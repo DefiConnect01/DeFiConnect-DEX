@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import Logo from "../assets/logo.png";
-import LogoDark from "../assets/logo_dark.png";
+// import LogoDark from "../assets/logo_dark.png";
 import MenuToggle from "../components/MenuToggle";
 import DarkModeToggle from "../components/DarkModeToggle";
 import BridgeInfo from "./BridgeInfo";
@@ -25,6 +25,7 @@ const ConnectButton = ({ isConnected }) => (
       <w3m-connect-button
         size="md"
         label={!isConnected ? "Connect Wallet" : "Disconnect"}
+        
       />
     </div>
   </div>
@@ -37,13 +38,16 @@ const Header = ({ isDarkMode, toggleDarkMode, isConnected, toggleSidebar }) => {
 
   return (
     <div className="flex justify-between items-center px-8">
-      <div>
+      <div className='flex items-center gap-2'>
         <img
-          src={isDarkMode ? Logo : LogoDark}
+          // src={isDarkMode ? Logo : LogoDark}
+          src = {Logo}
           alt="Logo"
           onClick={() => navigate("/")}
           style={{ cursor: 'pointer' }}
+          className='w-10 h-10'
         />
+        <p className={` ${isDarkMode ? "text-white" : "text-black"} md:text-xl`}>DefiConnect</p>
       </div>
       <div className="hidden gap-8 items-center md:flex">
         {!isTransactionsPage && <TransactionsButton />}

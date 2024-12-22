@@ -8,9 +8,11 @@ import { FaXTwitter } from "react-icons/fa6";
 import { PiSunFill } from "react-icons/pi";
 
 // Asset Image imports
-import LogoFooter from "./assets/logo_footer.png";
-import LogoFooterDark from "./assets/logo_footer_dark.png";
-import PageBackground from "./assets/bg_bridge.png";
+// import LogoFooter from "./assets/logo_footer.png";
+// import LogoFooterDark from "./assets/logo_footer_dark.png";
+import Logo from "./assets/logo.png";
+// import PageBackground from "./assets/bg_bridge.png";
+import PageBackground from "./assets/bridge-backg.png";
 
 // Component imports
 import AddCustomToken from "./components/AddCustomToken";
@@ -21,6 +23,7 @@ import TransactionInterface from "./components/TransactionInterface";
 
 // Hooks imports
 import { useAccount } from "wagmi";
+import ButtonList from "./components/shared/ButtonList";
 
 
 
@@ -35,8 +38,6 @@ const ConnectButton = ({ isConnected }) => (
   <w3m-connect-button
     size="md"
     label={!isConnected ? "Connect to a wallet" : "Disconnect"}
-    style={{color:"red"}}
-    className="bg-red-400"
   />
 );
 
@@ -48,9 +49,9 @@ export  const TransactionsButton =({closeSidebar})=>{
     navigate('/transactions');
     closeSidebar();
   };
-  return <button onClick={handleTransactionsClick} className="font-bold rounded-lg bg-transparent border-2 border-[hsl(258,100%,69%)] text-[hsl(258,100%,69%)] px-4 py-2 hover:border-[hsl(258,100%,80%)] hover:text-[hsl(258,100%,80%)] transition-colors duration-200">
-    Transactions
-  </button>
+  return <ButtonList onClick={handleTransactionsClick} border>
+        Transactions
+  </ButtonList>
 }
 const Sidebar = ({ closeSidebar, toggleDarkMode, isConnected }) => (
   <div className="relative w-[100%] left-0 z-30 gap-3 mt-12 flex px-6 items-start flex-col h-[100%] md:hidden">
@@ -69,7 +70,7 @@ const Sidebar = ({ closeSidebar, toggleDarkMode, isConnected }) => (
 
 const TransferButton = () => (
   <div className="sm:mt-10 mt-6">
-    <button className="bg-black dark:bg-white sm:text-2xl text-base font-bold flex justify-center items-center sm:py-2 rounded-full text-accent w-full">
+    <button className="bg-black dark:bg-white sm:text-2xl text-base font-bold flex justify-center items-center sm:py-2 rounded-full text-[#854CFF] w-full">
       Transfer{" "}
       <IoIosArrowRoundForward style={{ width: "40px", height: "40px" }} />
     </button>
@@ -78,15 +79,71 @@ const TransferButton = () => (
 
 const Footer = ({ isDarkMode }) => (
   <div className="px-8 w-full flex justify-between">
-    {isDarkMode ? (
+    {/* {isDarkMode ? (
       <img src={LogoFooter} alt="Logo" />
     ) : (
       <img src={LogoFooterDark} alt="Logo" />
-    )}
-    <div className="flex gap-6 text-accent">
-      <FaTelegramPlane className="w-6 h-6 hover:cursor-pointer" />
-      <FaXTwitter className="w-6 h-6 hover:cursor-pointer" />
-      <FaGithub className="w-6 h-6 hover:cursor-pointer" />
+    )} */}
+    <div className="flex items-center gap-2">
+      <img src={Logo} alt="Logo" className="w-6 h-6"/>
+      <p className={` ${isDarkMode ? "text-white" : "text-black"} text-sm`}>DefiConnect</p>
+    </div>
+    <div className="flex gap-6 text-[#fffff]">
+      {
+        isDarkMode && ( 
+          <>
+            <FaTelegramPlane className="w-6 h-6 hover:cursor-pointer" />
+            <FaXTwitter className="w-6 h-6 hover:cursor-pointer" />
+            <FaGithub className="w-6 h-6 hover:cursor-pointer" /> 
+          </>)
+      }
+      {
+        !isDarkMode && (
+          <> 
+            <svg
+              className="h-8 w-8"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+            >
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#140084" />
+                  <stop offset="100%" stopColor="#652400" />
+                </linearGradient>
+              </defs>
+              <FaTelegramPlane style={{ fill: "url(#gradient)" }} className="w-6 h-6 hover:cursor-pointer" />
+            </svg>
+
+            <svg
+              className="h-8 w-8"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+            >
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#140084" />
+                  <stop offset="100%" stopColor="#652400" />
+                </linearGradient>
+              </defs>
+              <FaXTwitter style={{ fill: "url(#gradient)" }} className="w-6 h-6 hover:cursor-pointer" />
+            </svg>
+
+            <svg
+              className="h-8 w-8"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+            >
+              <defs>
+                <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#140084" />
+                  <stop offset="100%" stopColor="#652400" />
+                </linearGradient>
+              </defs>
+              <FaGithub  style={{ fill: "url(#gradient)" }} className="w-6 h-6 hover:cursor-pointer" />
+            </svg>
+          </>
+        )
+      }
     </div>
   </div>
 );

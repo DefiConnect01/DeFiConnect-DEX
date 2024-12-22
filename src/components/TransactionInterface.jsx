@@ -510,7 +510,7 @@ const TransactionInterface = () => {
   };
 
   return (
-    <div className="ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-black dark:bg-black text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
+    <div className="ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
       <div className="p-2">
         <TokenInput
           label="From"
@@ -553,7 +553,7 @@ const TransactionInterface = () => {
                 ? "bg-green-500 hover:bg-green-600"
                 : transactionState === "error" || approvalState === "error"
                   ? "bg-red-500 hover:bg-red-600"
-                  : "bg-accent hover:bg-accent/90"
+                  : "button_bg"
             } 
           text-white 
           transition-all duration-200
@@ -686,7 +686,7 @@ const TokenInput = ({
             {chain === "Cybria" && selectedToken === "CYBA" && fee && (
               <div className="mt-4 text-gray-500">
                 Total with fee:{" "}
-                <span className="text-lg font-semibold text-accent">{getDisplayAmount()}</span>
+                <span className="text-lg font-semibold text-[#854CFF]">{getDisplayAmount()}</span>
               </div>
             )}
           </div>
@@ -713,7 +713,7 @@ function PercentageButton({ percentage, formattedFromBalance, setAmount }) {
           : (formattedFromBalance * percentage) / 100;
         setAmount(amount);  // Set the calculated amount
       }}
-      className="text-black dark:text-white border-accent border-2 px-2  rounded-full text-xs"
+      className="text-black dark:text-white button_border border-2 px-2  rounded-full text-xs"
     >
       {percentage}
       {percentage === "MAX" ? "" : "%"}
@@ -732,7 +732,7 @@ const SwitchDirection = ({ setFromChain, disabled }) => (
             prev === "CYBRIA" ? "ETHEREUM" : "CYBRIA"
           )
         }
-        className="bg-accent rounded-md sm:w-[40px] sm:h-[40px] w-[30px] h-[30px] cursor-pointer sm:p-2 p-1 hover:bg-darkModeGray hover:text-white text-darkText dark:text-darkText"
+        className="button_bg rounded-md sm:w-[40px] sm:h-[40px] w-[30px] h-[30px] cursor-pointer sm:p-2 p-1 hover:bg-darkModeGray hover:text-white text-darkText dark:text-darkText"
       />
       <div className="absolute top-[140%] left-1/2 transform -translate-x-1/2 w-max p-2 text-xs text-darkText bg-darkBackground rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
         Switch direction of bridge

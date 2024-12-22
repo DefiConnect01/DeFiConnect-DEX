@@ -32,7 +32,7 @@ export default function SelectTokenModal({
         <div className="flex justify-between mb-4">
           <h2 className="text-base sm:text-lg font-bold">Select a Token</h2>
           <h2
-            className="text-[#ef85ee] cursor-pointer hover:underline sm:hidden text-base"
+            className="text-[#854CFF] cursor-pointer hover:underline sm:hidden text-base"
             onClick={() => {
               setAddCustomToken(true); // Switch to Add Custom Token modal
               setSelectTokenModal(false); // Close this modal
@@ -41,7 +41,7 @@ export default function SelectTokenModal({
             + Custom
           </h2>
           <h2
-            className="text-[#ef85ee] cursor-pointer hover:underline hidden sm:block text-sm sm:text-md"
+            className="text-[#854CFF] cursor-pointer hover:underline hidden sm:block text-sm sm:text-md"
             onClick={() => {
               setAddCustomToken(true); // Switch to Add Custom Token modal
               setSelectTokenModal(false); // Close this modal
