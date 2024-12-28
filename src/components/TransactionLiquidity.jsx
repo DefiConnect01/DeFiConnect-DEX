@@ -41,10 +41,11 @@ const TOKENS = {
   }
 };
 
-const TransactionInterface = () => {
+const TransactionLiquidity = () => {
   const { setSelectTokenModal, isDarkMode } = useOutletContext();
   const { fromChain, setFromChain, selectedToken } = useContext(AppDataContext);
 
+  const [option, setOption] = useState("Stable");
   const [txHash, setTxHash] = useState(null);
   const [approvalTxHash, setApprovalTxHash] = useState(null);
   const [transactionState, setTransactionState] = useState("idle");
@@ -545,6 +546,56 @@ const TransactionInterface = () => {
           isDarkMode={isDarkMode}
           fee={fee}
         />
+        
+        <div className="flex justify-center items-center my-4 mt-6">
+          <button
+            className={`px-4 py-2 border rounded-l ${
+              option === "Stable" ? "bg-darkModeGray text-white" : "bg-gray-200 text-darkModeGray"
+            }`}
+            onClick={() => setOption("Stable")}
+          >
+            Stable
+          </button>
+          <button
+            className={`px-4 py-2 border rounded-r ${
+              option === "Volatile" ? "bg-darkModeGray text-white" : "bg-gray-200 text-darkModeGray"
+            }`}
+            onClick={() => setOption("Volatile")}
+          >
+            Volatile
+          </button>
+        </div>
+
+        <div>
+          <p className="font-medium text-left mb-2 text-[hsl(220,8%,35%)]">Reserve Info</p>
+          <div className="grid md:grid-cols-2" >
+            <div className="border border-secondary border-b-transparent md:border-b-secondary md:border-r-transparent flex flex-col items-start px-3 py-2" >
+              <p className="text-light">WMATIC</p>
+              <p className="text-lg font-bold">1,194.15</p>
+            </div>
+
+            <div className="border border-secondary flex flex-col items-start px-3 py-2" >
+              <p className="text-light">DYST</p>
+              <p className="text-lg font-bold">19,262,538.96</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="my-4">
+          <p className="font-medium text-left mb-2 text-[hsl(220,8%,35%)]">Your Balances - WMATIC/DYST</p>
+          <div className="grid md:grid-cols-2" >
+            <div className="border border-secondary border-b-transparent md:border-b-secondary md:border-r-transparent flex flex-col items-start px-3 py-2" >
+              <p className="text-light">Pooled</p>
+              <p className="text-lg font-bold">0.00</p>
+            </div>
+
+            <div className="border border-secondary flex flex-col items-start px-3 py-2" >
+              <p className="text-light">Staked</p>
+              <p className="text-lg font-bold">0.00</p>
+            </div>
+          </div>
+        </div>
+
         <button
           onClick={handleButtonClick}
           disabled={isButtonDisabled()}
@@ -746,4 +797,4 @@ const SwitchDirection = ({ setFromChain, disabled }) => (
 
 
 
-export default TransactionInterface;
+export default TransactionLiquidity;

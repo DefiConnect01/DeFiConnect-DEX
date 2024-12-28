@@ -70,7 +70,7 @@ const Sidebar = ({ closeSidebar, toggleDarkMode, isConnected }) => (
 
 const TransferButton = () => (
   <div className="sm:mt-10 mt-6">
-    <button className="bg-black dark:bg-white sm:text-2xl text-base font-bold flex justify-center items-center sm:py-2 rounded-full text-[#854CFF] w-full">
+    <button className="bg-black dark:bg-white sm:text-2xl text-base font-bold flex justify-center items-center sm:py-2 rounded-full text-purple w-full">
       Transfer{" "}
       <IoIosArrowRoundForward style={{ width: "40px", height: "40px" }} />
     </button>

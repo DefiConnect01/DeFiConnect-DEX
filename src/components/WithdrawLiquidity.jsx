@@ -41,10 +41,11 @@ const TOKENS = {
   }
 };
 
-const TransactionInterface = () => {
+const WithdrawLiquidity = () => {
   const { setSelectTokenModal, isDarkMode } = useOutletContext();
   const { fromChain, setFromChain, selectedToken } = useContext(AppDataContext);
 
+  const [option, setOption] = useState("Unstake");
   const [txHash, setTxHash] = useState(null);
   const [approvalTxHash, setApprovalTxHash] = useState(null);
   const [transactionState, setTransactionState] = useState("idle");
@@ -514,37 +515,59 @@ const TransactionInterface = () => {
     <>
     <div className="ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
       <div className="p-2">
-        <TokenInput
-          label="From"
-          chain={fromChain === "CYBRIA" ? "Cybria" : "Ethereum"}
-          setSelectTokenModal={setSelectTokenModal}
-          amount={amount}
-          setAmount={setAmount}
-          selectedToken={selectedToken}
-          disabled={isTransactionCompleted}
-          formattedFromBalance={formattedFromBalance}
-          cybaPrice={cybaPrice}
-          isDarkMode={isDarkMode}
-          fee={fee}
-          fromChain={fromChain}
 
-        />
-        <SwitchDirection
-          setFromChain={setFromChain}
-          disabled={isTransactionCompleted}
-        />
-        <TokenInput
-          label="To"
-          chain={fromChain === "CYBRIA" ? "Ethereum" : "Cybria"}
-          fromChain={fromChain}
-          selectedToken={selectedToken}
-          isReadOnly
-          formattedToBalance={formattedToBalance}
-          amount={amount}
-          cybaPrice={cybaPrice}
-          isDarkMode={isDarkMode}
-          fee={fee}
-        />
+      <div>
+          <p className="font-medium text-left mb-2 text-[hsl(220,8%,35%)]">Your Balances - undefined</p>
+          <div className="grid md:grid-cols-2" >
+            <div className="border border-secondary border-b-transparent md:border-b-secondary md:border-r-transparent flex flex-col items-start px-3 py-2" >
+              <p className="text-light">Pooled</p>
+              <p className="text-lg font-bold">0</p>
+            </div>
+
+            <div className="border border-secondary flex flex-col items-start px-3 py-2" >
+              <p className="text-light">Staked</p>
+              <p className="text-lg font-bold">0</p>
+            </div>
+          </div>
+        </div>
+        
+        <p className="font-medium text-center mt-4 mb-2 text-[hsl(220,8%,35%)]">Choose the action</p>
+        <div className="flex justify-center items-center mb-4">
+          <button
+            className={`px-4 py-2 border rounded-l ${
+              option === "Unstake" ? "bg-darkModeGray text-white" : "bg-gray-200 text-darkModeGray"
+            }`}
+            onClick={() => setOption("Unstake")}
+          >
+            Unstake LP
+          </button>
+          <button
+            className={`px-4 py-2 border rounded-r ${
+              option === "Remove" ? "bg-darkModeGray text-white" : "bg-gray-200 text-darkModeGray"
+            }`}
+            onClick={() => setOption("Remove")}
+          >
+            Remove LP
+          </button>
+        </div>
+
+        
+
+        <div className="my-4">
+          <p className="font-medium text-left mb-2 text-[hsl(220,8%,35%)]">Price Info</p>
+          <div className="grid md:grid-cols-2" >
+            <div className="border border-secondary border-b-transparent md:border-b-secondary md:border-r-transparent flex flex-col items-start px-3 py-2" >
+              <p className="text-light">undefined</p>
+              <p className="text-lg font-bold">0.00</p>
+            </div>
+
+            <div className="border border-secondary flex flex-col items-start px-3 py-2" >
+              <p className="text-light">undefined</p>
+              <p className="text-lg font-bold">0.00</p>
+            </div>
+          </div>
+        </div>
+
         <button
           onClick={handleButtonClick}
           disabled={isButtonDisabled()}
@@ -575,175 +598,7 @@ const TransactionInterface = () => {
 };
 
 
-const TokenInput = ({
-  disabled,
-  cybaPrice,
-  label,
-  chain,
-  setSelectTokenModal,
-  amount,
-  setAmount,
-  selectedToken,
-  isReadOnly = false,
-  formattedFromBalance,
-  formattedToBalance,
-  fromChain,
-  isDarkMode,
-  fee
-}) => {
-  const handleAmountChange = (e) => {
-    const inputValue = e.target.value;
-    if (!inputValue) {
-      setAmount("");
-      return;
-    }
-
-    const parsedValue = parseFloat(inputValue);
-    if (isNaN(parsedValue)) {
-      return;
-    }
-
-    // Don't clamp the value anymore, just set it as is
-    setAmount(parsedValue.toString());
-  };
-
-  const getDisplayAmount = () => {
-    if (!amount) return 0;
-
-    const isCybriaChain = fromChain === "CYBRIA";
-    const isCYBA = selectedToken === "CYBA";
-
-    if (isReadOnly) {
-      if (isCybriaChain && isCYBA) {
-        return amount;
-      } else {
-        return amount * 0.995;
-      }
-    } else {
-      if (isCybriaChain && isCYBA && fee) {
-        const feeInEther = formatUnits(fee, 18);
-        return (parseFloat(amount) + parseFloat(feeInEther)).toFixed(4);
-      }
-      return amount;
-    }
-  };
-
-  
-
-  return (
-    <div>
-      <div className={`${label === "To" ? "-mt-6" : ""} ml-2 text-start`}>
-        <p className="font-medium dark:text-[hsl(220,8%,60%)] text-[hsl(220,8%,35%)] text-sm sm:text-base">{label}</p>
-        <h2 className="sm:text-lg text-sm font-bold dark:text-[hsl(220,8%,60%)] text-[hsl(220,8%,35%)] mb-2">{chain}</h2>
-      </div>
-
-      <div className="p-4 flex flex-col bg-lightModeGray dark:bg-darkModeGray rounded-2xl">
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center">
-            {selectedToken === "CYBA" ? (
-              <img
-                src={isDarkMode ? CYBALogoDark : CYBALogo}
-                alt="CYBA logo"
-                className="w-[30px] mr-1"
-              />
-            ) : (
-              <img
-                src="https://etherscan.io/token/images/centre-usdc_28.png"
-                alt="USDT logo"
-                className="w-[30px] mr-1"
-              />
-            )}
-            <p className="sm:text-xl font-bold bg-transparent">{selectedToken}</p>
-            {/* {label === "From" && !isReadOnly && (
-              <IoMdArrowDropdown
-                className="ml-2 cursor-pointer"
-                onClick={() => setSelectTokenModal && setSelectTokenModal(true)}
-              />
-            )} */}
-          </div>
-          <em className="flex text-[#58585e] dark:text-[hsl(0,0%,65%)] text-sm">
-            Balance: <span className="ml-1">{formattedFromBalance || formattedToBalance}</span>
-          </em>
-        </div>
-
-        {!isReadOnly ? (
-          <div className="text-left">
-            <div className="flex justify-between">
-              <div className="flex flex-col gap-4">
-                <input
-                  disabled={disabled}
-                  type="number"
-                  value={amount}
-                  onChange={handleAmountChange}
-                  placeholder="0.0"
-                  className="dark:text-white font-normal sm:text-2xl bg-transparent outline-none w-full placeholder:text-black dark:placeholder:text-white"
-                />
-              </div>
-              <div className="flex gap-1">
-                <PercentageButton percentage={10} formattedFromBalance={formattedFromBalance} setAmount={setAmount} />
-                <PercentageButton percentage={25} formattedFromBalance={formattedFromBalance} setAmount={setAmount} />
-                <PercentageButton percentage={50} formattedFromBalance={formattedFromBalance} setAmount={setAmount} />
-                <PercentageButton percentage="MAX" formattedFromBalance={formattedFromBalance} setAmount={setAmount} />
-              </div>
-            </div>
-            {chain === "Cybria" && selectedToken === "CYBA" && fee && (
-              <div className="mt-4 text-gray-500">
-                Total with fee:{" "}
-                <span className="text-lg font-semibold text-[#854CFF]">{getDisplayAmount()}</span>
-              </div>
-            )}
-          </div>
-        ) : (
-          <p className="text-black mr-auto dark:text-white font-normal sm:text-2xl bg-transparent outline-none">
-            {getDisplayAmount()}
-          </p>
-        )}
-
-        <em className="mr-auto mt-2 text-sm">
-          ${selectedToken === "USDT" ? getDisplayAmount() : (getDisplayAmount() * cybaPrice).toFixed(4)}
-        </em>
-      </div>
-    </div>
-  );
-};
-
-function PercentageButton({ percentage, formattedFromBalance, setAmount }) {
-  return (
-    <button
-      onClick={() => {
-        const amount = percentage === "MAX"
-          ? formattedFromBalance
-          : (formattedFromBalance * percentage) / 100;
-        setAmount(amount);  // Set the calculated amount
-      }}
-      className="text-black dark:text-white button_border border-2 px-2  rounded-full text-xs"
-    >
-      {percentage}
-      {percentage === "MAX" ? "" : "%"}
-    </button>
-  );
-}
-
-
-const SwitchDirection = ({ setFromChain, disabled }) => (
-  <div className="flex justify-center items-center mt-4">
-    <div className="relative group">
-      <RiArrowUpDownLine
-        disabled={disabled}
-        onClick={() =>
-          setFromChain((prev) =>
-            prev === "CYBRIA" ? "ETHEREUM" : "CYBRIA"
-          )
-        }
-        className="button_bg rounded-md sm:w-[40px] sm:h-[40px] w-[30px] h-[30px] cursor-pointer sm:p-2 p-1 hover:bg-darkModeGray hover:text-white text-darkText dark:text-darkText"
-      />
-      <div className="absolute top-[140%] left-1/2 transform -translate-x-1/2 w-max p-2 text-xs text-darkText bg-darkBackground rounded-md opacity-0 group-hover:opacity-100 transition-opacity">
-        Switch direction of bridge
-      </div>
-    </div>
-  </div>
-);
 
 
 
-export default TransactionInterface;
+export default WithdrawLiquidity;
