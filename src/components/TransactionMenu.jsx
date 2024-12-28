@@ -28,17 +28,19 @@ function TransactionMenu() {
                 </div>
             </div>
 
-            {activeTab === "swap" && (
-                <>
-                    <TransactionInterface/>
-                </>
-            )}
+            <div className='min-h-[650px]'>
+                {activeTab === "swap" && (
+                    <>
+                        <TransactionInterface/>
+                    </>
+                )}
 
-            {activeTab === "liquidity" && (
-                <>
-                    <PoolTable/>
-                </>
-            )}
+                {activeTab === "liquidity" && (
+                    <>
+                        <PoolTable/>
+                    </>
+                )}
+            </div>
         </>
     )
 }

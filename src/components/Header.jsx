@@ -37,7 +37,7 @@ const Header = ({ isDarkMode, toggleDarkMode, isConnected, toggleSidebar }) => {
   const isTransactionsPage = location.pathname === '/transactions';
 
   return (
-    <div className="flex justify-between items-center px-8">
+    <div className="flex justify-between items-center px-4 mb-12">
       <div className='flex items-center gap-2'>
         <img
           // src={isDarkMode ? Logo : LogoDark}
@@ -53,7 +53,7 @@ const Header = ({ isDarkMode, toggleDarkMode, isConnected, toggleSidebar }) => {
         {!isTransactionsPage && <TransactionsButton />}
         <NetworkButton />
         <ConnectButton isConnected={isConnected} />
-        <BridgeInfo />
+        {/* <BridgeInfo /> */}
         <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
       </div>
       <MenuToggle toggleSidebar={toggleSidebar} />
