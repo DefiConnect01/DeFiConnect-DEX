@@ -11,5 +11,3 @@ Stack used
 Vite + React
 Etherjs 
 nodejs.
-
-
