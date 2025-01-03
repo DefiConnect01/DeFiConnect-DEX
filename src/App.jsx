@@ -24,6 +24,7 @@ import TransactionInterface from "./components/TransactionInterface";
 // Hooks imports
 import { useAccount } from "wagmi";
 import ButtonList from "./components/shared/ButtonList";
+import { useAppKitAccount } from "@reown/appkit/react";
 
 
 
@@ -154,7 +155,7 @@ function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [selectTokenModal, setSelectTokenModal] = useState(false);
   const [addCustomToken, setAddCustomToken] = useState(false);
-  const { address, isConnected } = useAccount();
+  const { address, isConnected } = useAppKitAccount();
 
   const location = useLocation()
   const isHomePage = location.pathname === '/';
@@ -207,6 +208,7 @@ function App() {
             isDarkMode={isDarkMode}
             toggleDarkMode={toggleDarkMode}
             isConnected={isConnected}
+            address={address}
             toggleSidebar={toggleSidebar}
           />
           {isSidebarOpen && (

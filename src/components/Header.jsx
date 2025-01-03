@@ -6,6 +6,9 @@ import MenuToggle from "../components/MenuToggle";
 import DarkModeToggle from "../components/DarkModeToggle";
 import BridgeInfo from "./BridgeInfo";
 import { TransactionsButton } from "../App";
+import { trimAddress } from "../lib/utils";
+import { useAppKitAccount } from '@reown/appkit/react'
+
 
 const NetworkButton = () => (
   <div className="bg-black py-[1px] dark:bg-transparent flex rounded-full">
@@ -13,25 +16,28 @@ const NetworkButton = () => (
   </div>
 );
 
-const ConnectButton = ({ isConnected }) => (
-  <div>
-    <div className="hidden md:block lg:hidden">
-      <w3m-connect-button
-        size="md"
-        label={!isConnected ? "Connect" : "Disconnect"}
-      />
-    </div>
-    <div className="md:hidden lg:block">
-      <w3m-connect-button
-        size="md"
-        label={!isConnected ? "Connect Wallet" : "Disconnect"}
-        
-      />
-    </div>
-  </div>
-);
+const ConnectButton = ({ isConnected, address }) => {
+  // const { address, isConnected: connected } = useAppKitAccount()
+  return (
+    <div>
+      <div className="hidden md:block lg:hidden">
+        <w3m-connect-button
+          size="md"
+          label={!isConnected ? "Connect" : "Disconnect"}
+        />
+      </div>
+      <div className="md:hidden lg:block">
+        <w3m-connect-button
+          size="md"
+          label={!isConnected ? "Connect Wallet" : `${trimAddress(address)}`}
 
-const Header = ({ isDarkMode, toggleDarkMode, isConnected, toggleSidebar }) => {
+        />
+      </div>
+    </div>
+  );
+}
+
+const Header = ({ isDarkMode, toggleDarkMode, isConnected, address, toggleSidebar }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const isTransactionsPage = location.pathname === '/transactions';
@@ -52,7 +58,7 @@ const Header = ({ isDarkMode, toggleDarkMode, isConnected, toggleSidebar }) => {
       <div className="hidden gap-8 items-center md:flex">
         {!isTransactionsPage && <TransactionsButton />}
         <NetworkButton />
-        <ConnectButton isConnected={isConnected} />
+        <ConnectButton isConnected={isConnected} address={address} />
         {/* <BridgeInfo /> */}
         <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
       </div>

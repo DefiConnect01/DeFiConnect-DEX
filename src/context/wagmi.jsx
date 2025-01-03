@@ -4,7 +4,8 @@ import { WagmiProvider } from "wagmi";
 import { baseSepolia, base } from "@reown/appkit/networks";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import cybaLogo from '../assets/cyba_dark.svg';
+import cybaLogo from '../assets/creator.png';
+
 
 // Function to convert SVG to blob URL
 async function createBlobUrl(svgPath) {
@@ -22,60 +23,30 @@ async function createBlobUrl(svgPath) {
 const createNetworks = async () => {
   const cybaLogoUrl = await createBlobUrl(cybaLogo);
 
-  // const mainnet = {
-  //   id: "eip155:1",
-  //   name: "Ethereum",
-  //   chainId: 1,
+  TODO: `Uncomment and update creator mainnet below`
+  // const creator = {
+  //   id: "eip155:66665",
+  //   name: "Creator",
+  //   chainId: 66665,
   //   chainNamespace: "eip155",
   //   currency: "ETH",
-  //   explorerUrl: "https://etherscan.io",
-  //   rpcUrl: "https://autumn-lively-mound.quiknode.pro/7f6055160fc5bab5f5dad0687e44fbf92e187fad"
+  //   explorerUrl: "https://explorer.creatorchain.io/stats",
+  //   rpcUrl: "https://rpc.creatorchain.io",
+  //   imagesrc: cybaLogoUrl
   // };
 
-
-const onlylayer = {
-  id: "eip155:5820948",
-  name: "OnlyLayer",
-  chainId: 5820948,
-  chainNamespace: "eip155",
-  currency: "ONLY",
-  explorerUrl: "https://onlyscan.info",
-  rpcUrl: "https://onlylayer.org"
-}
-
-  const creator = {
+  const creatorTestnet = {
     id: "eip155:66665",
-    name: "Creator",
+    name: "Creator Testnet",
     chainId: 66665,
     chainNamespace: "eip155",
     currency: "ETH",
     explorerUrl: "https://explorer.creatorchain.io/stats",
-    rpcUrl: "https://rpc.creatorchain.io"
+    rpcUrl: "https://rpc.creatorchain.io",
+    imagesrc: "/creator.png"
   };
 
-  const cybria = {
-    id: "eip115:6661",
-    name: "Cybria",
-    chainId: 6661,
-    chainNamespace: "eip155",
-    currency: "CYBA",
-    explorerUrl: "https://explorer.cybascan.io",
-    rpcUrl: "https://rpc-mainnet.cybria.io",
-    imagesrc: cybaLogoUrl
-  };
-
-  const cybriaTestnet = {
-    id: "eip115:6666",
-    name: "Cybria Testnet",
-    chainId: 6666,
-    chainNamespace: "eip155",
-    currency: "CYBA",
-    explorerUrl: "https://explorer.cybascan.io",
-    rpcUrl: "https://l2-rpc.cybascan.io",
-    imagesrc: cybaLogoUrl
-  };
-
-  return [onlylayer, creator, cybria, cybriaTestnet];
+  return [creatorTestnet];
 };
 
 const AppKitProvider = ({ children }) => {
@@ -109,9 +80,9 @@ const AppKitProvider = ({ children }) => {
       adapters: [wagmiAdapter],
       networks,
       metadata: {
-        name: "AppKit",
-        description: "AppKit Example",
-        url: "https://cyba-bridge.vercel.app/",
+        name: "DefiConnect Dex",
+        description: "ve-(3,3) dex on Creator",
+        url: import.meta.env.VITE_WEBSITE_URL,
         icons: ["https://avatars.githubusercontent.com/u/179229932"],
       },
       projectId,
