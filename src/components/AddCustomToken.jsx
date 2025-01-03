@@ -9,13 +9,13 @@ export default function AddCustomToken({
   if (addCustomToken) {
     return (
       <div
-        className="absolute w-full h-full inset-0"
-        onClick={() => setAddCustomToken(false)}
+        className="absolute w-full h-full inset-0 z-20"
+        // onClick={() => setAddCustomToken(false)}
       >
         <div className="absolute w-full h-full  bg-[hsla(0,0%,0%,0.7)] top-0 z-5">
           <div className=" sm:p-8 p-4 rounded-2xl  w-[500px]  max-w-[90vw] z-15 absolute left-[50%] top-[50%] transform translate-x-[-50%] translate-y-[-50%]   bg-lightBackground dark:bg-darkBackground text-lightText dark:text-darkText">
             <h2 className="text-lg font-bold mb-2">Add Custom Token</h2>{" "}
-            <div className="w-full h-[100px] bg-[#eef4fd]"></div>
+            {/* <div className="w-full h-[100px] bg-[#eef4fd]"></div> */}
             <div className="sm:mt-8 mt-4 flex flex-col sm:gap-6 gap-3 text-left">
               <div>
                 <p>Token Contract Address</p>{" "}

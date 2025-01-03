@@ -535,7 +535,7 @@ const WithdrawLiquidity = () => {
         <div className="flex justify-center items-center mb-4">
           <button
             className={`px-4 py-2 border rounded-l ${
-              option === "Unstake" ? "bg-darkModeGray text-white" : "bg-gray-200 text-darkModeGray"
+              option === "Unstake" ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
             }`}
             onClick={() => setOption("Unstake")}
           >
@@ -543,7 +543,7 @@ const WithdrawLiquidity = () => {
           </button>
           <button
             className={`px-4 py-2 border rounded-r ${
-              option === "Remove" ? "bg-darkModeGray text-white" : "bg-gray-200 text-darkModeGray"
+              option === "Remove" ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
             }`}
             onClick={() => setOption("Remove")}
           >

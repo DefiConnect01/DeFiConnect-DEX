@@ -9,3 +9,25 @@ export const RouterAddress = ""
 
 export const Router_abi = []
 export const Erc20_abi = []
+
+export const coinData = [
+    {
+      name: "Bitcoin",
+      symbol: "BTC",
+      price: "45000",
+      icon: "https://cryptoicons.org/api/icon/btc/32",
+    },
+    {
+      name: "Ethereum",
+      symbol: "ETH",
+      price: "3000",
+      icon: "https://cryptoicons.org/api/icon/eth/32",
+    },
+    {
+      name: "Cardano",
+      symbol: "ADA",
+      price: "1.5",
+      icon: "https://cryptoicons.org/api/icon/ada/32",
+    },
+  ];
+  
