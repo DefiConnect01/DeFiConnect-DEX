@@ -1,0 +1,42 @@
+[
+    {
+        "name": "Ether",
+        "symbol": "ETH",
+        "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
+        "decimals": 18,
+        "chainId": 66665,
+        "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
+    },
+    {
+        "name": "USDT",
+        "symbol": "USDT",
+        "address": "0xB0517790d29753429D63eFe95be5879EDc8c3311",
+        "decimals": 6,
+        "chainId": 66665,
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
+    },
+    {
+        "name": "Bridged USDC",
+        "symbol": "USDC.e",
+        "address": "0xE0870ba18492E46a8137daE711d583aae26E7337",
+        "decimals": 6,
+        "chainId": 66665,
+        "logoURI": "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694"
+    },
+    {
+        "name": "DAI",
+        "symbol": "DAI",
+        "address": "0xD0015150ef225D6762E8adBD682B4D7e941846D6",
+        "decimals": 18,
+        "chainId": 66665,
+        "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
+    },
+    {
+        "name": "BTC",
+        "symbol": "BTC",
+        "address": "0x33950C41c72D1a8c559aE312a81F9DA3e42D09D4",
+        "decimals": 8,
+        "chainId": 66665,
+        "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
+    }
+]

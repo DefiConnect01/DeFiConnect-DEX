@@ -1,10 +1,11 @@
 import React from "react";
-import { createAppKit } from "@reown/appkit/react";
-import { WagmiProvider } from "wagmi";
+import { createAppKit, modal, useAppKitAccount } from "@reown/appkit/react";
+import { useAccount, WagmiProvider } from "wagmi";
 import { baseSepolia, base } from "@reown/appkit/networks";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import cybaLogo from '../assets/creator.png';
+import stores from "../stores";
 
 
 // Function to convert SVG to blob URL

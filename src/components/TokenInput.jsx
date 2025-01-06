@@ -7,56 +7,29 @@ import CYBALogo from "../assets/cyba.svg";
 import CYBALogoDark from "../assets/cyba_dark.svg";
 
 const TokenInput = ({
-  disabled,
-  cybaPrice,
   label,
-  chain,
   amount,
   setAmount,
-  isReadOnly = false,
+  tokenDetails,
+  selectedToken,
+  disabled,
   formattedFromBalance,
-  formattedToBalance,
+  cybaPrice,
   isDarkMode,
   fee,
+  fromChain,
+  isReadOnly=false,
+  fromAmountChanged,
+  toAmountValue
 }) => {
-  const { fromChain, selectedToken, setSelectedToken } = useContext(AppDataContext);
   const [selectTokenModal, setSelectTokenModal] = useState(false);
   const [addCustomToken, setAddCustomToken] = useState(false);
 
-  const handleAmountChange = (e) => {
-    const inputValue = e.target.value;
-    if (!inputValue) {
-      setAmount("");
-      return;
-    }
-
-    const parsedValue = parseFloat(inputValue);
-    if (isNaN(parsedValue)) {
-      return;
-    }
-
-    setAmount(parsedValue.toString());
-  };
+  const handleAmountChange = fromAmountChanged;
 
   const getDisplayAmount = () => {
-    if (!amount) return 0;
-
-    const isCybriaChain = fromChain === "CYBRIA";
-    const isCYBA = selectedToken === "CYBA";
-
-    if (isReadOnly) {
-      if (isCybriaChain && isCYBA) {
-        return amount;
-      } else {
-        return amount * 0.995;
-      }
-    } else {
-      if (isCybriaChain && isCYBA && fee) {
-        const feeInEther = formatUnits(fee, 18);
-        return (parseFloat(amount) + parseFloat(feeInEther)).toFixed(4);
-      }
-      return amount;
-    }
+    
+    return toAmountValue;
   };
 
   return (
@@ -77,9 +50,8 @@ const TokenInput = ({
       />
 
       {/* Main Token Input */}
-      <div className={`${label === "To" ? "-mt-6" : ""} ml-2 text-start`}>
+      <div className={`${label === "To" ? "-mt-2" : ""} ml-2 text-start`}>
         <p className="font-medium dark:text-[hsl(220,8%,60%)] text-[hsl(220,8%,35%)] text-sm sm:text-base">{label}</p>
-        <h2 className="sm:text-lg text-sm font-bold dark:text-[hsl(220,8%,60%)] text-[hsl(220,8%,35%)] mb-2">{chain}</h2>
       </div>
 
       <div className="p-4 flex flex-col bg-lightModeGray dark:bg-darkModeGray rounded-2xl">
@@ -88,24 +60,20 @@ const TokenInput = ({
             className="flex items-center cursor-pointer"
             onClick={() => setSelectTokenModal(true)}
           >
-            {selectedToken === "CYBA" ? (
               <img
-                src={isDarkMode ? CYBALogoDark : CYBALogo}
-                alt="CYBA logo"
-                className="w-[30px] mr-1"
-              />
-            ) : (
-              <img
-                src="https://etherscan.io/token/images/centre-usdc_28.png"
+                src={tokenDetails.logoURI}
                 alt="USDT logo"
-                className="w-[30px] mr-1"
+                className="w-[30px] mr-1 rounded-full"
               />
-            )}
             <p className="sm:text-xl font-bold bg-transparent">{selectedToken}</p>
           </div>
-          <em className="flex text-[#58585e] dark:text-[hsl(0,0%,65%)] text-sm">
-            Balance: <span className="ml-1">{formattedFromBalance || formattedToBalance}</span>
-          </em>
+          {
+            formattedFromBalance && (
+              <em className="flex text-[#58585e] dark:text-[hsl(0,0%,65%)] text-sm">
+                Balance: <span className="ml-1">{formattedFromBalance}</span>
+              </em>
+            )
+          }
         </div>
 
         {!isReadOnly ? (
@@ -115,7 +83,7 @@ const TokenInput = ({
                 disabled={disabled}
                 type="number"
                 value={amount}
-                onChange={handleAmountChange}
+                onChange={(e) => handleAmountChange(e.target.value)}
                 placeholder="0.0"
                 className="dark:text-white font-normal sm:text-2xl bg-transparent outline-none w-full placeholder:text-black dark:placeholder:text-white"
               />
@@ -126,21 +94,21 @@ const TokenInput = ({
                 <PercentageButton percentage="MAX" formattedFromBalance={formattedFromBalance} setAmount={setAmount} />
               </div>
             </div>
-            {chain === "Cybria" && selectedToken === "CYBA" && fee && (
+            {selectedToken === "CYBA" && fee && (
               <div className="mt-4 text-gray-500">
                 Total with fee:{" "}
-                <span className="text-lg font-semibold text-[#854CFF]">{getDisplayAmount()}</span>
+                <span className="text-lg font-semibold text-[#854CFF]">{getDisplayAmount() || 0}</span>
               </div>
             )}
           </div>
         ) : (
           <p className="text-black mr-auto dark:text-white font-normal sm:text-2xl bg-transparent outline-none">
-            {getDisplayAmount()}
+            {getDisplayAmount() || 0}
           </p>
         )}
 
         <em className="mr-auto mt-2 text-sm">
-          ${selectedToken === "USDT" ? getDisplayAmount() : (getDisplayAmount() * cybaPrice).toFixed(4)}
+          ${getDisplayAmount() || 0}
         </em>
       </div>
     </div>

@@ -14,11 +14,10 @@ import { abi, baseSepoliaAddress,ethereumAddress, cybriaAddress } from "../const
 import { toast } from 'react-toastify';
 import SwitchDirection from "./SwitchDirections";
 import TokenInput from "./TokenInput";
-import CYBALogo from "../assets/cyba.svg"
-import CYBALogoDark from "../assets/cyba_dark.svg"
-import TransactionMenu from "./TransactionMenu";
 import tokenList from "../constants/tokenList.json";
 import { useAppKitAccount } from "@reown/appkit/react";
+import stores from "../stores";
+import { ACTIONS } from "../stores/constants/constants";
 
 const priceUpdateLink = import.meta.env.VITE_PRICE_UPDATE_LINK
 const cyberApiKey = import.meta.env.VITE_CYBER_API_KEY
@@ -44,6 +43,7 @@ const TOKENS = {
 };
 
 const TransactionInterface = () => {
+  const multiSwapStore = stores.multiSwapStore;
   const { setSelectTokenModal, isDarkMode } = useOutletContext();
   const { 
     fromChain, 
@@ -51,7 +51,29 @@ const TransactionInterface = () => {
     selectedToken
   } = useContext(AppDataContext);
 
+  // ============================================
+  const [quoteLoading, setQuoteLoading] = useState(false);
+
   const [swapList, setSwapList] = useState([tokenList[0], tokenList[1]]);
+  const [, updateState] = React.useState();
+  const forceUpdate = React.useCallback(() => updateState({}), []);
+
+  const [fromAmountValue, setFromAmountValue] = useState("");
+  const [fromAmountError, setFromAmountError] = useState(false);
+  const [fromAssetValue, setFromAssetValue] = useState(null);
+  const [fromAssetError, setFromAssetError] = useState(false);
+  const [fromAssetOptions, setFromAssetOptions] = useState([]);
+
+  const [toAmountValue, setToAmountValue] = useState("");
+  const [toAmountError, setToAmountError] = useState(false);
+  const [toAssetValue, setToAssetValue] = useState(null);
+  const [toAssetError, setToAssetError] = useState(false);
+  const [toAssetOptions, setToAssetOptions] = useState([]);
+
+  const [quoteError, setQuoteError] = useState(null);
+  const [quote, setQuote] = useState(null);
+  const [hidequote, sethidequote] = useState(true);
+  // ====================================
 
   const [txHash, setTxHash] = useState(null);
   const [approvalTxHash, setApprovalTxHash] = useState(null);
@@ -73,6 +95,7 @@ const TransactionInterface = () => {
 
   const isETH = swapList[0]?.symbol === "ETH";
 
+  // use useEeffect to update token balance on switch
   const { data: fromBalanceData } = useBalance({
     address,
     chainId: swapList[0]?.chainId,
@@ -118,50 +141,233 @@ const TransactionInterface = () => {
     ],
   });
 
-  const { data: feeData, refetch: refetchFee } = useReadContract({
-    address: fromChain === "CYBRIA" ? cybriaAddress : ethereumAddress,
-    abi,
-    functionName: "getCalculatedFee",
-    enabled: false, // Don't automatically fetch
-  });
 
-  // Then wrap fetchFeeAndPrice in useCallback to prevent infinite loop
-  const fetchFeeAndPrice = useCallback(async () => {
-    try {
-      setIsFetchingFee(true);
+  // useEffect(
+  //   function () {
+  //     const errorReturned = () => {
+  //       setLoading(false);
+  //       setApprovalLoading(false);
+  //       setQuoteLoading(false);
+  //     };
 
-      const fromChainId = fromChain === "CYBRIA" ? CHAIN_IDS.CYBRIA : CHAIN_IDS.ETHEREUM;
+  //     const quoteReturned = (val) => {
+  //       // console.log('quoteReturned val', val)
+  //       if (!val) {
+  //         setQuoteLoading(false);
+  //         setQuote(null);
+  //         setToAmountValue("");
+  //         setQuoteError(
+  //           "Insufficient liquidity or no route available to complete swap"
+  //         );
+  //       }
+  //       if (
+  //         val &&
+  //         val.inputs &&
+  //         val.inputs.fromAmount === fromAmountValue &&
+  //         val.inputs.fromAsset.address === fromAssetValue.address &&
+  //         val.inputs.toAsset.address === toAssetValue.address
+  //       ) {
+  //         setQuoteLoading(false);
+  //         if (BigNumber(val.output.finalValue).eq(0)) {
+  //           setQuote(null);
+  //           setToAmountValue("");
+  //           setQuoteError(
+  //             "Insufficient liquidity or no route available to complete swap"
+  //           );
+  //           return;
+  //         }
 
-      const response = await fetch(priceUpdateLink, {
-        method: 'POST',
-        headers: {
-          'cyber-api-key': cyberApiKey,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ network: fromChainId })
-      });
+  //         setToAmountValue(BigNumber(val.output.finalValue).toFixed(8));
+  //         // console.log('setquote')
+  //         setQuote(val);
+  //       }
+  //     };
 
-      if (!response.ok) {
-        throw new Error(`Price check HTTP error! status: ${response.status}`);
-      }
-      // console.log("fee fetched")
-      const { data: newFee } = await refetchFee();
+  //     const ssUpdated = () => {
+  //       const baseAsset = stores.stableSwapStore.getStore("baseAssets");
 
-      if (!newFee) {
-        throw new Error('Failed to fetch new fee');
-      }
+  //       // set tokens for multiswap store
+  //       if (
+  //         baseAsset.length > 0
+  //         && multiSwapStore.tokenIn === null
+  //         && multiSwapStore.tokenOut === null
+  //       ) {
+  //         if (router.query.to) {
+  //           multiSwapStore.setTokenOut(router.query.to)
+  //         } else {
+  //           multiSwapStore.setTokenOut(DEFAULT_ASSET_TO)
+  //         }
 
-      setFee(newFee);
-      // console.log("newfeeeeeeeeeeeeeeeeeeee:",newFee)
-      return newFee;
+  //         if (router.query.from) {
+  //           multiSwapStore.setTokenIn(router.query.from)
+  //         } else {
+  //           multiSwapStore.setTokenIn(DEFAULT_ASSET_FROM)
+  //         }
+  //       }
 
-    } catch (error) {
-      // console.error('Error in fee and price fetching:', error);
-      throw error;
-    } finally {
-      setIsFetchingFee(false);
+  //       setToAssetOptions(baseAsset);
+  //       setFromAssetOptions(baseAsset);
+
+  //       // set tokens for component state
+  //       if (baseAsset.length > 0 && toAssetValue == null) {
+  //         let toIndex
+  //         if (router.query.to) {
+  //           const index = baseAsset.findIndex((token) => {
+  //             return token.address?.toLowerCase() === router.query.to.toLowerCase();
+  //           });
+  //           if (index !== -1) {
+  //             toIndex = index
+  //           }
+  //         }
+
+  //         if (toIndex === undefined) {
+  //           toIndex = baseAsset.findIndex((token) => {
+  //             return token.id.toLowerCase() === DEFAULT_ASSET_TO.toLowerCase();
+  //           });
+  //         }
+
+  //         setToAssetValue(baseAsset[toIndex]);
+  //       }
+
+  //       if (baseAsset.length > 0 && fromAssetValue == null) {
+  //         let fromIndex;
+
+  //         if (router.query.from) {
+  //           const index = baseAsset.findIndex((token) => {
+  //             return token.id.toLowerCase() === router.query.from.toLowerCase();
+  //           });
+  //           if (index !== -1) {
+  //             fromIndex = index
+  //           }
+  //         }
+
+  //         if (fromIndex === undefined) {
+  //           fromIndex = baseAsset.findIndex((token) => {
+  //             return token.id.toLowerCase() === DEFAULT_ASSET_FROM.toLowerCase();
+  //           });
+  //         }
+
+  //         setFromAssetValue(baseAsset[fromIndex]);
+  //       }
+
+  //       // update not inited tokens data
+  //       if (fromAssetValue && fromAssetValue.chainId === 'not_inited') {
+  //         // console.log('asset not inited')
+  //         const foundBaIndex = baseAsset.findIndex((token) => {
+  //           return token.id == fromAssetValue.address;
+  //         });
+  //         if (foundBaIndex) {
+  //           setFromAssetValue(baseAsset[foundBaIndex])
+  //         }
+  //       }
+
+  //       if (toAssetValue && toAssetValue.chainId === 'not_inited') {
+  //         // console.log('asset not inited')
+  //         const foundBaIndex = baseAsset.findIndex((token) => {
+  //           return token.id == toAssetValue.address;
+  //         });
+  //         if (foundBaIndex) {
+  //           setToAssetValue(baseAsset[foundBaIndex])
+  //         }
+  //       }
+
+  //       forceUpdate();
+  //     };
+
+  //     const assetsUpdated = () => {
+  //       const baseAsset = stores.stableSwapStore.getStore("baseAssets");
+  //       setToAssetOptions(baseAsset);
+  //       setFromAssetOptions(baseAsset);
+  //     };
+
+  //     const swapReturned = (event) => {
+  //       setLoading(false);
+  //       setFromAmountValue("");
+  //       setToAmountValue("");
+  //       if (
+  //         !(
+  //           (fromAssetValue?.symbol === FTM_SYMBOL ||
+  //             fromAssetValue?.symbol === WFTM_SYMBOL) &&
+  //           (toAssetValue?.symbol === WFTM_SYMBOL ||
+  //             toAssetValue?.symbol === FTM_SYMBOL)
+  //         )
+  //       ) {
+  //         sethidequote(false);
+  //         calculateReceiveAmount(0, fromAssetValue, toAssetValue);
+  //       }
+  //       else {
+  //         sethidequote(true);
+  //         setToAmountValue(0);
+  //       }
+  //       setQuote(null);
+  //       setQuoteLoading(false);
+  //     };
+  //     const wrapReturned = () => {
+  //       setLoading(false);
+  //     };
+
+  //     stores.emitter.on(ACTIONS.ERROR, errorReturned);
+  //     stores.emitter.on(ACTIONS.UPDATED, ssUpdated);
+  //     stores.emitter.on(ACTIONS.WRAP_RETURNED, wrapReturned);
+  //     stores.emitter.on(ACTIONS.UNWRAP_RETURNED, wrapReturned);
+  //     stores.emitter.on(ACTIONS.SWAP_RETURNED, swapReturned);
+  //     stores.emitter.on(ACTIONS.QUOTE_SWAP_RETURNED, quoteReturned);
+  //     stores.emitter.on(ACTIONS.BASE_ASSETS_UPDATED, assetsUpdated);
+
+  //     ssUpdated();
+
+  //     return () => {
+  //       stores.emitter.removeListener(ACTIONS.ERROR, errorReturned);
+  //       stores.emitter.removeListener(ACTIONS.UPDATED, ssUpdated);
+  //       stores.emitter.removeListener(ACTIONS.WRAP_RETURNED, wrapReturned);
+  //       stores.emitter.removeListener(ACTIONS.UNWRAP_RETURNED, wrapReturned);
+  //       stores.emitter.removeListener(ACTIONS.SWAP_RETURNED, swapReturned);
+  //       stores.emitter.removeListener(
+  //         ACTIONS.QUOTE_SWAP_RETURNED,
+  //         quoteReturned
+  //       );
+  //       stores.emitter.removeListener(
+  //         ACTIONS.BASE_ASSETS_UPDATED,
+  //         assetsUpdated
+  //       );
+  //     };
+  //   },
+  //   [fromAmountValue, fromAssetValue, toAssetValue]
+  // );
+
+  const fromAmountChanged = (value) => {
+    setFromAmountError(false);
+    setFromAmountValue(value);
+    setQuote(null);
+    setToAmountValue("");
+    if (value == "" || Number(value) === 0) {
+      setQuoteLoading(false)
+      setToAmountValue("");
+      sethidequote(true);
+      // setQuote(null);
+    } else {
+      sethidequote(false);
+      calculateReceiveAmount(value, swapList[0], swapList[1]);
     }
-  }, [fromChain, refetchFee]); // Add dependencies
+  };
+
+  const calculateReceiveAmount = (amount, from, to) => {
+    if (multiSwapStore.isMultiswapInclude) {
+      if (amount !== "" && !isNaN(amount) && to != null) {
+        setQuoteLoading(true);
+        setQuoteError(false);
+
+        stores.dispatcher.dispatch({
+          type: ACTIONS.QUOTE_SWAP,
+          content: {
+            fromAsset: from,
+            toAsset: to,
+            fromAmount: amount,
+          },
+        });
+      }
+    }
+  };
 
   // Add detailed debug logging
   // useEffect(() => {
@@ -177,21 +383,6 @@ const TransactionInterface = () => {
   //     isTransactionCompleted,
   //   });
   // }, [transactionState, approvalState, amount, fromChain, selectedToken, fee, isFetchingFee, needsApproval, isTransactionCompleted]);
- 
-  // Update the fee fetching useEffect to include all required dependencies
-  useEffect(() => {
-    const fetchFeeIfNeeded = async () => {
-      if (amount && fromChain === "CYBRIA" && selectedToken === "CYBA") {
-        try {
-          await fetchFeeAndPrice();
-        } catch (error) {
-          // console.error('Error fetching fee:', error);
-        }
-      }
-    };
-
-    fetchFeeIfNeeded();
-  }, [amount, fromChain, selectedToken, fetchFeeAndPrice]); // Add fetchFeeAndPrice to dependencies
 
   useEffect(() => {
     const updateBalance = () => {
@@ -209,27 +400,6 @@ const TransactionInterface = () => {
     }
   }, [fromBalanceData]);
 
-  useEffect(() => {
-    const getCoinPrice = async (amount = 1) => {
-      try {
-        const response = await fetch(
-          `https://min-api.cryptocompare.com/data/price?fsym=CYBA&tsyms=USD&api_key=${import.meta.env.VITE_PRICE_API_KEY}`
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        const price = result?.USD * amount;
-        setCybaPrice(price);
-      } catch (error) {
-        // console.error('Error fetching coin price:', error);
-      }
-    };
-
-    getCoinPrice();
-  }, []);
 
 
   useEffect(() => {
@@ -408,6 +578,10 @@ const TransactionInterface = () => {
       return "Connect Wallet"
     }
 
+    if (quoteLoading){
+      return "Quote loading..."
+    }
+
     if (isInsufficientBalance()) {
       return "Insufficient Balance";
     }
@@ -514,8 +688,8 @@ const TransactionInterface = () => {
         <TokenInput
           label="From"
           setSelectTokenModal={setSelectTokenModal}
-          amount={amount}
-          setAmount={setAmount}
+          amount={fromAmountValue}
+          setAmount={setFromAmountValue}
           tokenDetails={swapList[0]}
           selectedToken={swapList[0]["symbol"]}
           disabled={isTransactionCompleted}
@@ -524,6 +698,7 @@ const TransactionInterface = () => {
           isDarkMode={isDarkMode}
           fee={fee}
           fromChain={fromChain}
+          fromAmountChanged={fromAmountChanged}
 
         />
         <SwitchDirection
@@ -541,7 +716,14 @@ const TransactionInterface = () => {
           cybaPrice={cybaPrice}
           isDarkMode={isDarkMode}
           fee={fee}
+          toAmountValue={toAmountValue}
         />
+        {!hidequote && (
+          <div>
+            <p>quote: {quote}</p>
+              <p>quoteError: {quoteError}</p>
+          </div>
+        )}
         <button
           onClick={handleButtonClick}
           disabled={isButtonDisabled()}
