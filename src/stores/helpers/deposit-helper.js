@@ -27,8 +27,8 @@ export const createPairDeposit = async (
   isCreateGauge,
   callback
 ) => {
+  console.log({ token0, token1, amount0, amount1, isStable, slippage })
   try {
-
     let toki0 = token0.address;
     let toki1 = token1.address;
     if (token0.address === FTM_SYMBOL) {

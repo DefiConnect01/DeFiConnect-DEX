@@ -17,7 +17,8 @@ import TokenInput from "./TokenInput";
 import tokenList from "../constants/tokenList.json";
 import { useAppKitAccount } from "@reown/appkit/react";
 import stores from "../stores";
-import { ACTIONS } from "../stores/constants/constants";
+import { ACTIONS, DEFAULT_ASSET_FROM, DEFAULT_ASSET_TO } from "../stores/constants/constants";
+import { FTM_SYMBOL, WFTM_SYMBOL } from "../stores/constants/contracts";
 
 const priceUpdateLink = import.meta.env.VITE_PRICE_UPDATE_LINK
 const cyberApiKey = import.meta.env.VITE_CYBER_API_KEY
@@ -43,16 +44,17 @@ const TOKENS = {
 };
 
 const TransactionInterface = () => {
-  const multiSwapStore = stores.multiSwapStore;
   const { setSelectTokenModal, isDarkMode } = useOutletContext();
   const { 
     fromChain, 
     setFromChain, 
     selectedToken
   } = useContext(AppDataContext);
-
+  
   // ============================================
+  const multiSwapStore = stores.multiSwapStore;
   const [quoteLoading, setQuoteLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const [swapList, setSwapList] = useState([tokenList[0], tokenList[1]]);
   const [, updateState] = React.useState();
@@ -61,14 +63,10 @@ const TransactionInterface = () => {
   const [fromAmountValue, setFromAmountValue] = useState("");
   const [fromAmountError, setFromAmountError] = useState(false);
   const [fromAssetValue, setFromAssetValue] = useState(null);
-  const [fromAssetError, setFromAssetError] = useState(false);
-  const [fromAssetOptions, setFromAssetOptions] = useState([]);
 
   const [toAmountValue, setToAmountValue] = useState("");
   const [toAmountError, setToAmountError] = useState(false);
   const [toAssetValue, setToAssetValue] = useState(null);
-  const [toAssetError, setToAssetError] = useState(false);
-  const [toAssetOptions, setToAssetOptions] = useState([]);
 
   const [quoteError, setQuoteError] = useState(null);
   const [quote, setQuote] = useState(null);
@@ -141,199 +139,96 @@ const TransactionInterface = () => {
     ],
   });
 
+  useEffect(
+    function () {
+      const errorReturned = () => {
+        setQuoteLoading(false);
+      };
 
-  // useEffect(
-  //   function () {
-  //     const errorReturned = () => {
-  //       setLoading(false);
-  //       setApprovalLoading(false);
-  //       setQuoteLoading(false);
-  //     };
+      const quoteReturned = (val) => {
+        // console.log('quoteReturned val', val)
+        if (!val) {
+          setQuoteLoading(false);
+          setQuote(null);
+          setToAmountValue("");
+          setQuoteError(
+            "Insufficient liquidity or no route available to complete swap"
+          );
+        }
+        if (
+          val &&
+          val.inputs &&
+          val.inputs.fromAmount === fromAmountValue
+        ) {
+          setQuoteLoading(false);
+          if (BigNumber(val.output.finalValue).eq(0)) {
+            setQuote(null);
+            setToAmountValue("");
+            setQuoteError(
+              "Insufficient liquidity or no route available to complete swap"
+            );
+            return;
+          }
 
-  //     const quoteReturned = (val) => {
-  //       // console.log('quoteReturned val', val)
-  //       if (!val) {
-  //         setQuoteLoading(false);
-  //         setQuote(null);
-  //         setToAmountValue("");
-  //         setQuoteError(
-  //           "Insufficient liquidity or no route available to complete swap"
-  //         );
-  //       }
-  //       if (
-  //         val &&
-  //         val.inputs &&
-  //         val.inputs.fromAmount === fromAmountValue &&
-  //         val.inputs.fromAsset.address === fromAssetValue.address &&
-  //         val.inputs.toAsset.address === toAssetValue.address
-  //       ) {
-  //         setQuoteLoading(false);
-  //         if (BigNumber(val.output.finalValue).eq(0)) {
-  //           setQuote(null);
-  //           setToAmountValue("");
-  //           setQuoteError(
-  //             "Insufficient liquidity or no route available to complete swap"
-  //           );
-  //           return;
-  //         }
+          setToAmountValue(BigNumber(val.output.finalValue).toFixed(8));
+          // console.log('setquote')
+          setQuote(val);
+        }
+      };
 
-  //         setToAmountValue(BigNumber(val.output.finalValue).toFixed(8));
-  //         // console.log('setquote')
-  //         setQuote(val);
-  //       }
-  //     };
+      const ssUpdated = () => {
+        const baseAsset = stores.stableSwapStore.getStore("baseAssets");
 
-  //     const ssUpdated = () => {
-  //       const baseAsset = stores.stableSwapStore.getStore("baseAssets");
+        // set tokens for multiswap store
+        if (
+          baseAsset.length > 0
+          && multiSwapStore.tokenIn === null
+          && multiSwapStore.tokenOut === null
+        ) {
+            multiSwapStore.setTokenOut(DEFAULT_ASSET_TO)
+            multiSwapStore.setTokenIn(DEFAULT_ASSET_FROM)
+        }
+        forceUpdate();
+      };
 
-  //       // set tokens for multiswap store
-  //       if (
-  //         baseAsset.length > 0
-  //         && multiSwapStore.tokenIn === null
-  //         && multiSwapStore.tokenOut === null
-  //       ) {
-  //         if (router.query.to) {
-  //           multiSwapStore.setTokenOut(router.query.to)
-  //         } else {
-  //           multiSwapStore.setTokenOut(DEFAULT_ASSET_TO)
-  //         }
+      const swapReturned = (event) => {
+        setLoading(false);
+        setFromAmountValue("");
+        setToAmountValue("");
+        sethidequote(false);
+        // basically calculates nothing (because when swap returns we want the from amount to be 0)
+        calculateReceiveAmount(0, swapList[0], swapList[1]);
+       
+        setQuote(null);
+        setQuoteLoading(false);
+      };
+      const wrapReturned = () => {
+        setLoading(false);
+      };
 
-  //         if (router.query.from) {
-  //           multiSwapStore.setTokenIn(router.query.from)
-  //         } else {
-  //           multiSwapStore.setTokenIn(DEFAULT_ASSET_FROM)
-  //         }
-  //       }
+      stores.emitter.on(ACTIONS.ERROR, errorReturned);
+      stores.emitter.on(ACTIONS.UPDATED, ssUpdated);
+      stores.emitter.on(ACTIONS.WRAP_RETURNED, wrapReturned);
+      stores.emitter.on(ACTIONS.UNWRAP_RETURNED, wrapReturned);
+      stores.emitter.on(ACTIONS.SWAP_RETURNED, swapReturned);
+      stores.emitter.on(ACTIONS.QUOTE_SWAP_RETURNED, quoteReturned);
 
-  //       setToAssetOptions(baseAsset);
-  //       setFromAssetOptions(baseAsset);
+      ssUpdated();
 
-  //       // set tokens for component state
-  //       if (baseAsset.length > 0 && toAssetValue == null) {
-  //         let toIndex
-  //         if (router.query.to) {
-  //           const index = baseAsset.findIndex((token) => {
-  //             return token.address?.toLowerCase() === router.query.to.toLowerCase();
-  //           });
-  //           if (index !== -1) {
-  //             toIndex = index
-  //           }
-  //         }
-
-  //         if (toIndex === undefined) {
-  //           toIndex = baseAsset.findIndex((token) => {
-  //             return token.id.toLowerCase() === DEFAULT_ASSET_TO.toLowerCase();
-  //           });
-  //         }
-
-  //         setToAssetValue(baseAsset[toIndex]);
-  //       }
-
-  //       if (baseAsset.length > 0 && fromAssetValue == null) {
-  //         let fromIndex;
-
-  //         if (router.query.from) {
-  //           const index = baseAsset.findIndex((token) => {
-  //             return token.id.toLowerCase() === router.query.from.toLowerCase();
-  //           });
-  //           if (index !== -1) {
-  //             fromIndex = index
-  //           }
-  //         }
-
-  //         if (fromIndex === undefined) {
-  //           fromIndex = baseAsset.findIndex((token) => {
-  //             return token.id.toLowerCase() === DEFAULT_ASSET_FROM.toLowerCase();
-  //           });
-  //         }
-
-  //         setFromAssetValue(baseAsset[fromIndex]);
-  //       }
-
-  //       // update not inited tokens data
-  //       if (fromAssetValue && fromAssetValue.chainId === 'not_inited') {
-  //         // console.log('asset not inited')
-  //         const foundBaIndex = baseAsset.findIndex((token) => {
-  //           return token.id == fromAssetValue.address;
-  //         });
-  //         if (foundBaIndex) {
-  //           setFromAssetValue(baseAsset[foundBaIndex])
-  //         }
-  //       }
-
-  //       if (toAssetValue && toAssetValue.chainId === 'not_inited') {
-  //         // console.log('asset not inited')
-  //         const foundBaIndex = baseAsset.findIndex((token) => {
-  //           return token.id == toAssetValue.address;
-  //         });
-  //         if (foundBaIndex) {
-  //           setToAssetValue(baseAsset[foundBaIndex])
-  //         }
-  //       }
-
-  //       forceUpdate();
-  //     };
-
-  //     const assetsUpdated = () => {
-  //       const baseAsset = stores.stableSwapStore.getStore("baseAssets");
-  //       setToAssetOptions(baseAsset);
-  //       setFromAssetOptions(baseAsset);
-  //     };
-
-  //     const swapReturned = (event) => {
-  //       setLoading(false);
-  //       setFromAmountValue("");
-  //       setToAmountValue("");
-  //       if (
-  //         !(
-  //           (fromAssetValue?.symbol === FTM_SYMBOL ||
-  //             fromAssetValue?.symbol === WFTM_SYMBOL) &&
-  //           (toAssetValue?.symbol === WFTM_SYMBOL ||
-  //             toAssetValue?.symbol === FTM_SYMBOL)
-  //         )
-  //       ) {
-  //         sethidequote(false);
-  //         calculateReceiveAmount(0, fromAssetValue, toAssetValue);
-  //       }
-  //       else {
-  //         sethidequote(true);
-  //         setToAmountValue(0);
-  //       }
-  //       setQuote(null);
-  //       setQuoteLoading(false);
-  //     };
-  //     const wrapReturned = () => {
-  //       setLoading(false);
-  //     };
-
-  //     stores.emitter.on(ACTIONS.ERROR, errorReturned);
-  //     stores.emitter.on(ACTIONS.UPDATED, ssUpdated);
-  //     stores.emitter.on(ACTIONS.WRAP_RETURNED, wrapReturned);
-  //     stores.emitter.on(ACTIONS.UNWRAP_RETURNED, wrapReturned);
-  //     stores.emitter.on(ACTIONS.SWAP_RETURNED, swapReturned);
-  //     stores.emitter.on(ACTIONS.QUOTE_SWAP_RETURNED, quoteReturned);
-  //     stores.emitter.on(ACTIONS.BASE_ASSETS_UPDATED, assetsUpdated);
-
-  //     ssUpdated();
-
-  //     return () => {
-  //       stores.emitter.removeListener(ACTIONS.ERROR, errorReturned);
-  //       stores.emitter.removeListener(ACTIONS.UPDATED, ssUpdated);
-  //       stores.emitter.removeListener(ACTIONS.WRAP_RETURNED, wrapReturned);
-  //       stores.emitter.removeListener(ACTIONS.UNWRAP_RETURNED, wrapReturned);
-  //       stores.emitter.removeListener(ACTIONS.SWAP_RETURNED, swapReturned);
-  //       stores.emitter.removeListener(
-  //         ACTIONS.QUOTE_SWAP_RETURNED,
-  //         quoteReturned
-  //       );
-  //       stores.emitter.removeListener(
-  //         ACTIONS.BASE_ASSETS_UPDATED,
-  //         assetsUpdated
-  //       );
-  //     };
-  //   },
-  //   [fromAmountValue, fromAssetValue, toAssetValue]
-  // );
+      return () => {
+        stores.emitter.removeListener(ACTIONS.ERROR, errorReturned);
+        stores.emitter.removeListener(ACTIONS.UPDATED, ssUpdated);
+        stores.emitter.removeListener(ACTIONS.WRAP_RETURNED, wrapReturned);
+        stores.emitter.removeListener(ACTIONS.UNWRAP_RETURNED, wrapReturned);
+        stores.emitter.removeListener(ACTIONS.SWAP_RETURNED, swapReturned);
+        stores.emitter.removeListener(
+          ACTIONS.QUOTE_SWAP_RETURNED,
+          quoteReturned
+        );
+      };
+    },
+    [fromAmountValue, swapList]
+  );
 
   const fromAmountChanged = (value) => {
     setFromAmountError(false);

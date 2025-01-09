@@ -31,7 +31,7 @@ const TokenInput = ({
     
     return toAmountValue;
   };
-
+  
   return (
     <div>
       {/* Add Custom Token Modal */}
@@ -61,7 +61,7 @@ const TokenInput = ({
             onClick={() => setSelectTokenModal(true)}
           >
               <img
-                src={tokenDetails.logoURI}
+                src={tokenDetails?.logoURI}
                 alt="USDT logo"
                 className="w-[30px] mr-1 rounded-full"
               />
@@ -70,7 +70,7 @@ const TokenInput = ({
           {
             formattedFromBalance && (
               <em className="flex text-[#58585e] dark:text-[hsl(0,0%,65%)] text-sm">
-                Balance: <span className="ml-1">{formattedFromBalance}</span>
+                Balance: <span className="ml-1">{formattedFromBalance} {tokenDetails.symbol}</span>
               </em>
             )
           }

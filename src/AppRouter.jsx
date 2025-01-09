@@ -7,6 +7,7 @@ import TransactionMenu from './components/TransactionMenu';
 import LiquidityMenu from './components/LiquidityMenu'
 
 ;
+import LiquidityPage from './components/LiquidityPage';
 
 function AppRouter() {
     // console.log("Rendering AppRouter");
@@ -18,7 +19,8 @@ function AppRouter() {
                         <TransactionMenu/>
                     </>} />
                     <Route path="liquidity" element={<>
-                        <LiquidityMenu />
+                        <LiquidityPage />
+                        {/* <LiquidityMenu /> */}
                     </>} />
                     <Route path="transactions" element={<>
                         <TransactionHistory />

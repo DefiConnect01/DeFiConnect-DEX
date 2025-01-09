@@ -562,6 +562,12 @@ class Store {
 
   createPairDeposit = async (payload) => {
     const { token0, token1, amount0, amount1, isStable, slippage } = payload.content;
+    // console.log({
+    //   userAddress: this.getUserAddress(),
+    //   web3: await this.getWeb3(),
+    //   emitter: this.emitter,
+    //   dispatcher: this.dispatcher,
+    // })
     await createPairDeposit(
       token0,
       token1,
@@ -573,7 +579,8 @@ class Store {
       await this.getWeb3(),
       this.emitter,
       this.dispatcher,
-      await stores.accountStore.getGasPrice(),
+      10.9, // approx of gas price
+      // await stores.accountStore.getGasPrice(),
       true,
       async () => await this.refreshPairs()
     );
