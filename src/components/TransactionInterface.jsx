@@ -4,24 +4,20 @@ import { AppDataContext } from "../context/appContext";
 import { parseEther, formatUnits, parseUnits } from "viem";
 import {
   useWriteContract,
-  useAccount,
   useWaitForTransactionReceipt,
   useReadContract,
   useSwitchChain,
   useBalance
 } from "wagmi";
-import { abi, baseSepoliaAddress,ethereumAddress, cybriaAddress } from "../constants";
+import { abi, ethereumAddress, cybriaAddress } from "../constants";
 import { toast } from 'react-toastify';
 import SwitchDirection from "./SwitchDirections";
 import TokenInput from "./TokenInput";
 import tokenList from "../constants/tokenList.json";
 import { useAppKitAccount } from "@reown/appkit/react";
 import stores from "../stores";
+import BigNumber from "bignumber.js";
 import { ACTIONS, DEFAULT_ASSET_FROM, DEFAULT_ASSET_TO } from "../stores/constants/constants";
-import { FTM_SYMBOL, WFTM_SYMBOL } from "../stores/constants/contracts";
-
-const priceUpdateLink = import.meta.env.VITE_PRICE_UPDATE_LINK
-const cyberApiKey = import.meta.env.VITE_CYBER_API_KEY
 
 
 const CHAIN_IDS = {
@@ -47,7 +43,6 @@ const TransactionInterface = () => {
   const { setSelectTokenModal, isDarkMode } = useOutletContext();
   const { 
     fromChain, 
-    setFromChain, 
     selectedToken
   } = useContext(AppDataContext);
   
@@ -87,7 +82,6 @@ const TransactionInterface = () => {
   const [formattedFromBalance, setFormattedFromBalance] = useState("0")
 
   const { switchChain } = useSwitchChain();
-  const { chain } = useAccount();
   const { address, isConnected } = useAppKitAccount()
   const { writeContractAsync } = useWriteContract();
 
@@ -239,9 +233,10 @@ const TransactionInterface = () => {
       setQuoteLoading(false)
       setToAmountValue("");
       sethidequote(true);
-      // setQuote(null);
     } else {
       sethidequote(false);
+      setQuoteLoading(true);
+      setQuoteError(false);
       calculateReceiveAmount(value, swapList[0], swapList[1]);
     }
   };
@@ -249,8 +244,6 @@ const TransactionInterface = () => {
   const calculateReceiveAmount = (amount, from, to) => {
     if (multiSwapStore.isMultiswapInclude) {
       if (amount !== "" && !isNaN(amount) && to != null) {
-        setQuoteLoading(true);
-        setQuoteError(false);
 
         stores.dispatcher.dispatch({
           type: ACTIONS.QUOTE_SWAP,
@@ -613,12 +606,6 @@ const TransactionInterface = () => {
           fee={fee}
           toAmountValue={toAmountValue}
         />
-        {!hidequote && (
-          <div>
-            <p>quote: {quote}</p>
-              <p>quoteError: {quoteError}</p>
-          </div>
-        )}
         <button
           onClick={handleButtonClick}
           disabled={isButtonDisabled()}

@@ -227,6 +227,8 @@ export const quoteSwap = async (
       return null;
     }
 
+    console.log({bestAmountOut})
+
     const libraryContract = new web3.eth.Contract(
       CONTRACTS.LIBRARY_ABI,
       CONTRACTS.LIBRARY_ADDRESS
@@ -237,9 +239,12 @@ export const quoteSwap = async (
       let amountIn = bestAmountOut.receiveAmounts[i];
 
       try {
-        const tokenInDecimals = baseAssets
-          .filter(a => a?.address?.toLowerCase() === bestAmountOut.routes[i].from?.toLowerCase())[0]
-          .decimals
+        const tokenInDecimals = 18;
+        // TODO: uncomment and fix
+        // const tokenInDecimals = baseAssets
+        //   .filter(a => a?.address?.toLowerCase() === bestAmountOut.routes[i].from?.toLowerCase())[0]
+        //   .decimals
+        console.log(i)
 
         const reserves = await libraryContract.methods
           .getNormalizedReserves(

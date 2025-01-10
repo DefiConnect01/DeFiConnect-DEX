@@ -1,23 +1,23 @@
 [
     {
-        "name": "Eddison",
-        "symbol": "EDS",
-        "address": "0x6D25D76F57ec8292AC3caF3BbCB54E4524FB0885",
+        "name": "Tungsten",
+        "symbol": "TGS",
+        "address": "0xcFd2cb035A6647dC553a2Ef65b9694E2D076475f",
         "decimals": 18,
         "chainId": 66665,
         "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
     },
     {
-        "name": "Tesla",
-        "symbol": "TSL",
-        "address": "0x9752eFc4717A0CBbbd8DF45E2232833cBae1b5eB",
+        "name": "Veritasium",
+        "symbol": "VTS",
+        "address": "0x205D6afE82EC32e271162f0C80dADd37ED94Ee35",
         "decimals": 18,
         "chainId": 66665,
         "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
     },
     {
         "name": "Ether",
-        "symbol": "ETH",
+        "symbol": "CETH",
         "address": "0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE",
         "decimals": 18,
         "chainId": 66665,

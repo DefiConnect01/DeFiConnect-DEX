@@ -12,6 +12,8 @@ const LiquidityPage = () => {
     const token0 = tokenList[0];
     const token1 = tokenList[1];
     const stable = true;
+    // const stable = false;
+    // const token0 = tokenList[2]
     const slippage = 10;
 
     const onCreateAndDeposit = () => {

@@ -1,5 +1,5 @@
 import BigNumber from "bignumber.js";
-import * as moment from "moment/moment";
+import * as moment from "moment";
 import { getPairAddressByTokens } from "./pair-helper";
 import { getTokenAllowance, getTokenContract } from "./token-helper";
 import { callContractWait } from "./web3-helper";
@@ -58,6 +58,33 @@ export const createPairDeposit = async (
 
 
     if (isCreateGauge) {
+      console.log({
+        title: `Create liquidity pool for ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,
+        type: "Liquidity",
+        verb: "Liquidity Pool Created",
+        transactions: [
+          {
+            uuid: allowance0TXID,
+            description: `Checking your ${token0.symbol} allowance`,
+            status: "WAITING",
+          },
+          {
+            uuid: allowance1TXID,
+            description: `Checking your ${token1.symbol} allowance`,
+            status: "WAITING",
+          },
+          {
+            uuid: depositTXID,
+            description: `Create liquidity pool ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,
+            status: "WAITING",
+          },
+          {
+            uuid: createGaugeTXID,
+            description: `Create gauge`,
+            status: "WAITING",
+          },
+        ],
+      })
       emitter.emit(ACTIONS.TX_ADDED, {
         title: `Create liquidity pool for ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,
         type: "Liquidity",
@@ -86,6 +113,28 @@ export const createPairDeposit = async (
         ],
       });
     } else {
+      console.log({
+        title: `Add liquidity to ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,
+        verb: "Liquidity Added",
+        type: "Liquidity",
+        transactions: [
+          {
+            uuid: allowance0TXID,
+            description: `Checking your ${token0.symbol} allowance`,
+            status: "WAITING",
+          },
+          {
+            uuid: allowance1TXID,
+            description: `Checking your ${token1.symbol} allowance`,
+            status: "WAITING",
+          },
+          {
+            uuid: depositTXID,
+            description: `Deposit tokens in the pool ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,
+            status: "WAITING",
+          },
+        ],
+      })
       emitter.emit(ACTIONS.TX_ADDED, {
         title: `Add liquidity to ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,
         verb: "Liquidity Added",
@@ -225,6 +274,9 @@ export const createPairDeposit = async (
 
     await Promise.all(allowanceCallsPromises);
 
+
+    console.log("Done with approval")
+
     // SUBMIT DEPOSIT TRANSACTION
     const sendSlippage = BigNumber(100).minus(slippage).div(100);
     const sendAmount0 = BigNumber(amount0)
@@ -233,7 +285,7 @@ export const createPairDeposit = async (
     const sendAmount1 = BigNumber(amount1)
       .times(10 ** parseInt(token1.decimals))
       .toFixed(0);
-    const deadline = "" + moment().add(600, "seconds").unix();
+    const deadline = (Math.floor(Date.now() / 1000) + 600).toString();
     const sendAmount0Min = BigNumber(amount0)
       .times(sendSlippage)
       .times(10 ** parseInt(token0.decimals))
@@ -287,6 +339,8 @@ export const createPairDeposit = async (
       CONTRACTS.ROUTER_ABI,
       CONTRACTS.ROUTER_ADDRESS
     );
+
+    console.log(params)
     callContractWait(
       web3,
       routerContract,
@@ -349,7 +403,7 @@ export const createPairDeposit = async (
       sendValue
     );
   } catch (ex) {
-    console.error("Create liquidity error", ex);
+    console.log("Create liquidity error", ex);
     emitter.emit(ACTIONS.ERROR, ex);
   }
 };

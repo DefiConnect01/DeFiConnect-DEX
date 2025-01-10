@@ -1,8 +1,8 @@
 import abis from "../abis";
 
-export const GOV_TOKEN_ADDRESS = '0x6E511b6fAce2c5094163A1F420135a4D70a5ecd7'
-export const GOV_TOKEN_NAME = 'DYSTOPIA'
-export const GOV_TOKEN_SYMBOL = 'DYST'
+export const GOV_TOKEN_ADDRESS = '0xf53EcB45A7D0048fb73Be03ab1776eb00f953D41'
+export const GOV_TOKEN_NAME = 'DeFiConnect token'
+export const GOV_TOKEN_SYMBOL = 'DCC'
 export const GOV_TOKEN_DECIMALS = 18
 export const GOV_TOKEN_LOGO = 'https://dystopia-swap-seven.vercel.app/logo.svg'
 export const GOV_TOKEN_ABI = abis.tokenABI
@@ -45,7 +45,11 @@ export const VE_DIST_ABI = abis.veDistABI
 export const VOTER_ADDRESS = '0x48950a60e12CAcb8043F32fFeF85d56D561D5671'
 export const VOTER_ABI = abis.voterABI
 
-export const REWARD_ADDRESS = '0x332C7aC34580dfEF553B7726549cEc7015C4B39b'
+// changed
+export const LIBRARY_ADDRESS = '0x6845cf30A9211050a0C706D85C09FcAe38734DDf'
+export const LIBRARY_ABI = abis.dystopiaLibraryABI
+
+export const REWARD_ADDRESS = '0xf53EcB45A7D0048fb73Be03ab1776eb00f953D41' //DCC
 export const ERC20_ABI = abis.erc20ABI
 export const PAIR_ABI = abis.pairABI
 export const GAUGE_ABI = abis.gaugeABI
