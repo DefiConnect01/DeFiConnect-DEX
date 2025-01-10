@@ -478,12 +478,15 @@ const TransactionInterface = () => {
       return "Start New Transaction";
     }
 
+    if (quote) {
+      return "Swap"
+    }
 
     if (isFetchingFee) {
       return "Calculating Fee...";
     }
 
-    if (!amount) {
+    if (!fromAmountValue) {
       return "Enter Amount";
     }
 
@@ -511,14 +514,11 @@ const TransactionInterface = () => {
   const isButtonDisabled = () => {
     if (isInsufficientBalance()) return true;
     if (isTransactionCompleted) return false;
-    if (!amount) return true;
+    if (!fromAmountValue) return true;
+    if (quoteLoading) return true;
 
     if (["sending", "confirming"].includes(transactionState)) return true;
     if (["approving", "confirming"].includes(approvalState)) return true;
-
-    if (fromChain === "CYBRIA" && selectedToken === "CYBA") {
-      return isFetchingFee || !fee;
-    }
 
     return false;
   };
