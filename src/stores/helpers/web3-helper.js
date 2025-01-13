@@ -24,20 +24,24 @@ export const callContractWait = async (
   sendValue = null
 ) => {
   emitNotificationPending(emitter, uuid)
-
+  console.log({
+    account,
+    sendValue: sendValue ?? 0
+  })
   await contract.methods[method](...params)
     .estimateGas({from: account, value: sendValue ?? 0})
     .then(async (gasAmount) => {
-
+      console.log({gasAmount})
       let sendGasAmount = BigNumber(gasAmount).times(1.5).toFixed(0);
-      let sendGasPrice = BigNumber(gasPrice).times(GAS_MULTIPLIER).toFixed(0);
+      // let sendGasPrice = BigNumber(gasPrice).times(GAS_MULTIPLIER).toFixed(0);
+ 
 
-      console.log('callContractWait', method, params, account, sendGasPrice, sendValue);
+      console.log('callContractWait', { method, params, account, gasPrice, sendValue});
 
       await contract.methods[method](...params)
         .send({
           from: account,
-          gasPrice: web3.utils.toWei(sendGasPrice, "gwei"),
+          gasPrice: web3.utils.toWei(gasPrice, "gwei"),
           gas: sendGasAmount,
           value: sendValue ?? 0,
           // maxFeePerGas: web3.utils.toWei(gasPrice, "gwei"),
@@ -65,6 +69,7 @@ export const callContractWait = async (
           callback(error);
         })
         .catch(async (error) => {
+          console.log(error)
           if (error.message) {
             emitNotificationRejected(emitter, uuid, error.message)
             return callback(error.message);

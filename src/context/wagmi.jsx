@@ -44,6 +44,7 @@ const createNetworks = async () => {
     currency: "ETH",
     explorerUrl: "https://explorer.creatorchain.io/stats",
     rpcUrl: "https://rpc.creatorchain.io",
+    // rpcUrl: `https://66665.rpc.thirdweb.com/${import.meta.env.VITE_THIRDWEB_SECRET_KEY}`,
     imagesrc: "/creator.png"
   };
 

@@ -6,7 +6,6 @@ import { v4 as uuidv4 } from "uuid";
 import { ACTIONS, CONTRACTS, MAX_UINT256 } from "../constants";
 import { formatCurrency, parseBN } from '../../lib/utils';
 import { emitNewNotifications, emitStatus, emitNotificationDone } from "./emit-helper";
-import { FTM_SYMBOL } from "../constants/contracts";
 
 const getTXUUID = () => {
   return uuidv4();
@@ -24,6 +23,15 @@ export const swap = async (
   try {
 
     const { fromAsset, toAsset, fromAmount, quote, slippage } = payload.content;
+    console.log({
+      payload,
+      account,
+      web3,
+      emitter,
+      dispatcher,
+      gasPrice,
+      callback
+    })
 
     // ADD TRNASCTIONS TO TRANSACTION QUEUE DISPLAY
     let allowanceTXID = getTXUUID();
@@ -80,17 +88,19 @@ export const swap = async (
       );
     }
 
+    console.log("approved")
+
     // SUBMIT SWAP TRANSACTION
     let _slippage = slippage;
 
     // todo taxable tokens logic, need make universal logic
-    if (
-      fromAsset.address.toLowerCase() ===
-      CONTRACTS.SPHERE_ADDRESS.toLowerCase() &&
-      Number(slippage) <= 22
-    ) {
-      _slippage = (30 + Number(slippage)).toString();
-    }
+    // if (
+    //   fromAsset.address.toLowerCase() ===
+    //   CONTRACTS.SPHERE_ADDRESS.toLowerCase() &&
+    //   Number(slippage) <= 22
+    // ) {
+    //   _slippage = (30 + Number(slippage)).toString();
+    // }
 
     const sendSlippage = BigNumber(100).minus(_slippage).div(100);
 
@@ -100,9 +110,10 @@ export const swap = async (
       .times(sendSlippage)
       .toFixed(0);
     // console.log("fromAmount", fromAmount, sendFromAmount) // 10000000000000000000
-    console.log("sendMinAmountOut", quote.output.finalValue, sendMinAmountOut) // 563329031843791
+    // console.log("sendMinAmountOut", quote.output.finalValue, sendMinAmountOut) // 563329031843791
 
-    const deadline = "" + moment().add(600, "seconds").unix();
+    // const deadline = "" + moment().add(600, "seconds").unix();
+    const deadline = (Math.floor(Date.now() / 1000) + 600).toString();
 
     const routerContract = new web3.eth.Contract(CONTRACTS.ROUTER_ABI, CONTRACTS.ROUTER_ADDRESS);
 
@@ -117,15 +128,15 @@ export const swap = async (
     let sendValue = null;
 
     // todo taxable tokens logic, need make universal logic
-    if (
-      fromAsset.address.toLowerCase() ===
-      CONTRACTS.SPHERE_ADDRESS.toLowerCase()
-    ) {
-      // SPHERE token address
-      func = "swapExactTokensForTokensSupportingFeeOnTransferTokens";
-    }
+    // if (
+    //   fromAsset.address.toLowerCase() ===
+    //   CONTRACTS.SPHERE_ADDRESS.toLowerCase()
+    // ) {
+    //   // SPHERE token address
+    //   func = "swapExactTokensForTokensSupportingFeeOnTransferTokens";
+    // }
 
-    if (fromAsset.address === FTM_SYMBOL) {
+    if (fromAsset.address === CONTRACTS.FTM_SYMBOL) {
       func = "swapExactMATICForTokens";
       params = [
         sendMinAmountOut,
@@ -135,16 +146,20 @@ export const swap = async (
       ];
       sendValue = sendFromAmount;
     }
-    if (toAsset.address === FTM_SYMBOL) {
+    if (toAsset.address === CONTRACTS.FTM_SYMBOL) {
       func = "swapExactTokensForMATIC";
-      if (
-        fromAsset.address.toLowerCase() ===
-        CONTRACTS.SPHERE_ADDRESS.toLowerCase()
-      ) {
-        func = "swapExactTokensForMATICSupportingFeeOnTransferTokens";
-      }
+      
+      // TODO: check 
+      // if (
+      //   fromAsset.address.toLowerCase() ===
+      //   CONTRACTS.SPHERE_ADDRESS.toLowerCase()
+      // ) {
+      //   func = "swapExactTokensForMATICSupportingFeeOnTransferTokens";
+      // }
     }
 
+    console.log({func})
+    
     await callContractWait(
       web3,
       routerContract,

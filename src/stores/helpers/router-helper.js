@@ -188,8 +188,9 @@ export const quoteSwap = async (
         })
         .map((el) => el.value);
     };
-
+    console.log("gerr")
     const receiveAmounts = await retryCall();
+    console.log({receiveAmounts})
 
     if (receiveAmounts === null) {
       return null;
@@ -240,6 +241,7 @@ export const quoteSwap = async (
 
       try {
         const tokenInDecimals = 18;
+        // TODO: get token decimals
         // TODO: uncomment and fix
         // const tokenInDecimals = baseAssets
         //   .filter(a => a?.address?.toLowerCase() === bestAmountOut.routes[i].from?.toLowerCase())[0]

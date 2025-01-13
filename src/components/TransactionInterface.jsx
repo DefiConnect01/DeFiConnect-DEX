@@ -51,7 +51,7 @@ const TransactionInterface = () => {
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [swapList, setSwapList] = useState([tokenList[0], tokenList[1]]);
+  const [swapList, setSwapList] = useState([tokenList[2], tokenList[0]]);
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
 
@@ -85,7 +85,7 @@ const TransactionInterface = () => {
   const { address, isConnected } = useAppKitAccount()
   const { writeContractAsync } = useWriteContract();
 
-  const isETH = swapList[0]?.symbol === "ETH";
+  const isETH = swapList[0]?.symbol === "CETH";
 
   // use useEeffect to update token balance on switch
   const { data: fromBalanceData } = useBalance({
@@ -240,6 +240,7 @@ const TransactionInterface = () => {
       calculateReceiveAmount(value, swapList[0], swapList[1]);
     }
   };
+
 
   const calculateReceiveAmount = (amount, from, to) => {
     if (multiSwapStore.isMultiswapInclude) {
@@ -471,6 +472,7 @@ const TransactionInterface = () => {
     }
 
     if (isInsufficientBalance()) {
+      toast.info('Insufficient balance');
       return "Insufficient Balance";
     }
 
@@ -486,7 +488,7 @@ const TransactionInterface = () => {
       return "Calculating Fee...";
     }
 
-    if (!fromAmountValue) {
+    if (!fromAmountValue || fromAmountValue == 0) {
       return "Enter Amount";
     }
 
@@ -514,7 +516,7 @@ const TransactionInterface = () => {
   const isButtonDisabled = () => {
     if (isInsufficientBalance()) return true;
     if (isTransactionCompleted) return false;
-    if (!fromAmountValue) return true;
+    if (!fromAmountValue || fromAmountValue == 0) return true;
     if (quoteLoading) return true;
 
     if (["sending", "confirming"].includes(transactionState)) return true;
@@ -522,6 +524,26 @@ const TransactionInterface = () => {
 
     return false;
   };
+
+  const makeSwap = async() => {
+    try {
+      await stores.stableSwapStore.swap({
+        content: {
+          fromAsset: swapList[0],
+          toAsset: swapList[1],
+          fromAmount: fromAmountValue,
+          quote: quote,
+          // TODO: make slippage value dynamic
+          slippage: 50,
+        }
+      })
+      await stores.stableSwapStore.loadBaseAssets()
+    } catch (e) {
+      console.log('error swapping', e)
+    } finally {
+      console.log("Done swapping")
+    }
+  }
   
   // Modify handleButtonClick for better error handling
   const handleButtonClick = () => {
@@ -532,21 +554,21 @@ const TransactionInterface = () => {
       }
 
       // Don't proceed if there's no amount
-      if (!amount) {
+      if (!fromAmountValue) {
         toast.error('Please enter an amount');
         return;
       }
 
-      // For Cybria CYBA transfers, ensure fee is ready
-      if (fromChain === "CYBRIA" && selectedToken === "CYBA") {
-        if (isFetchingFee) {
-          toast.info('Please wait while fee is being calculated');
-          return;
-        }
-        if (!fee) {
-          toast.error('Fee calculation failed. Please try again');
-          return;
-        }
+      if (quote) {
+        // do swap
+        makeSwap()
+      }
+
+      if (isFetchingFee) {
+        return;
+      }
+      if (!fee) {
+        return;
       }
 
       if (!needsApproval) {
@@ -564,7 +586,7 @@ const TransactionInterface = () => {
     setTransactionState("idle");
     setApprovalState("idle");
     setIsTransactionCompleted(false);
-    setAmount("");
+    setFromAmountValue("");
     setTxHash(null);
     setApprovalTxHash(null);
   };
@@ -592,6 +614,8 @@ const TransactionInterface = () => {
         <SwitchDirection
           swapList={swapList}
           setSwapList={setSwapList}
+          fromAmountChanged={fromAmountChanged}
+          fromAmountValue={fromAmountValue}
           disabled={isTransactionCompleted}
         />
         <TokenInput

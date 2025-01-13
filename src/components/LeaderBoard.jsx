@@ -38,6 +38,7 @@ export default function LeaderBoard() {
 
   const getDecimals = (token) => {
     // Base Sepolia Chain ID is 84532
+    // TODO
     if (token === "CYBA (on Ethereum)" ) {
       // console.log(9)
       return 9;

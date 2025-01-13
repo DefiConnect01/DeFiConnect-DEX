@@ -9,12 +9,15 @@ const LiquidityPage = () => {
     const [depositLoading, setDepositLoading] = useState(false);
 
 
-    const token0 = tokenList[0];
-    const token1 = tokenList[1];
-    const stable = true;
-    // const stable = false;
-    // const token0 = tokenList[2]
+    // const token0 = tokenList[0];
+    const token0 = tokenList[2]
+    const token1 = tokenList[0];
+    // const stable = true;
+    const stable = false;
     const slippage = 10;
+
+    // TODO: check balance before sending transaction
+    // TOD0: both amouth must be equal
 
     const onCreateAndDeposit = () => {
         setDepositLoading(true)
@@ -34,6 +37,10 @@ const LiquidityPage = () => {
     const handleOnclick = () => {
         onCreateAndDeposit()
     }
+
+    return (
+        <div>https://pub-f9b97c2eaa4f4ebe8f462b5aa49fa08e.r2.dev</div>
+    )
 
     return (
         <div className='flex flex-col gap-y-2 items-center justify-center'>
