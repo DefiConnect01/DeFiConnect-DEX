@@ -39,10 +39,6 @@ const LiquidityPage = () => {
     }
 
     return (
-        <div>https://pub-f9b97c2eaa4f4ebe8f462b5aa49fa08e.r2.dev</div>
-    )
-
-    return (
         <div className='flex flex-col gap-y-2 items-center justify-center'>
             <div className='flex gap-x-2 '>
                 <p>amount 0</p>
