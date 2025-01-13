@@ -26,10 +26,11 @@ export const callContractWait = async (
   emitNotificationPending(emitter, uuid)
   console.log({
     account,
-    sendValue: sendValue ?? 0
+    sendValue: sendValue ?? 0,
+    method
   })
   await contract.methods[method](...params)
-    .estimateGas({from: account, value: sendValue ?? 0})
+    .estimateGas({from: account, value: sendValue ?? '0'})
     .then(async (gasAmount) => {
       console.log({gasAmount})
       let sendGasAmount = BigNumber(gasAmount).times(1.5).toFixed(0);

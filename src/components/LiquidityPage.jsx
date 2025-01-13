@@ -10,8 +10,8 @@ const LiquidityPage = () => {
 
 
     // const token0 = tokenList[0];
-    const token0 = tokenList[2]
-    const token1 = tokenList[0];
+    const token0 = tokenList[0]
+    const token1 = tokenList[2];
     // const stable = true;
     const stable = false;
     const slippage = 10;

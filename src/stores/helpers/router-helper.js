@@ -168,7 +168,7 @@ export const quoteSwap = async (
           return await fn();
         })
       );
-
+      console.log("...............................")
       if (res.filter(el => el.value === undefined).length !== 0) {
         return null;
       }

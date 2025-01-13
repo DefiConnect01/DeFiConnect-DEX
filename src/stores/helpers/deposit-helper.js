@@ -46,6 +46,7 @@ export const createPairDeposit = async (
       if (pairFor && pairFor !== ZERO_ADDRESS) {
         emitter.emit(ACTIONS.ERROR, "Pair already exists")
         await callback();
+        console.log("Pair already exists")
         return null;
       }
     }

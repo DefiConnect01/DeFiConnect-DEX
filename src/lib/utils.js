@@ -239,25 +239,76 @@ export const retry = ({ fn, args, defaultValue }) => {
   return wrappedFn;
 };
 
+const validateQuoteAmount = (amounts) => {
+  if (!Array.isArray(amounts)) return false;
+
+  // Check if we have at least input and output amounts
+  if (amounts.length < 2) return false;
+
+  // Check if any amount is zero
+  const hasZeroAmount = amounts.some(amount =>
+    !amount || amount.toString() === '0' || amount === 0n
+  );
+
+  return !hasZeroAmount;
+};
+
 export const retryForSwapQuote = ({ fn, args, defaultValue }) => {
   let retryCount = 0;
+
   const wrappedFn = async () => {
     try {
+      // If args provided, spread them into function call, otherwise call without args
       const response = args ? await fn(...args) : await fn();
-      return response;
-    } catch (err) {
-      if (err.toString().includes('execution reverted') || err.toString().includes('Out of Gas')) {
-        retryCount++;
-        if (retryCount > MAX_REQUEST_RETRY) {
-          return defaultValue ?? null;
-        } else {
-          return await wrappedFn();
-        }
-      } else {
-        console.log('retryForSwapQuote bad error catched')
-        console.log(err)
-        return undefined
+
+      // Validate response
+      if (!response) {
+        throw new Error('Empty response received');
       }
+
+      // Additional validation for response format
+      if (Array.isArray(response) && response.length === 2) {
+        // Check if any amounts are zero
+        const hasZeroAmount = response.some(amount =>
+          amount === '0' || amount === 0n || amount.toString() === '0'
+        );
+
+        if (hasZeroAmount) {
+          throw new Error('Zero amount detected in response');
+        }
+
+        console.log('Valid response received:', response);
+      }
+
+      return response;
+
+    } catch (err) {
+      console.log('Error in swap quote:', err.message);
+
+      // Handle specific error cases
+      if (
+        err.toString().includes('execution reverted') ||
+        err.toString().includes('Out of Gas') ||
+        err.toString().includes('division or modulo by zero')
+      ) {
+        retryCount++;
+
+        if (retryCount > MAX_REQUEST_RETRY) {
+          console.log(`Max retries (${MAX_REQUEST_RETRY}) exceeded`);
+          return defaultValue ?? null;
+        }
+
+        // Add exponential backoff
+        const backoffMs = Math.min(1000 * Math.pow(2, retryCount - 1), 10000);
+        await new Promise(resolve => setTimeout(resolve, backoffMs));
+
+        console.log(`Retry attempt ${retryCount}`);
+        return await wrappedFn();
+      }
+
+      // Log other unexpected errors
+      console.error('Unexpected error in swap quote:', err);
+      return defaultValue ?? null;
     }
   };
 
