@@ -3,8 +3,6 @@ import { AppDataContext } from "../context/appContext";
 import SelectTokenModal from "./SelectTokenModal";
 import AddCustomToken from "./AddCustomToken";
 import PercentageButton from "./PercentageButton";
-import CYBALogo from "../assets/cyba.svg";
-import CYBALogoDark from "../assets/cyba_dark.svg";
 
 const TokenInput = ({
   label,
@@ -20,8 +18,8 @@ const TokenInput = ({
   fromChain,
   isReadOnly=false,
   fromAmountChanged,
-  toAmountValue
-}) => {
+  toAmountValue, setSlippage
+  }) => {
   const [selectTokenModal, setSelectTokenModal] = useState(false);
   const [addCustomToken, setAddCustomToken] = useState(false);
 
@@ -70,7 +68,7 @@ const TokenInput = ({
           {
             formattedFromBalance && (
               <em className="flex text-[#58585e] dark:text-[hsl(0,0%,65%)] text-sm">
-                Balance: <span className="ml-1">{formattedFromBalance} {tokenDetails.symbol}</span>
+                Balance: <span className="ml-1">{formattedFromBalance} {tokenDetails?.symbol || selectedToken}</span>
               </em>
             )
           }
@@ -88,10 +86,10 @@ const TokenInput = ({
                 className="dark:text-white font-normal sm:text-2xl bg-transparent outline-none w-full placeholder:text-black dark:placeholder:text-white"
               />
               <div className="flex gap-1">
-                <PercentageButton percentage={10} formattedFromBalance={formattedFromBalance} setAmount={setAmount} />
-                <PercentageButton percentage={25} formattedFromBalance={formattedFromBalance} setAmount={setAmount} />
-                <PercentageButton percentage={50} formattedFromBalance={formattedFromBalance} setAmount={setAmount} />
-                <PercentageButton percentage="MAX" formattedFromBalance={formattedFromBalance} setAmount={setAmount} />
+                <PercentageButton setSlippage={setSlippage} percentage={10} formattedFromBalance={formattedFromBalance} setAmount={setAmount} />
+                <PercentageButton setSlippage={setSlippage} percentage={25} formattedFromBalance={formattedFromBalance} setAmount={setAmount} />
+                <PercentageButton setSlippage={setSlippage} percentage={50} formattedFromBalance={formattedFromBalance} setAmount={setAmount} />
+                <PercentageButton setSlippage={setSlippage} percentage="MAX" formattedFromBalance={formattedFromBalance} setAmount={setAmount} />
               </div>
             </div>
             {selectedToken === "CYBA" && fee && (

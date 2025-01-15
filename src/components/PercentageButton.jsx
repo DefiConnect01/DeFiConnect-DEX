@@ -1,7 +1,10 @@
-function PercentageButton({ percentage, formattedFromBalance, setAmount }) {
+function PercentageButton({ setSlippage, percentage, formattedFromBalance, setAmount }) {
     return (
       <button
         onClick={() => {
+          const calculatedPercentage = percentage === "MAX" ? 0 : percentage;
+          setSlippage(calculatedPercentage);
+
           const amount = percentage === "MAX"
             ? formattedFromBalance
             : (formattedFromBalance * percentage) / 100;
