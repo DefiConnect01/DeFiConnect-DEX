@@ -303,8 +303,10 @@ const TransactionLiquidity = () => {
             } 
           text-white 
           transition-all duration-200
-          ${isButtonDisabled() ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"}
+          
+          hover:shadow-lg
         `}
+        // ${isButtonDisabled() ? "opacity-50000 cursor-not-alloweddd" : "hover:shadow-lg"} 
         >
           {getButtonText()}
         </button>
