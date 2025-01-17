@@ -19,6 +19,8 @@ import CYBALogoDark from "../assets/cyba_dark.svg"
 import TransactionMenu from "./TransactionMenu";
 import TokenInput from "./TokenInput";
 import SwitchDirection from "./SwitchDirections";
+import tokenList from "../constants/tokenList.json";
+
 
 const priceUpdateLink = import.meta.env.VITE_PRICE_UPDATE_LINK
 const cyberApiKey = import.meta.env.VITE_CYBER_API_KEY
@@ -46,6 +48,8 @@ const TOKENS = {
 const TransactionLiquidity = () => {
   const { setSelectTokenModal, isDarkMode } = useOutletContext();
   const { fromChain, setFromChain, selectedToken } = useContext(AppDataContext);
+  const [swapList, setSwapList] = useState([tokenList[1], tokenList[0]]);
+
 
   const [option, setOption] = useState("Stable");
   const [txHash, setTxHash] = useState(null);
@@ -519,11 +523,11 @@ const TransactionLiquidity = () => {
       <div className="p-2">
         <TokenInput
           label="From"
-          chain={fromChain === "CYBRIA" ? "Cybria" : "Ethereum"}
           setSelectTokenModal={setSelectTokenModal}
+          tokenDetails={swapList[0]}
           amount={amount}
           setAmount={setAmount}
-          selectedToken={selectedToken}
+            selectedToken={swapList[0].symbol}
           disabled={isTransactionCompleted}
           formattedFromBalance={formattedFromBalance}
           cybaPrice={cybaPrice}
@@ -535,12 +539,14 @@ const TransactionLiquidity = () => {
         <SwitchDirection
           setFromChain={setFromChain}
           disabled={isTransactionCompleted}
+          swapList={swapList}
+          setSwapList={setSwapList}
         />
         <TokenInput
           label="To"
-          chain={fromChain === "CYBRIA" ? "Ethereum" : "Cybria"}
+          tokenDetails={swapList[1]}
           fromChain={fromChain}
-          selectedToken={selectedToken}
+            selectedToken={swapList[1].symbol}
           isReadOnly
           formattedToBalance={formattedToBalance}
           amount={amount}
@@ -548,7 +554,6 @@ const TransactionLiquidity = () => {
           isDarkMode={isDarkMode}
           fee={fee}
         />
-        
         <div className="flex justify-center items-center my-4 mt-6">
           <button
             className={`px-4 py-2 border rounded-l ${

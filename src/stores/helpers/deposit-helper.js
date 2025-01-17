@@ -585,6 +585,7 @@ export const removeLiquidity = async (
 ) => {
   try {
     const { token0, token1, pair, percent, slippage } = payload.content;
+    console.log({payload})
 
     // ADD TRNASCTIONS TO TRANSACTION QUEUE DISPLAY
     let allowanceTXID = getTXUUID();
@@ -682,7 +683,7 @@ export const removeLiquidity = async (
       .call();
 
     const sendSlippage = BigNumber(100).minus(slippage).div(100);
-    const deadline = "" + moment().add(600, "seconds").unix();
+    const deadline = (Math.floor(Date.now() / 1000) + 600).toString();
     const sendAmount0Min = BigNumber(quoteRemove.amountA)
       .times(sendSlippage)
       .toFixed(0);

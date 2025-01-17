@@ -145,7 +145,7 @@ async function loadFullPairInfo(pairAddress, web3, account, baseAssets) {
       address: token0,
       symbol: token0Symbol,
       balance: BigNumber(token0Balance)
-        .div(10 ** token0Decimals)
+        .div(10 ** BigNumber(token0Decimals))
         .toFixed(parseInt(token0Decimals)),
       decimals: parseInt(token0Decimals),
     },
@@ -153,27 +153,27 @@ async function loadFullPairInfo(pairAddress, web3, account, baseAssets) {
       address: token1,
       symbol: token1Symbol,
       balance: BigNumber(token1Balance)
-        .div(10 ** token1Decimals)
+        .div(10 ** BigNumber(token1Decimals))
         .toFixed(parseInt(token1Decimals)),
       decimals: parseInt(token1Decimals),
     },
     balance: BigNumber(balanceOf)
-      .div(10 ** decimals)
+      .div(10 ** BigNumber(decimals))
       .toFixed(parseInt(decimals)),
     totalSupply: BigNumber(totalSupply)
-      .div(10 ** decimals)
+      .div(10 ** BigNumber(decimals))
       .toFixed(parseInt(decimals)),
     reserve0: BigNumber(reserve0)
-      .div(10 ** token0Decimals)
+      .div(10 ** BigNumber(token0Decimals))
       .toFixed(parseInt(token0Decimals)),
     reserve1: BigNumber(reserve1)
-      .div(10 ** token1Decimals)
+      .div(10 ** BigNumber(token1Decimals))
       .toFixed(parseInt(token1Decimals)),
     claimable0: BigNumber(claimable0)
-      .div(10 ** token0Decimals)
+      .div(10 ** BigNumber(token0Decimals))
       .toFixed(parseInt(token0Decimals)),
     claimable1: BigNumber(claimable1)
-      .div(10 ** token1Decimals)
+      .div(10 ** BigNumber(token1Decimals))
       .toFixed(parseInt(token1Decimals)),
   };
 
@@ -310,14 +310,17 @@ export const getAndUpdatePair = async (
 ) => {
   // console.log(">>> GET AND UPDATE PAIR");
   if (!account || !web3) {
+    console.log("Account and web3")
     return null;
   }
 
   // if pair exist just update fields and return
   const existPair = findPair(pairs, pairAddress)
   if (existPair !== null) {
+    console.log("pair exists")
     return updatePairFields(existPair, web3, account)
   }
+  console.log("no pair")
   // if pair not exist return null, use getPair function
   return null
 };
