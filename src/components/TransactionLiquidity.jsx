@@ -239,7 +239,6 @@ const TransactionLiquidity = () => {
          formattedBalance={formattedToBalance}
          toAmountValue={amount}
         />
-        
         <div className="flex justify-center items-center my-4 mt-6">
           <button
             className={`px-4 py-2 border rounded-l ${
