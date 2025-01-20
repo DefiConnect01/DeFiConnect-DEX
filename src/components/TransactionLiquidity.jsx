@@ -1,7 +1,4 @@
 import React, { useContext, useState, useCallback, useEffect } from "react";
-import { useOutletContext } from 'react-router-dom';
-import { IoMdArrowDropdown } from "react-icons/io";
-import { RiArrowUpDownLine } from "react-icons/ri";
 import { AppDataContext } from "../context/appContext";
 import { parseEther, formatUnits, parseUnits } from "viem";
 import {
@@ -12,403 +9,141 @@ import {
   useSwitchChain,
   useBalance
 } from "wagmi";
-import { abi, baseSepoliaAddress,ethereumAddress, cybriaAddress } from "../constants";
 import { toast } from 'react-toastify';
-import CYBALogo from "../assets/cyba.svg"
-import CYBALogoDark from "../assets/cyba_dark.svg"
-import TransactionMenu from "./TransactionMenu";
-import TokenInput from "./TokenInput";
-import SwitchDirection from "./SwitchDirections";
-import tokenList from "../constants/tokenList.json";
+import TokenInput from "./LiquidityTokenInput";
+import SwitchDirection from "./LiquiditySwitchDirection";
 
+import stores from '../stores';
+import { ACTIONS } from '../stores/constants/constants';
 
 const priceUpdateLink = import.meta.env.VITE_PRICE_UPDATE_LINK
 const cyberApiKey = import.meta.env.VITE_CYBER_API_KEY
 
 
-const CHAIN_IDS = {
-  CYBRIA: 6661,
-  BASE_SEPOLIA: 84532,
-  ETHEREUM: 1
-};
-
-const TOKENS = {
-  CYBRIA: {
-    CYBA: "0x95622Fce49d65D1101f6FDa8b6325459A6188E52",
-    // USDT: "0x102bd5D18b2f6800ef4dcaF5fCe131fbb52aeBA4",
-  },
-  BASE_SEPOLIA: {
-    CYBA: "0xE5a4574B92A3D9528CFE9FC1a02F4983dBFd8aa1",
-    // USDT: "0xd1e728572AD0F0Bd8AD9EEf614C353CdE527929B",
-  }, ETHEREUM:{
-    CYBA: "0x1063181dc986F76F7eA2Dd109e16fc596d0f522A"
-  }
-};
-
 const TransactionLiquidity = () => {
-  const { setSelectTokenModal, isDarkMode } = useOutletContext();
-  const { fromChain, setFromChain, selectedToken } = useContext(AppDataContext);
-  const [swapList, setSwapList] = useState([tokenList[1], tokenList[0]]);
-
-
-  const [option, setOption] = useState("Stable");
-  const [txHash, setTxHash] = useState(null);
-  const [approvalTxHash, setApprovalTxHash] = useState(null);
-  const [transactionState, setTransactionState] = useState("idle");
-  const [approvalState, setApprovalState] = useState("idle");
-  const [isTransactionCompleted, setIsTransactionCompleted] = useState(false);
-  const [needsApproval, setNeedsApproval] = useState(true);
-  const [needChainSwitch, setNeedChainSwitch] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("Error - Try Again");
+  const { 
+    selectedFromToken, 
+    selectedToToken,
+    setSelectedFromToken,
+    setSelectedToToken 
+  } = useContext(AppDataContext);
+  
   const [amount, setAmount] = useState("");
-  const [cybaPrice, setCybaPrice] = useState();
+  const [slippage, setSlippage] = useState(1);
   const [fee, setFee] = useState(null);
-  const [isFetchingFee, setIsFetchingFee] = useState(false);
+  const [isStable, setIsStable] = useState(true);
+  const [txHash, setTxHash] = useState(null);
+  const [transactionState, setTransactionState] = useState("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [depositLoading, setDepositLoading] = useState(false);
 
-  const { switchChain } = useSwitchChain();
-  const { address, chain } = useAccount();
+  const { address } = useAccount();
   const { writeContractAsync } = useWriteContract();
 
-  // Balance queries
+  // Balance queries using token addresses from context
   const { data: fromBalanceData } = useBalance({
     address,
-    token: fromChain === "CYBRIA" && selectedToken === "CYBA" ? null : TOKENS[fromChain][selectedToken]
+    token: selectedFromToken.address === "CETH" ? null : selectedFromToken.address
   });
 
-  const { data: toTokenBalanceData } = useBalance({
+  const { data: toBalanceData } = useBalance({
     address,
-    chainId: fromChain === "CYBRIA" ? 1 : 6661,
-    token: fromChain === "ETHEREUM" && selectedToken === "CYBA" ? null : fromChain === "CYBRIA" ? TOKENS["ETHEREUM"][selectedToken] : TOKENS["CYBRIA"][selectedToken]
+    token: selectedToToken.address === "CETH" ? null : selectedToToken.address
   });
-// console.log("from:",fromBalanceData,"to:", toTokenBalanceData)
-  const fromTokenDecimals = fromBalanceData?.decimals || 18;
-  const toTokenDecimals = toTokenBalanceData?.decimals || 18;
 
   const formattedFromBalance = fromBalanceData
-    ? Number(formatUnits(fromBalanceData.value, fromTokenDecimals)).toFixed(2)
+    ? Number(formatUnits(fromBalanceData.value, selectedFromToken.decimals)).toFixed(2)
     : "0";
 
-  const formattedToBalance = toTokenBalanceData
-    ? Number(formatUnits(toTokenBalanceData.value, toTokenDecimals)).toFixed(2)
+  const formattedToBalance = toBalanceData
+    ? Number(formatUnits(toBalanceData.value, selectedToToken.decimals)).toFixed(2)
     : "0";
 
-  // Transaction receipt hooks
-  const {
-    isLoading,
-    isSuccess: isConfirmed,
-    isError,
-  } = useWaitForTransactionReceipt({
-    hash: txHash,
-  });
-
-  const {
-    isLoading: approvalTxIsLoading,
-    isSuccess: approvalTxIsConfirmed,
-    isError: approvalIsTxError,
-  } = useWaitForTransactionReceipt({
-    hash: approvalTxHash,
-  });
-
-  // Contract reads
-  const { data: allowance } = useReadContract({
-    address: TOKENS[fromChain][selectedToken],
-    abi: [
-      {
-        constant: true,
-        inputs: [
-          { name: "_owner", type: "address" },
-          { name: "_spender", type: "address" },
-        ],
-        name: "allowance",
-        outputs: [{ name: "", type: "uint256" }],
-        type: "function",
-      },
-    ],
-    functionName: "allowance",
-    args: [
-      address,
-      fromChain === "CYBRIA" ? cybriaAddress : ethereumAddress,
-    ],
-  });
-
-  const { data: feeData, refetch: refetchFee } = useReadContract({
-    address: fromChain === "CYBRIA" ? cybriaAddress : ethereumAddress,
-    abi,
-    functionName: "getCalculatedFee",
-    enabled: false, // Don't automatically fetch
-  });
-
-  // Then wrap fetchFeeAndPrice in useCallback to prevent infinite loop
-  const fetchFeeAndPrice = useCallback(async () => {
-    try {
-      setIsFetchingFee(true);
-
-      const fromChainId = fromChain === "CYBRIA" ? CHAIN_IDS.CYBRIA : CHAIN_IDS.ETHEREUM;
-
-      const response = await fetch(priceUpdateLink, {
-        method: 'POST',
-        headers: {
-          'cyber-api-key': cyberApiKey,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ network: fromChainId })
-      });
-
-      if (!response.ok) {
-        throw new Error(`Price check HTTP error! status: ${response.status}`);
-      }
-// console.log("fee fetched")
-      const { data: newFee } = await refetchFee();
-
-      if (!newFee) {
-        throw new Error('Failed to fetch new fee');
-      }
-
-      setFee(newFee);
-      // console.log("newfeeeeeeeeeeeeeeeeeeee:",newFee)
-      return newFee;
-
-    } catch (error) {
-      // console.error('Error in fee and price fetching:', error);
-      throw error;
-    } finally {
-      setIsFetchingFee(false);
-    }
-  }, [fromChain, refetchFee]); // Add dependencies
-
-  // Add detailed debug logging
-  // useEffect(() => {
-  //   console.log('Button State Debug:', {
-  //     transactionState,
-  //     approvalState,
-  //     amount,
-  //     fromChain,
-  //     selectedToken,
-  //     fee,
-  //     isFetchingFee,
-  //     needsApproval,
-  //     isTransactionCompleted,
-  //     needChainSwitch
-  //   });
-  // }, [transactionState, approvalState, amount, fromChain, selectedToken, fee, isFetchingFee, needsApproval, isTransactionCompleted, needChainSwitch]);
- 
-  // Update the fee fetching useEffect to include all required dependencies
-  useEffect(() => {
-    const fetchFeeIfNeeded = async () => {
-      if (amount && fromChain === "CYBRIA" && selectedToken === "CYBA") {
-        try {
-          await fetchFeeAndPrice();
-        } catch (error) {
-          // console.error('Error fetching fee:', error);
-        }
-      }
-    };
-
-    fetchFeeIfNeeded();
-  }, [amount, fromChain, selectedToken, fetchFeeAndPrice]); // Add fetchFeeAndPrice to dependencies
-
-  useEffect(() => {
-    const getCoinPrice = async (amount = 1) => {
-      try {
-        const response = await fetch(
-          `https://min-api.cryptocompare.com/data/price?fsym=CYBA&tsyms=USD&api_key=${import.meta.env.VITE_PRICE_API_KEY}`
-        );
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status}`);
-        }
-
-        const result = await response.json();
-        const price = result?.USD * amount;
-        setCybaPrice(price);
-      } catch (error) {
-        // console.error('Error fetching coin price:', error);
-      }
-    };
-
-    getCoinPrice();
-  }, []);
-
-  useEffect(() => {
-    const currentChain = chain?.name;
-    const isCybriaMismatch = fromChain === "CYBRIA" && currentChain !== "Cybria";
-    const isEthereumMismatch = fromChain === "ETHEREUM" && currentChain !== "Ethereum";
-
-    setNeedChainSwitch(isCybriaMismatch || isEthereumMismatch);
-  }, [chain, fromChain]);
-
-  useEffect(() => {
-    if (fromChain === "CYBRIA" && selectedToken === "CYBA") {
-      setNeedsApproval(false);
+  // Add handleAmountChange function
+  const handleAmountChange = useCallback((value) => {
+    if (!value || value === "") {
+      setAmount("");
       return;
     }
 
-    if (!amount || !allowance) {
-      setNeedsApproval(true);
-      return;
+    // Validate input is a valid number
+    const numValue = parseFloat(value);
+    if (isNaN(numValue)) return;
+
+    // Limit decimal places based on token decimals
+    const decimals = selectedFromToken?.decimals || 18;
+    const parts = value.split('.');
+    if (parts[1] && parts[1].length > decimals) {
+      value = `${parts[0]}.${parts[1].slice(0, decimals)}`;
     }
 
-    try {
-      const parsedAmount = parseEther(amount.toString());
-      setNeedsApproval(allowance < parsedAmount);
-    } catch (err) {
-      // console.error("Error parsing amount:", err);
-      setNeedsApproval(true);
+    setAmount(value);
+  }, [selectedFromToken]);
+
+  const handleSwap = useCallback(() => {
+    // Store current amount
+    const currentAmount = amount;
+
+    // Swap tokens
+    setSelectedFromToken(selectedToToken);
+    setSelectedToToken(selectedFromToken);
+
+    // Clear amount and reset fee
+    setAmount("");
+    setFee(null);
+
+    // If there was an amount, update it after token swap
+    if (currentAmount) {
+      // You might want to add price conversion logic here
+      handleAmountChange(currentAmount);
     }
-  }, [allowance, amount, fromChain, selectedToken]);
+  }, [selectedFromToken, selectedToToken, amount, handleAmountChange]);
 
-  useEffect(() => {
-    if (isLoading) setTransactionState("confirming");
-    else if (isConfirmed) {
-      setTransactionState("confirmed");
-      toast.success('🎉 Transaction successfull!');
-      setIsTransactionCompleted(true);
-    } else if (isError) {
-      setTransactionState("error");
-    }
-  }, [isLoading, isConfirmed, isError]);
-
-  useEffect(() => {
-    if (approvalTxIsLoading) setApprovalState("confirming");
-    else if (approvalTxIsConfirmed) {
-      setApprovalState("approved");
-      setNeedsApproval(false);
-    } else if (approvalIsTxError) {
-      setApprovalState("error");
-    }
-  }, [approvalTxIsLoading, approvalTxIsConfirmed, approvalIsTxError]);
-
-  const handleSwitchChains = () => {
-    const nextChainId = CHAIN_IDS[fromChain];
-    switchChain({ chainId: nextChainId });
-  };
-
-  const handleApprove = useCallback(async () => {
+  const handleSend = async () => {
     if (!writeContractAsync || !amount) return;
-
-    try {
-      setApprovalState("approving");
-
-      const tokenAddress = TOKENS[fromChain][selectedToken];
-      const spenderAddress = fromChain === "CYBRIA" ? cybriaAddress : ethereumAddress;
-      const parsedAmount = parseEther(amount.toString());
-
-      const hash = await writeContractAsync({
-        address: tokenAddress,
-        abi: [
-          {
-            constant: false,
-            inputs: [
-              { name: "_spender", type: "address" },
-              { name: "_value", type: "uint256" },
-            ],
-            name: "approve",
-            outputs: [{ name: "", type: "bool" }],
-            type: "function",
-          },
-        ],
-        functionName: "approve",
-        args: [spenderAddress, parsedAmount],
-      });
-
-      setApprovalTxHash(hash);
-      setApprovalState("approved");
-    } catch (err) {
-      // console.error("Failed to approve:", err);
-      setApprovalState("error");
-    }
-  }, [writeContractAsync, fromChain, selectedToken, amount]);
-
-  
-
-  // Helper function to parse amount based on token and chain
-  const parseAmount = (amount, chain, token) => {
-    if (chain === "ETHEREUM" && token === "CYBA") {
-      // Use 9 decimals for CYBA on Base Sepolia
-      return parseUnits(amount.toString(), 9);
-    }
-    // Use 18 decimals for all other cases
-    return parseEther(amount.toString());
-  };
-
-  // Add this to the handleSend function
-  const handleSend = useCallback(async () => {
-    if (!writeContractAsync || !amount) return;
-
+    
     try {
       setTransactionState("sending");
-
-      const isCybria = fromChain === "CYBRIA";
-      const dstChainId = isCybria ? CHAIN_IDS.ETHEREUM : CHAIN_IDS.CYBRIA;
-
-      const srcToken = TOKENS[fromChain][selectedToken];
-      const dstToken = TOKENS[isCybria ? "ETHEREUM" : "CYBRIA"][selectedToken];
-      const contractAddress = isCybria ? cybriaAddress : ethereumAddress;
-      const functionName = isCybria && selectedToken === "CYBA" ? "sendNative" : "send";
-
-      const userInput = parseAmount(amount, fromChain, selectedToken);
-      let txConfig = {
-        address: contractAddress,
-        abi,
-        functionName,
+      
+      const parsedAmount = parseUnits(amount, selectedFromToken.decimals);
+      
+      // Handle transaction logic here based on selected tokens
+      const txConfig = {
+        address: selectedFromToken.address,
+        abi: [], // Add appropriate ABI
+        functionName: "transfer",
+        args: [address, parsedAmount]
       };
 
-      if (isCybria && selectedToken === "CYBA") {
-        const nativeUserInput = parseEther(amount.toString()) + fee; // Keep 18 decimals for native ETH
-        txConfig.args = [address, dstToken, nativeUserInput, dstChainId, 0n, 5000];
-        txConfig.value = nativeUserInput;
-      } else {
-        txConfig.args = [address, srcToken, dstToken, userInput, dstChainId, 1n, 10];
-      }
-
-      // console.log("Transaction config:", txConfig);
       const hash = await writeContractAsync(txConfig);
       setTxHash(hash);
       setTransactionState("confirming");
     } catch (err) {
-      handleTransactionError(err);
+      setErrorMessage(err.message);
+      setTransactionState("error");
     }
-  }, [writeContractAsync, fromChain, selectedToken, amount, address, fee]);
-
-
-  const handleTransactionError = (err) => {
-    const message = err.message;
-    if (message.includes("transfer exist")) {
-      setErrorMessage("Transfer already exists. Change amount.");
-    } else if (message.includes("InsufficientFunds")) {
-      setErrorMessage("Insufficient Funds");
-    } else if (message.includes("Arithmetic operation resulted in underflow or overflow")) {
-      setErrorMessage("Amount is too small. Please increase the amount."); // New user-friendly message
-    } else {
-      setErrorMessage("Failed to send transaction");
-      // console.error("Failed to send transaction:", err.message);
-    }
-
-    // Show toast for better visibility
-    toast.error(
-      message.includes("Arithmetic operation resulted in underflow or overflow")
-        ? "Amount is too small. Please increase the amount."
-        : "Transaction failed. Please try again."
-    );
-
-    // console.error("Failed to send transaction:", err.message);
-    setTransactionState("error");
   };
-  const isInsufficientBalance = () => {
-    if (!amount) return false;
+
+  const [isTransactionCompleted, setIsTransactionCompleted] = useState(false);
+  const [approvalState, setApprovalState] = useState("idle");
+
+  // Check if balance is sufficient
+  const isInsufficientBalance = useCallback(() => {
+    if (!amount || !formattedFromBalance) return false;
 
     const currentAmount = parseFloat(amount);
     const balance = parseFloat(formattedFromBalance);
 
-    if (fromChain === "CYBRIA" && selectedToken === "CYBA" && fee) {
-      const feeInEther = parseFloat(formatUnits(fee, 18));
-      return currentAmount + feeInEther > balance;
+    if (fee) {
+      const feeInToken = parseFloat(formatUnits(fee, selectedFromToken.decimals));
+      return currentAmount + feeInToken > balance;
     }
 
     return currentAmount > balance;
-  };
+  }, [amount, formattedFromBalance, fee, selectedFromToken]);
 
-  const getButtonText = () => {
+  // Get button text based on current state
+  const getButtonText = useCallback(() => {
     if (isInsufficientBalance()) {
       return "Insufficient Balance";
     }
@@ -417,157 +152,105 @@ const TransactionLiquidity = () => {
       return "Start New Transaction";
     }
 
-    if (needChainSwitch) {
-      return "Switch Network";
-    }
-
-    if (isFetchingFee && fromChain === "CYBRIA" && selectedToken === "CYBA") {
-      return "Calculating Fee...";
-    }
-
     if (!amount) {
       return "Enter Amount";
     }
 
-    if (!needsApproval) {
-      switch (transactionState) {
-        case "idle": return "Transfer";
-        case "sending": return "Initiating Transfer...";
-        case "confirming": return "Confirming Transaction...";
-        case "confirmed": return "Transfer Complete";
-        case "error": return "Try Again";
-        default: return "Transfer";
-      }
-    } else {
-      switch (approvalState) {
-        case "idle": return "Approve Token";
-        case "approving": return "Approving...";
-        case "confirming": return "Confirming Approval...";
-        case "approved": return "Proceed with Transfer";
-        case "error": return "Approval Failed - Try Again";
-        default: return "Approve Token";
-      }
+    switch (transactionState) {
+      case "idle": return "Add Liquidity";
+      case "sending": return "Adding Liquidity...";
+      case "confirming": return "Confirming Transaction...";
+      case "confirmed": return "Transaction Complete";
+      case "error": return "Try Again";
+      default: return "Add Liquidity";
     }
-  };
+  }, [amount, isTransactionCompleted, transactionState, isInsufficientBalance]);
 
-  const isButtonDisabled = () => {
+  // Check if button should be disabled
+  const isButtonDisabled = useCallback(() => {
     if (isInsufficientBalance()) return true;
     if (isTransactionCompleted) return false;
-    if (needChainSwitch) return false;
     if (!amount) return true;
 
-    if (["sending", "confirming"].includes(transactionState)) return true;
-    if (["approving", "confirming"].includes(approvalState)) return true;
+    return ["sending", "confirming"].includes(transactionState) ||
+           ["approving", "confirming"].includes(approvalState);
+  }, [amount, isTransactionCompleted, transactionState, approvalState, isInsufficientBalance]);
 
-    if (fromChain === "CYBRIA" && selectedToken === "CYBA") {
-      return isFetchingFee || !fee;
-    }
+  // Handle button click
+  const handleButtonClick = useCallback(async () => {
 
-    return false;
-  };
-  
-  // Modify handleButtonClick for better error handling
-  const handleButtonClick = () => {
+    // if (isButtonDisabled()) return;
+     setDepositLoading(true)
+            
     try {
-      if (isTransactionCompleted) {
-        resetTransaction();
-        return;
-      }
-
-      if (needChainSwitch) {
-        handleSwitchChains();
-        return;
-      }
-
-      // Don't proceed if there's no amount
-      if (!amount) {
-        toast.error('Please enter an amount');
-        return;
-      }
-
-      // For Cybria CYBA transfers, ensure fee is ready
-      if (fromChain === "CYBRIA" && selectedToken === "CYBA") {
-        if (isFetchingFee) {
-          toast.info('Please wait while fee is being calculated');
-          return;
+      toast.promise(
+        stores.dispatcher.dispatch({
+          type: ACTIONS.CREATE_PAIR_AND_DEPOSIT,
+          content: {
+            token0: selectedFromToken,
+            token1: selectedToToken,
+            amount0: amount,
+            amount1: amount,
+            isStable: isStable,
+            slippage: slippage
+          }
+        }),
+        {
+          pending: 'Creating pair and depositing...',
+          success: 'Pair created and deposit successful! 🎉',
+          error: 'Failed to create pair or deposit. Please try again.'
         }
-        if (!fee) {
-          toast.error('Fee calculation failed. Please try again');
-          return;
-        }
-      }
-
-      if (!needsApproval) {
-        handleSend();
-      } else {
-        handleApprove();
-      }
-    } catch (error) {
-      // console.error('Button click error:', error);
-      toast.error('An error occurred. Please try again');
+      );
+    } catch (err) {
+      toast.error('Transaction failed. Please try again.');
+      setTransactionState("error");
     }
-  };
-
-  const resetTransaction = () => {
-    setTransactionState("idle");
-    setApprovalState("idle");
-    setIsTransactionCompleted(false);
-    setAmount("");
-    setTxHash(null);
-    setApprovalTxHash(null);
-  };
+  }, [isTransactionCompleted, isButtonDisabled, handleSend]);
 
   return (
     <>
+    {console.log(slippage)}
     <div className="ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
       <div className="p-2">
         <TokenInput
           label="From"
-          setSelectTokenModal={setSelectTokenModal}
-          tokenDetails={swapList[0]}
           amount={amount}
           setAmount={setAmount}
-            selectedToken={swapList[0].symbol}
-          disabled={isTransactionCompleted}
-          formattedFromBalance={formattedFromBalance}
-          cybaPrice={cybaPrice}
-          isDarkMode={isDarkMode}
+          selectedToken={selectedFromToken}
+          onTokenSelect={setSelectedFromToken}
+          disabled={transactionState !== "idle"}
+          formattedBalance={formattedFromBalance}
           fee={fee}
-          fromChain={fromChain}
-
+          setSlippage={setSlippage}
         />
         <SwitchDirection
-          setFromChain={setFromChain}
-          disabled={isTransactionCompleted}
-          swapList={swapList}
-          setSwapList={setSwapList}
+          disabled={transactionState !== "idle"}
+          fromAmountChanged={handleAmountChange}
+          fromAmountValue={amount}
+          onSwitch={handleSwap}
         />
         <TokenInput
-          label="To"
-          tokenDetails={swapList[1]}
-          fromChain={fromChain}
-            selectedToken={swapList[1].symbol}
-          isReadOnly
-          formattedToBalance={formattedToBalance}
-          amount={amount}
-          cybaPrice={cybaPrice}
-          isDarkMode={isDarkMode}
-          fee={fee}
+         label="To"
+         selectedToken={selectedToToken}
+         onTokenSelect={setSelectedToToken}
+         isReadOnly={true}
+         formattedBalance={formattedToBalance}
+         toAmountValue={amount}
         />
         <div className="flex justify-center items-center my-4 mt-6">
           <button
             className={`px-4 py-2 border rounded-l ${
-              option === "Stable" ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
+              isStable ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
             }`}
-            onClick={() => setOption("Stable")}
+            onClick={() => setIsStable(true)}
           >
             Stable
           </button>
           <button
             className={`px-4 py-2 border rounded-r ${
-              option === "Volatile" ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
+              !isStable ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
             }`}
-            onClick={() => setOption("Volatile")}
+            onClick={() => setIsStable(false)}
           >
             Volatile
           </button>
@@ -605,7 +288,7 @@ const TransactionLiquidity = () => {
 
         <button
           onClick={handleButtonClick}
-          disabled={isButtonDisabled()}
+          // disabled={isButtonDisabled()}
           className={`py-2 rounded-full mt-4 w-full 
           ${isInsufficientBalance()
               ? "bg-red-500 hover:bg-red-600"
@@ -617,8 +300,10 @@ const TransactionLiquidity = () => {
             } 
           text-white 
           transition-all duration-200
-          ${isButtonDisabled() ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"}
+          
+          hover:shadow-lg
         `}
+        // ${isButtonDisabled() ? "opacity-50000 cursor-not-alloweddd" : "hover:shadow-lg"} 
         >
           {getButtonText()}
         </button>
