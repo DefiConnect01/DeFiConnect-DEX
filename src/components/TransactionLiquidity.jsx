@@ -178,31 +178,29 @@ const TransactionLiquidity = () => {
 
   // Handle button click
   const handleButtonClick = useCallback(async () => {
-    // if (isTransactionCompleted) {
-    //   // Reset transaction
-    //   setAmount("");
-    //   setTransactionState("idle");
-    //   setApprovalState("idle");
-    //   setIsTransactionCompleted(false);
-    //   setTxHash(null);
-    //   return;
-    // }
 
     // if (isButtonDisabled()) return;
      setDepositLoading(true)
             
     try {
-      await stores.dispatcher.dispatch({
-        type: ACTIONS.CREATE_PAIR_AND_DEPOSIT, content: {
+      toast.promise(
+        stores.dispatcher.dispatch({
+          type: ACTIONS.CREATE_PAIR_AND_DEPOSIT,
+          content: {
             token0: selectedFromToken,
             token1: selectedToToken,
             amount0: amount,
             amount1: amount,
             isStable: isStable,
-            // should be slippage below
             slippage: slippage
+          }
+        }),
+        {
+          pending: 'Creating pair and depositing...',
+          success: 'Pair created and deposit successful! 🎉',
+          error: 'Failed to create pair or deposit. Please try again.'
         }
-      });
+      );
     } catch (err) {
       toast.error('Transaction failed. Please try again.');
       setTransactionState("error");

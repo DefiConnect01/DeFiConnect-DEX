@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import { AppDataContext } from "../context/appContext";
 import SelectTokenModal from "./TokenModal";
-import AddCustomToken from "./AddCustomToken";
 import PercentageButton from "./PercentageButton";
 
 const TokenInput = ({
