@@ -65,8 +65,8 @@ const RemoveLiquidity = () => {
       }
     }
     
-    const address = "0x7B9A90a535395ee272435E13Bac3372372AE3356" //vAMM-WETH/TGS
-    const addressA = "0x46961dBC53AF28CE82479f6e1eA10F6477CfEca3" 
+    const address = "0x7B9A90a535395ee272435E13Bac3372372AE3356"; //vAMM-WETH/TGS
+    const addressA = "0x46961dBC53AF28CE82479f6e1eA10F6477CfEca3"; 
     const addressB = "0xcFd2cb035A6647dC553a2Ef65b9694E2D076475f";
     const stab = false;
     if (address) {

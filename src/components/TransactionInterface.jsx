@@ -11,13 +11,15 @@ import {
 } from "wagmi";
 import { abi, ethereumAddress, cybriaAddress } from "../constants";
 import { toast } from 'react-toastify';
-import SwitchDirection from "./SwitchDirections";
-import TokenInput from "./TokenInput";
+// import SwitchDirection from "./SwitchDirections";
+// import TokenInput from "./TokenInput";
 import tokenList from "../constants/tokenList.json";
 import { useAppKitAccount } from "@reown/appkit/react";
 import stores from "../stores";
 import BigNumber from "bignumber.js";
 import { ACTIONS, DEFAULT_ASSET_FROM, DEFAULT_ASSET_TO } from "../stores/constants/constants";
+import TokenInput from "./LiquidityTokenInput";
+import SwitchDirection from "./LiquiditySwitchDirection";
 
 
 const CHAIN_IDS = {
@@ -42,16 +44,25 @@ const TOKENS = {
 const TransactionInterface = () => {
   const { setSelectTokenModal, isDarkMode } = useOutletContext();
   const { 
+    selectedFromToken,
+    selectedToToken,
+    setSelectedFromToken,
+    setSelectedToToken,
+    tokenList,
     fromChain, 
     selectedToken
   } = useContext(AppDataContext);
   
   // ============================================
   const multiSwapStore = stores.multiSwapStore;
+  const [fromAmount, setFromAmount] = useState("");
+  const [toAmount, setToAmount] = useState("");
+  const [priceImpact, setPriceImpact] = useState(null);
+  const [slippage, setSlippage] = useState(0.5);
+
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  const [swapList, setSwapList] = useState([tokenList[1], tokenList[0]]);
+  const [swapList, setSwapList] = useState([selectedFromToken, selectedToToken]);
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
 
@@ -86,6 +97,28 @@ const TransactionInterface = () => {
   const { writeContractAsync } = useWriteContract();
 
   const isETH = swapList[0]?.symbol === "CETH";
+
+
+  const handleSwitch = () => {
+    const tempToken = selectedFromToken;
+    setSelectedFromToken(selectedToToken);
+    setSelectedToToken(tempToken);
+    setFromAmount(""); // Clear input when switching
+    setToAmount("");
+  };
+
+  const handleFromAmountChange = (value) => {
+    setFromAmount(value);
+    // Implement logic to calculate the "to" amount based on price/rate here
+    // Example placeholder logic:
+    const rate = 1; // Replace with actual rate fetching logic
+    setToAmount((value * rate).toFixed(selectedToToken?.decimals || 2));
+  };
+
+  const handleToAmountChange = (value) => {
+    setToAmount(value);
+    // Implement reverse calculation logic here if necessary
+  };
 
   // use useEeffect to update token balance on switch
   const { data: fromBalanceData } = useBalance({
@@ -596,11 +629,40 @@ const TransactionInterface = () => {
     setApprovalTxHash(null);
   };
 
+  const handleAmountChange = useCallback((value) => {
+      if (!value || value === "") {
+        setAmount("");
+        return;
+      }
+  
+      // Validate input is a valid number
+      const numValue = parseFloat(value);
+      if (isNaN(numValue)) return;
+  
+      // Limit decimal places based on token decimals
+      const decimals = selectedFromToken?.decimals || 18;
+      const parts = value.split('.');
+      if (parts[1] && parts[1].length > decimals) {
+        value = `${parts[0]}.${parts[1].slice(0, decimals)}`;
+      }
+  
+      setAmount(value);
+    }, [selectedFromToken]);
+
+    const { data: toBalanceData } = useBalance({
+        address,
+        token: selectedToToken.address === "CETH" ? null : selectedToToken.address
+      });
+
+    const formattedToBalance = toBalanceData
+      ? Number(formatUnits(toBalanceData.value, selectedToToken.decimals)).toFixed(2)
+      : "0";
+
   return (
     <>
     <div className="ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
       <div className="p-2">
-        <TokenInput
+        {/* <TokenInput
           label="From"
           setSelectTokenModal={setSelectTokenModal}
           amount={fromAmountValue}
@@ -634,7 +696,33 @@ const TransactionInterface = () => {
           isDarkMode={isDarkMode}
           fee={fee}
           toAmountValue={toAmountValue}
+        /> */}
+
+        <TokenInput
+          label="From"
+          amount={amount}
+          setAmount={setAmount}
+          selectedToken={selectedFromToken}
+          onTokenSelect={setSelectedFromToken}
+          disabled={transactionState !== "idle"}
+          formattedBalance={formattedFromBalance}
+          fee={fee}
+          setSlippage={setSlippage}
         />
+        <SwitchDirection
+          disabled={transactionState !== "idle"}
+          fromAmountChanged={handleAmountChange}
+          fromAmountValue={amount}
+        />
+        <TokenInput
+         label="To"
+         selectedToken={selectedToToken}
+         onTokenSelect={setSelectedToToken}
+         isReadOnly={true}
+         formattedBalance={formattedToBalance}
+         toAmountValue={amount}
+        />
+
         <button
           onClick={handleButtonClick}
           disabled={isButtonDisabled()}
