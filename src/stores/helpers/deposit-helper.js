@@ -57,9 +57,6 @@ export const createPairDeposit = async (
     let depositTXID = getTXUUID();
     let createGaugeTXID = getTXUUID();
 
-    //DOD A CHECK FOR IF THE POOL ALREADY EXISTS
-
-
     if (isCreateGauge) {
       console.log({
         title: `Create liquidity pool for ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,

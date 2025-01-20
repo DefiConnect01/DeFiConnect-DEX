@@ -21,8 +21,8 @@ function AppRouter() {
                     </>} />
                     <Route path="liquidity" element={<>
                         {/* <LiquidityPage /> */}
-                        {/* <LiquidityMenu /> */}
-                        <RemoveLiquidity />
+                        <LiquidityMenu />
+                        {/* <RemoveLiquidity /> */}
                     </>} />
                     <Route path="transactions" element={<>
                         <TransactionHistory />

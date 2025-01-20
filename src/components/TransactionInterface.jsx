@@ -51,7 +51,7 @@ const TransactionInterface = () => {
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [swapList, setSwapList] = useState([tokenList[2], tokenList[0]]);
+  const [swapList, setSwapList] = useState([tokenList[1], tokenList[0]]);
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
 
