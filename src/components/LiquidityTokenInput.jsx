@@ -23,9 +23,7 @@ const TokenInput = ({
   const { tokenList } = useContext(AppDataContext);
 
   const handleAmountChange = (value) => {
-    if (fromAmountChanged) {
-      fromAmountChanged(value);
-    }
+    fromAmountChanged(value)
   };
 
   const getDisplayAmount = () => toAmountValue || '0';
@@ -98,6 +96,7 @@ const TokenInput = ({
         onClose={() => setSelectTokenModal(false)}
         tokens={tokenList}
         onSelect={(token) => {
+          onTokenSelect(token);
           onTokenSelect(token);
           setSelectTokenModal(false);
         }}

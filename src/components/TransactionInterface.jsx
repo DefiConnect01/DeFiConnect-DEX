@@ -166,6 +166,11 @@ const TransactionInterface = () => {
     ],
   });
 
+  useEffect(() => {
+    setSwapList([selectedFromToken, selectedToToken])
+    console.log(swapList)
+  }, [selectedFromToken, selectedToToken])
+
   useEffect(
     function () {
       const errorReturned = () => {
@@ -258,6 +263,7 @@ const TransactionInterface = () => {
   );
 
   const fromAmountChanged = (value) => {
+    console.log({swapList})
     setFromAmountError(false);
     setFromAmountValue(value);
     setQuote(null);
@@ -370,48 +376,6 @@ const TransactionInterface = () => {
     fromAmountChanged(fromAmountValue);
   }, [swapList])
 
-  const handleSwitchChains = () => {
-    const nextChainId = CHAIN_IDS[fromChain];
-    switchChain({ chainId: nextChainId });
-  };
-
-  const handleApprove = useCallback(async () => {
-    if (!writeContractAsync || !amount) return;
-
-    try {
-      setApprovalState("approving");
-
-      const tokenAddress = TOKENS[fromChain][selectedToken];
-      const spenderAddress = fromChain === "CYBRIA" ? cybriaAddress : ethereumAddress;
-      const parsedAmount = parseEther(amount.toString());
-
-      const hash = await writeContractAsync({
-        address: tokenAddress,
-        abi: [
-          {
-            constant: false,
-            inputs: [
-              { name: "_spender", type: "address" },
-              { name: "_value", type: "uint256" },
-            ],
-            name: "approve",
-            outputs: [{ name: "", type: "bool" }],
-            type: "function",
-          },
-        ],
-        functionName: "approve",
-        args: [spenderAddress, parsedAmount],
-      });
-
-      setApprovalTxHash(hash);
-      setApprovalState("approved");
-    } catch (err) {
-      // console.error("Failed to approve:", err);
-      setApprovalState("error");
-    }
-  }, [writeContractAsync, fromChain, selectedToken, amount]);
-
-  
 
   // Helper function to parse amount based on token and chain
   const parseAmount = (amount, chain, token) => {
@@ -506,6 +470,7 @@ const TransactionInterface = () => {
     }
 
     if (quoteLoading){
+      // toast.info('Quote loading...');
       return "Quote loading..."
     }
 
@@ -513,6 +478,10 @@ const TransactionInterface = () => {
       toast.info('Insufficient balance');
       return "Insufficient Balance";
     }
+    // if (loading) {
+    //   // toast.info('Swapping...');
+    //   return "swapping..."
+    // }
 
     if (isTransactionCompleted) {
       return "Start New Transaction";
@@ -556,6 +525,7 @@ const TransactionInterface = () => {
     if (isTransactionCompleted) return false;
     if (!fromAmountValue || fromAmountValue == 0) return true;
     if (quoteLoading) return true;
+    if (loading) return true
 
     if (["sending", "confirming"].includes(transactionState)) return true;
     if (["approving", "confirming"].includes(approvalState)) return true;
@@ -565,6 +535,7 @@ const TransactionInterface = () => {
 
   const makeSwap = async() => {
     try {
+      setLoading(true)
       await stores.stableSwapStore.swap({
         content: {
           fromAsset: swapList[0],
@@ -577,8 +548,11 @@ const TransactionInterface = () => {
       })
       await stores.stableSwapStore.loadBaseAssets()
     } catch (e) {
+      // toast.error("Error occurred")
       console.log('error swapping', e)
     } finally {
+      setLoading(false)
+      toast.success("Done swapping")
       console.log("Done swapping")
     }
   }
@@ -700,18 +674,19 @@ const TransactionInterface = () => {
 
         <TokenInput
           label="From"
-          amount={amount}
-          setAmount={setAmount}
+          amount={fromAmountValue}
+          setAmount={setFromAmountValue}
           selectedToken={selectedFromToken}
           onTokenSelect={setSelectedFromToken}
           disabled={transactionState !== "idle"}
           formattedBalance={formattedFromBalance}
           fee={fee}
           setSlippage={setSlippage}
+            fromAmountChanged={fromAmountChanged}
         />
         <SwitchDirection
           disabled={transactionState !== "idle"}
-          fromAmountChanged={handleAmountChange}
+            fromAmountChanged={fromAmountChanged}
           fromAmountValue={amount}
         />
         <TokenInput
@@ -720,7 +695,7 @@ const TransactionInterface = () => {
          onTokenSelect={setSelectedToToken}
          isReadOnly={true}
          formattedBalance={formattedToBalance}
-         toAmountValue={amount}
+         toAmountValue={toAmountValue}
         />
 
         <button

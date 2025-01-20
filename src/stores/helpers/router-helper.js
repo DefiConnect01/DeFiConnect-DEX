@@ -246,7 +246,6 @@ export const quoteSwap = async (
         // const tokenInDecimals = baseAssets
         //   .filter(a => a?.address?.toLowerCase() === bestAmountOut.routes[i].from?.toLowerCase())[0]
         //   .decimals
-        console.log(i)
 
         const reserves = await libraryContract.methods
           .getNormalizedReserves(
