@@ -237,6 +237,7 @@ const TransactionInterface = () => {
       sethidequote(false);
       setQuoteLoading(true);
       setQuoteError(false);
+      console.log({s1: swapList[0], s2: swapList[1]})
       calculateReceiveAmount(value, swapList[0], swapList[1]);
     }
   };
@@ -331,6 +332,10 @@ const TransactionInterface = () => {
       setApprovalState("error");
     }
   }, [approvalTxIsLoading, approvalTxIsConfirmed, approvalIsTxError]);
+
+  useEffect(() => {
+    fromAmountChanged(fromAmountValue);
+  }, [swapList])
 
   const handleSwitchChains = () => {
     const nextChainId = CHAIN_IDS[fromChain];
