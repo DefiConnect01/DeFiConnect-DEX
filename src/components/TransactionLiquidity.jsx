@@ -43,12 +43,12 @@ const TransactionLiquidity = () => {
   // Balance queries using token addresses from context
   const { data: fromBalanceData } = useBalance({
     address,
-    token: selectedFromToken.address === "CETH" ? null : selectedFromToken.address
+    token: selectedFromToken.address === "ETH" ? null : selectedFromToken.address
   });
 
   const { data: toBalanceData } = useBalance({
     address,
-    token: selectedToToken.address === "CETH" ? null : selectedToToken.address
+    token: selectedToToken.address === "ETH" ? null : selectedToToken.address
   });
 
   const formattedFromBalance = fromBalanceData

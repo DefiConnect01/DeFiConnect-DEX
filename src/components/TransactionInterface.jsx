@@ -97,7 +97,7 @@ const TransactionInterface = () => {
   const { address, isConnected } = useAppKitAccount()
   const { writeContractAsync } = useWriteContract();
 
-  const isETH = swapList[0]?.symbol === "CETH";
+  const isETH = swapList[0]?.symbol === "ETH";
 
 
   const handleSwitch = () => {
@@ -652,7 +652,7 @@ const TransactionInterface = () => {
 
     const { data: toBalanceData } = useBalance({
         address,
-        token: selectedToToken.address === "CETH" ? null : selectedToToken.address
+        token: selectedToToken.address === "ETH" ? null : selectedToToken.address
       });
 
     const formattedToBalance = toBalanceData

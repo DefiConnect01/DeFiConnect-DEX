@@ -8,6 +8,14 @@
     "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
   },
   {
+    "name": "Defi Connect Token",
+    "symbol": "DCC",
+    "address": "0xf53EcB45A7D0048fb73Be03ab1776eb00f953D41",
+    "decimals": 18,
+    "chainId": 66665, 
+    "logoURI": "https://i.ibb.co/Z6hz0Dq/deficonnectcredit1.png"
+  },
+  {
     "name": "Veritasium",
     "symbol": "VTS",
     "address": "0x205D6afE82EC32e271162f0C80dADd37ED94Ee35",
@@ -17,8 +25,8 @@
   },
   {
     "name": "Ether",
-    "symbol": "CETH",
-    "address": "CETH", 
+    "symbol": "ETH",
+    "address": "0x46961dBC53AF28CE82479f6e1eA10F6477CfEca3", 
     "decimals": 18,
     "chainId": 66665,
     "logoURI":"https://i.ibb.co/rGJ8WyX/eth-logo.png"
@@ -45,7 +53,7 @@
     "address": "0xD0015150ef225D6762E8adBD682B4D7e941846D6",
     "decimals": 18,
     "chainId": 66665,
-    "logoURI":"https://i.ibb.co/rGJ8WyX/eth-logo.png"
+    "logoURI":"https://i.ibb.co/vQTj584/dai.jpg"
   },
   {
     "name": "BTC",
@@ -53,6 +61,6 @@
     "address": "0x33950C41c72D1a8c559aE312a81F9DA3e42D09D4",
     "decimals": 8,
     "chainId": 66665,
-    "logoURI":"https://i.ibb.co/rGJ8WyX/eth-logo.png"
+    "logoURI":"https://i.ibb.co/CP9393X/BTC.png"
   }   
 ]

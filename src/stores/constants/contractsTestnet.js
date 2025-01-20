@@ -16,16 +16,16 @@ export const VE_TOKEN_LOGO = 'https://dystopia-swap-seven.vercel.app/logo.svg'
 export const VE_TOKEN_ABI = abis.veTokenABI
 
 export const WFTM_ADDRESS = '0x46961dBC53AF28CE82479f6e1eA10F6477CfEca3'
-export const WFTM_NAME = 'CETH'
-export const WFTM_SYMBOL = 'CETH'
+export const WFTM_NAME = 'ETH'
+export const WFTM_SYMBOL = 'ETH'
 export const WFTM_DECIMALS = 18
 export const WFTM_LOGO = 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0/logo.png'
 export const WFTM_ABI = abis.wftmABI
 
 // changed
-export const FTM_ADDRESS = 'CETH'
-export const FTM_NAME = 'CETH'
-export const FTM_SYMBOL = 'CETH'
+export const FTM_ADDRESS = 'ETH'
+export const FTM_NAME = 'ETH'
+export const FTM_SYMBOL = 'ETH'
 export const FTM_DECIMALS = 18
 export const FTM_LOGO = 'https://i.ibb.co/rGJ8WyX/eth-logo.png'
 
