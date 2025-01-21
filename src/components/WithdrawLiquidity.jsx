@@ -43,7 +43,7 @@ const WithdrawLiquidity = () => {
           setPair(currentPair);
           
           // Update balances
-          setPooledBalance(currentPair.balance || "0.00");
+          setPooledBalance(parseFloat(currentPair.balance).toFixed(2) || "0.00");
           setStakedBalance(currentPair.gauge?.balance || "0.00");
           
           // Update prices if available
@@ -136,7 +136,7 @@ const WithdrawLiquidity = () => {
       }
     } catch (error) {
       console.error('Transaction failed:', error);
-      toast.error('Transaction failed. Please try again.');
+      // toast.error('Transaction failed. Please try again.');
       setDepositLoading(false);
     }
   };
@@ -218,9 +218,9 @@ const WithdrawLiquidity = () => {
           {getButtonText()}
         </button>
 
-        {errorMessage && (
+        {/* {errorMessage && (
           <p className="text-red-500 mt-2">{errorMessage}</p>
-        )}
+        )} */}
       </div>
     </div>
   );

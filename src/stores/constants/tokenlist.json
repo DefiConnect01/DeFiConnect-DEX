@@ -8,6 +8,14 @@
         "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
     },
     {
+        "name": "Gojo",
+        "symbol": "GJO",
+        "address": "0xfbc422CDa9Cd1765974c9389974e4B3ad00C772C",
+        "decimals": 18,
+        "chainId": 66665,
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
+    },
+    {
         "name": "Veritasium",
         "symbol": "VTS",
         "address": "0x205D6afE82EC32e271162f0C80dADd37ED94Ee35",
@@ -17,8 +25,8 @@
     },
     {
         "name": "Ether",
-        "symbol": "CETH",
-        "address": "CETH",
+        "symbol": "ETH",
+        "address": "ETH",
         "decimals": 18,
         "chainId": 66665,
         "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"

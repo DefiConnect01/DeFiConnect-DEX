@@ -57,7 +57,6 @@ const TransactionInterface = () => {
   const multiSwapStore = stores.multiSwapStore;
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
-  const [priceImpact, setPriceImpact] = useState(null);
   const [slippage, setSlippage] = useState(0.5);
 
   const [quoteLoading, setQuoteLoading] = useState(false);
@@ -68,11 +67,8 @@ const TransactionInterface = () => {
 
   const [fromAmountValue, setFromAmountValue] = useState("");
   const [fromAmountError, setFromAmountError] = useState(false);
-  const [fromAssetValue, setFromAssetValue] = useState(null);
 
   const [toAmountValue, setToAmountValue] = useState("");
-  const [toAmountError, setToAmountError] = useState(false);
-  const [toAssetValue, setToAssetValue] = useState(null);
 
   const [quoteError, setQuoteError] = useState(null);
   const [quote, setQuote] = useState(null);
@@ -87,7 +83,6 @@ const TransactionInterface = () => {
   const [needsApproval, setNeedsApproval] = useState(true);
   const [errorMessage, setErrorMessage] = useState("Error - Try Again");
   const [amount, setAmount] = useState("");
-  const [cybaPrice, setCybaPrice] = useState();
   const [fee, setFee] = useState(null);
   const [isFetchingFee, setIsFetchingFee] = useState(false);
   const [formattedFromBalance, setFormattedFromBalance] = useState("0")
@@ -96,7 +91,7 @@ const TransactionInterface = () => {
   const { address, isConnected } = useAppKitAccount()
   const { writeContractAsync } = useWriteContract();
 
-  const isETH = swapList[0]?.symbol === "CETH";
+  const isETH = swapList[0]?.symbol === "ETH";
 
 
   const handleSwitch = () => {
@@ -175,6 +170,7 @@ const TransactionInterface = () => {
     function () {
       const errorReturned = () => {
         setQuoteLoading(false);
+        toast.error("Error swapping tokens")
       };
 
       const quoteReturned = (val) => {
@@ -186,7 +182,9 @@ const TransactionInterface = () => {
           setQuoteError(
             "Insufficient liquidity or no route available to complete swap"
           );
+          toast.info("Insufficient liquidity or no route available to complete swap")
         }
+
         if (
           val &&
           val.inputs &&
@@ -199,9 +197,11 @@ const TransactionInterface = () => {
             setQuoteError(
               "Insufficient liquidity or no route available to complete swap"
             );
+            toast.info("Insufficient liquidity or no route available to complete swap")
             return;
           }
 
+          toast.success("Quote fetched successfully")
           setToAmountValue(BigNumber(val.output.finalValue).toFixed(8));
           // console.log('setquote')
           setQuote(val);
@@ -224,13 +224,13 @@ const TransactionInterface = () => {
       };
 
       const swapReturned = (event) => {
+        toast.success('🎉 Transaction successfull!');
         setLoading(false);
         setFromAmountValue("");
         setToAmountValue("");
         sethidequote(false);
         // basically calculates nothing (because when swap returns we want the from amount to be 0)
         calculateReceiveAmount(0, swapList[0], swapList[1]);
-       
         setQuote(null);
         setQuoteLoading(false);
       };
@@ -297,21 +297,6 @@ const TransactionInterface = () => {
       }
     }
   };
-
-  // Add detailed debug logging
-  // useEffect(() => {
-  //   console.log('Button State Debug:', {
-  //     transactionState,
-  //     approvalState,
-  //     amount,
-  //     fromChain,
-  //     selectedToken,
-  //     fee,
-  //     isFetchingFee,
-  //     needsApproval,
-  //     isTransactionCompleted,
-  //   });
-  // }, [transactionState, approvalState, amount, fromChain, selectedToken, fee, isFetchingFee, needsApproval, isTransactionCompleted]);
 
   useEffect(() => {
     const updateBalance = () => {
@@ -552,7 +537,6 @@ const TransactionInterface = () => {
       console.log('error swapping', e)
     } finally {
       setLoading(false)
-      toast.success("Done swapping")
       console.log("Done swapping")
     }
   }
@@ -625,7 +609,7 @@ const TransactionInterface = () => {
 
     const { data: toBalanceData } = useBalance({
         address,
-        token: selectedToToken.address === "CETH" ? null : selectedToToken.address
+        token: selectedToToken.address === "ETH" ? null : selectedToToken.address
       });
 
     const formattedToBalance = toBalanceData
