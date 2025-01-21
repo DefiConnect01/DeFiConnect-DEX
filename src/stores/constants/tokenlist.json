@@ -8,6 +8,30 @@
       "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
     },
     {
+        "name": "Gojo",
+        "symbol": "GJO",
+        "address": "0xfbc422CDa9Cd1765974c9389974e4B3ad00C772C",
+        "decimals": 18,
+        "chainId": 66665,
+        "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
+    },
+    {
+        "name": "Veritasium",
+        "symbol": "VTS",
+        "address": "0x205D6afE82EC32e271162f0C80dADd37ED94Ee35",
+        "decimals": 18,
+        "chainId": 66665,
+        "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
+    },
+    {
+        "name": "Ether",
+        "symbol": "ETH",
+        "address": "ETH",
+        "decimals": 18,
+        "chainId": 66665,
+        "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
+    },
+    {
       "name": "Defi Connect Token",
       "symbol": "DCC",
       "address": "0xf53EcB45A7D0048fb73Be03ab1776eb00f953D41",

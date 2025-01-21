@@ -8,6 +8,14 @@
     "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
   },
   {
+    "name": "Gojo",
+    "symbol": "GJO",
+    "address": "0xfbc422CDa9Cd1765974c9389974e4B3ad00C772C",
+    "decimals": 18,
+    "chainId": 66665,
+    "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
+  },
+  {
     "name": "Defi Connect Token",
     "symbol": "DCC",
     "address": "0xf53EcB45A7D0048fb73Be03ab1776eb00f953D41",
@@ -20,16 +28,16 @@
     "symbol": "VTS",
     "address": "0x205D6afE82EC32e271162f0C80dADd37ED94Ee35",
     "decimals": 18,
-    "chainId": 66665, 
+    "chainId": 66665,
     "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
   },
   {
     "name": "Ether",
     "symbol": "ETH",
-    "address": "0x46961dBC53AF28CE82479f6e1eA10F6477CfEca3", 
+    "address": "ETH",
     "decimals": 18,
     "chainId": 66665,
-    "logoURI":"https://i.ibb.co/rGJ8WyX/eth-logo.png"
+    "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
   },
   {
     "name": "USDT",
@@ -37,7 +45,7 @@
     "address": "0xB0517790d29753429D63eFe95be5879EDc8c3311",
     "decimals": 6,
     "chainId": 66665,
-    "logoURI":"https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
+    "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
   },
   {
     "name": "Bridged USDC",
@@ -45,7 +53,7 @@
     "address": "0xE0870ba18492E46a8137daE711d583aae26E7337",
     "decimals": 6,
     "chainId": 66665,
-    "logoURI":"https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694"
+    "logoURI": "https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694"
   },
   {
     "name": "DAI",

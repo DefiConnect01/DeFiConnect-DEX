@@ -57,7 +57,6 @@ const TransactionInterface = () => {
   const multiSwapStore = stores.multiSwapStore;
   const [fromAmount, setFromAmount] = useState("");
   const [toAmount, setToAmount] = useState("");
-  const [priceImpact, setPriceImpact] = useState(null);
   const [slippage, setSlippage] = useState(0.5);
 
   const [quoteLoading, setQuoteLoading] = useState(false);
@@ -68,11 +67,8 @@ const TransactionInterface = () => {
 
   const [fromAmountValue, setFromAmountValue] = useState("");
   const [fromAmountError, setFromAmountError] = useState(false);
-  const [fromAssetValue, setFromAssetValue] = useState(null);
 
   const [toAmountValue, setToAmountValue] = useState("");
-  const [toAmountError, setToAmountError] = useState(false);
-  const [toAssetValue, setToAssetValue] = useState(null);
 
   const [quoteError, setQuoteError] = useState(null);
   const [quote, setQuote] = useState(null);
@@ -87,7 +83,6 @@ const TransactionInterface = () => {
   const [needsApproval, setNeedsApproval] = useState(true);
   const [errorMessage, setErrorMessage] = useState("Error - Try Again");
   const [amount, setAmount] = useState("");
-  const [cybaPrice, setCybaPrice] = useState();
   const [fee, setFee] = useState(null);
   const [isFetchingFee, setIsFetchingFee] = useState(false);
   const [formattedFromBalance, setFormattedFromBalance] = useState("0")
@@ -166,10 +161,16 @@ const TransactionInterface = () => {
     ],
   });
 
+  useEffect(() => {
+    setSwapList([selectedFromToken, selectedToToken])
+    console.log(swapList)
+  }, [selectedFromToken, selectedToToken])
+
   useEffect(
     function () {
       const errorReturned = () => {
         setQuoteLoading(false);
+        toast.error("Error swapping tokens")
       };
 
       const quoteReturned = (val) => {
@@ -181,7 +182,9 @@ const TransactionInterface = () => {
           setQuoteError(
             "Insufficient liquidity or no route available to complete swap"
           );
+          toast.info("Insufficient liquidity or no route available to complete swap")
         }
+
         if (
           val &&
           val.inputs &&
@@ -194,9 +197,11 @@ const TransactionInterface = () => {
             setQuoteError(
               "Insufficient liquidity or no route available to complete swap"
             );
+            toast.info("Insufficient liquidity or no route available to complete swap")
             return;
           }
 
+          toast.success("Quote fetched successfully")
           setToAmountValue(BigNumber(val.output.finalValue).toFixed(8));
           // console.log('setquote')
           setQuote(val);
@@ -219,13 +224,13 @@ const TransactionInterface = () => {
       };
 
       const swapReturned = (event) => {
+        toast.success('🎉 Transaction successfull!');
         setLoading(false);
         setFromAmountValue("");
         setToAmountValue("");
         sethidequote(false);
         // basically calculates nothing (because when swap returns we want the from amount to be 0)
         calculateReceiveAmount(0, swapList[0], swapList[1]);
-       
         setQuote(null);
         setQuoteLoading(false);
       };
@@ -258,6 +263,7 @@ const TransactionInterface = () => {
   );
 
   const fromAmountChanged = (value) => {
+    console.log({swapList})
     setFromAmountError(false);
     setFromAmountValue(value);
     setQuote(null);
@@ -291,21 +297,6 @@ const TransactionInterface = () => {
       }
     }
   };
-
-  // Add detailed debug logging
-  // useEffect(() => {
-  //   console.log('Button State Debug:', {
-  //     transactionState,
-  //     approvalState,
-  //     amount,
-  //     fromChain,
-  //     selectedToken,
-  //     fee,
-  //     isFetchingFee,
-  //     needsApproval,
-  //     isTransactionCompleted,
-  //   });
-  // }, [transactionState, approvalState, amount, fromChain, selectedToken, fee, isFetchingFee, needsApproval, isTransactionCompleted]);
 
   useEffect(() => {
     const updateBalance = () => {
@@ -370,48 +361,6 @@ const TransactionInterface = () => {
     fromAmountChanged(fromAmountValue);
   }, [swapList])
 
-  const handleSwitchChains = () => {
-    const nextChainId = CHAIN_IDS[fromChain];
-    switchChain({ chainId: nextChainId });
-  };
-
-  const handleApprove = useCallback(async () => {
-    if (!writeContractAsync || !amount) return;
-
-    try {
-      setApprovalState("approving");
-
-      const tokenAddress = TOKENS[fromChain][selectedToken];
-      const spenderAddress = fromChain === "CYBRIA" ? cybriaAddress : ethereumAddress;
-      const parsedAmount = parseEther(amount.toString());
-
-      const hash = await writeContractAsync({
-        address: tokenAddress,
-        abi: [
-          {
-            constant: false,
-            inputs: [
-              { name: "_spender", type: "address" },
-              { name: "_value", type: "uint256" },
-            ],
-            name: "approve",
-            outputs: [{ name: "", type: "bool" }],
-            type: "function",
-          },
-        ],
-        functionName: "approve",
-        args: [spenderAddress, parsedAmount],
-      });
-
-      setApprovalTxHash(hash);
-      setApprovalState("approved");
-    } catch (err) {
-      // console.error("Failed to approve:", err);
-      setApprovalState("error");
-    }
-  }, [writeContractAsync, fromChain, selectedToken, amount]);
-
-  
 
   // Helper function to parse amount based on token and chain
   const parseAmount = (amount, chain, token) => {
@@ -506,6 +455,7 @@ const TransactionInterface = () => {
     }
 
     if (quoteLoading){
+      // toast.info('Quote loading...');
       return "Quote loading..."
     }
 
@@ -513,6 +463,10 @@ const TransactionInterface = () => {
       toast.info('Insufficient balance');
       return "Insufficient Balance";
     }
+    // if (loading) {
+    //   // toast.info('Swapping...');
+    //   return "swapping..."
+    // }
 
     if (isTransactionCompleted) {
       return "Start New Transaction";
@@ -556,6 +510,7 @@ const TransactionInterface = () => {
     if (isTransactionCompleted) return false;
     if (!fromAmountValue || fromAmountValue == 0) return true;
     if (quoteLoading) return true;
+    if (loading) return true
 
     if (["sending", "confirming"].includes(transactionState)) return true;
     if (["approving", "confirming"].includes(approvalState)) return true;
@@ -565,6 +520,7 @@ const TransactionInterface = () => {
 
   const makeSwap = async() => {
     try {
+      setLoading(true)
       await stores.stableSwapStore.swap({
         content: {
           fromAsset: swapList[0],
@@ -577,8 +533,10 @@ const TransactionInterface = () => {
       })
       await stores.stableSwapStore.loadBaseAssets()
     } catch (e) {
+      // toast.error("Error occurred")
       console.log('error swapping', e)
     } finally {
+      setLoading(false)
       console.log("Done swapping")
     }
   }
@@ -700,18 +658,19 @@ const TransactionInterface = () => {
 
         <TokenInput
           label="From"
-          amount={amount}
-          setAmount={setAmount}
+          amount={fromAmountValue}
+          setAmount={setFromAmountValue}
           selectedToken={selectedFromToken}
           onTokenSelect={setSelectedFromToken}
           disabled={transactionState !== "idle"}
           formattedBalance={formattedFromBalance}
           fee={fee}
           setSlippage={setSlippage}
+            fromAmountChanged={fromAmountChanged}
         />
         <SwitchDirection
           disabled={transactionState !== "idle"}
-          fromAmountChanged={handleAmountChange}
+            fromAmountChanged={fromAmountChanged}
           fromAmountValue={amount}
         />
         <TokenInput
@@ -720,7 +679,7 @@ const TransactionInterface = () => {
          onTokenSelect={setSelectedToToken}
          isReadOnly={true}
          formattedBalance={formattedToBalance}
-         toAmountValue={amount}
+         toAmountValue={toAmountValue}
         />
 
         <button

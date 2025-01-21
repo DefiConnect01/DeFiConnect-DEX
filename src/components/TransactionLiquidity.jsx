@@ -15,41 +15,40 @@ import SwitchDirection from "./LiquiditySwitchDirection";
 
 import stores from '../stores';
 import { ACTIONS } from '../stores/constants/constants';
-
-const priceUpdateLink = import.meta.env.VITE_PRICE_UPDATE_LINK
-const cyberApiKey = import.meta.env.VITE_CYBER_API_KEY
+import { useAppKitAccount } from "@reown/appkit/react";
 
 
 const TransactionLiquidity = () => {
-  const { 
-    selectedFromToken, 
+  const {
+    selectedFromToken,
     selectedToToken,
     setSelectedFromToken,
-    setSelectedToToken 
+    setSelectedToToken
   } = useContext(AppDataContext);
-  
+
   const [amount, setAmount] = useState("");
   const [slippage, setSlippage] = useState(1);
   const [fee, setFee] = useState(null);
   const [isStable, setIsStable] = useState(true);
-  const [txHash, setTxHash] = useState(null);
   const [transactionState, setTransactionState] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [depositLoading, setDepositLoading] = useState(false);
+  const [tokenOneAmount, setTokenOneAmount] = useState("")
+  const [tokenTwoAmount, setTokenTwoAmount] = useState("")
 
-  const { address } = useAccount();
-  const { writeContractAsync } = useWriteContract();
+  const { address } = useAppKitAccount()
 
-  // Balance queries using token addresses from context
   const { data: fromBalanceData } = useBalance({
-    address,
-    token: selectedFromToken.address === "ETH" ? null : selectedFromToken.address
-  });
+      address,
+      chainId: selectedFromToken?.chainId,
+      token: selectedFromToken.address === "ETH" ? undefined : selectedFromToken?.address, // Token is undefined for ETH
+    });
 
   const { data: toBalanceData } = useBalance({
-    address,
-    token: selectedToToken.address === "ETH" ? null : selectedToToken.address
-  });
+      address,
+      chainId: selectedToToken?.chainId,
+      token: selectedToToken.address === "ETH" ? undefined : selectedToToken?.address, // Token is undefined for ETH
+    });
 
   const formattedFromBalance = fromBalanceData
     ? Number(formatUnits(fromBalanceData.value, selectedFromToken.decimals)).toFixed(2)
@@ -99,30 +98,7 @@ const TransactionLiquidity = () => {
     }
   }, [selectedFromToken, selectedToToken, amount, handleAmountChange]);
 
-  const handleSend = async () => {
-    if (!writeContractAsync || !amount) return;
-    
-    try {
-      setTransactionState("sending");
-      
-      const parsedAmount = parseUnits(amount, selectedFromToken.decimals);
-      
-      // Handle transaction logic here based on selected tokens
-      const txConfig = {
-        address: selectedFromToken.address,
-        abi: [], // Add appropriate ABI
-        functionName: "transfer",
-        args: [address, parsedAmount]
-      };
 
-      const hash = await writeContractAsync(txConfig);
-      setTxHash(hash);
-      setTransactionState("confirming");
-    } catch (err) {
-      setErrorMessage(err.message);
-      setTransactionState("error");
-    }
-  };
 
   const [isTransactionCompleted, setIsTransactionCompleted] = useState(false);
   const [approvalState, setApprovalState] = useState("idle");
@@ -152,7 +128,7 @@ const TransactionLiquidity = () => {
       return "Start New Transaction";
     }
 
-    if (!amount) {
+    if (!tokenOneAmount || !tokenTwoAmount) {
       return "Enter Amount";
     }
 
@@ -164,155 +140,155 @@ const TransactionLiquidity = () => {
       case "error": return "Try Again";
       default: return "Add Liquidity";
     }
-  }, [amount, isTransactionCompleted, transactionState, isInsufficientBalance]);
+  }, [tokenOneAmount, tokenTwoAmount, isTransactionCompleted, transactionState, isInsufficientBalance]);
 
   // Check if button should be disabled
   const isButtonDisabled = useCallback(() => {
+    if (!tokenOneAmount || !tokenTwoAmount) return true;
     if (isInsufficientBalance()) return true;
     if (isTransactionCompleted) return false;
-    if (!amount) return true;
 
     return ["sending", "confirming"].includes(transactionState) ||
-           ["approving", "confirming"].includes(approvalState);
-  }, [amount, isTransactionCompleted, transactionState, approvalState, isInsufficientBalance]);
+      ["approving", "confirming"].includes(approvalState);
+  }, [tokenOneAmount, tokenTwoAmount, isTransactionCompleted, transactionState, approvalState, isInsufficientBalance]);
 
   // Handle button click
   const handleButtonClick = useCallback(async () => {
 
     // if (isButtonDisabled()) return;
-     setDepositLoading(true)
-            
+    setDepositLoading(true)
+
     try {
-      toast.promise(
         stores.dispatcher.dispatch({
           type: ACTIONS.CREATE_PAIR_AND_DEPOSIT,
           content: {
             token0: selectedFromToken,
             token1: selectedToToken,
-            amount0: amount,
-            amount1: amount,
+            amount0: tokenOneAmount,
+            amount1: tokenTwoAmount,
             isStable: isStable,
-            slippage: slippage
+            slippage: 10 // TODO: create a UI for setting slippage
           }
-        }),
-        {
-          pending: 'Creating pair and depositing...',
-          success: 'Pair created and deposit successful! 🎉',
-          error: 'Failed to create pair or deposit. Please try again.'
-        }
-      );
+        });
     } catch (err) {
       toast.error('Transaction failed. Please try again.');
       setTransactionState("error");
+    } finally {
+      toast.success("Transaction completed")
+      setTokenTwoAmount("")
+      setTokenOneAmount("")
+      console.log("done")
     }
-  }, [isTransactionCompleted, isButtonDisabled, handleSend]);
+  }, [isTransactionCompleted, isButtonDisabled]);
 
   return (
     <>
-    {console.log(slippage)}
-    <div className="ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
-      <div className="p-2">
-        <TokenInput
-          label="From"
-          amount={amount}
-          setAmount={setAmount}
-          selectedToken={selectedFromToken}
-          onTokenSelect={setSelectedFromToken}
-          disabled={transactionState !== "idle"}
-          formattedBalance={formattedFromBalance}
-          fee={fee}
-          setSlippage={setSlippage}
-        />
-        <SwitchDirection
-          disabled={transactionState !== "idle"}
-          fromAmountChanged={handleAmountChange}
-          fromAmountValue={amount}
-          onSwitch={handleSwap}
-        />
-        <TokenInput
-         label="To"
-         selectedToken={selectedToToken}
-         onTokenSelect={setSelectedToToken}
-         isReadOnly={true}
-         formattedBalance={formattedToBalance}
-         toAmountValue={amount}
-        />
-        <div className="flex justify-center items-center my-4 mt-6">
-          <button
-            className={`px-4 py-2 border rounded-l ${
-              isStable ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
-            }`}
-            onClick={() => setIsStable(true)}
-          >
-            Stable
-          </button>
-          <button
-            className={`px-4 py-2 border rounded-r ${
-              !isStable ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
-            }`}
-            onClick={() => setIsStable(false)}
-          >
-            Volatile
-          </button>
-        </div>
+      <div className="ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
+        <div className="p-2">
+          <TokenInput
+            label=""
+            amount={tokenOneAmount}
+            setAmount={setTokenOneAmount}
+            fromAmountChanged={setTokenOneAmount}
+            selectedToken={selectedFromToken}
+            onTokenSelect={setSelectedFromToken}
+            disabled={transactionState !== "idle"}
+            formattedBalance={formattedFromBalance}
+            fee={fee}
+            setSlippage={setSlippage}
+          />
+          <SwitchDirection
+            disabled={transactionState !== "idle"}
+            fromAmountValue={amount}
+            onSwitch={handleSwap}
+            className="mb-4"
+          />
+          <TokenInput
+            label=""
+            amount={tokenTwoAmount}
+            setAmount={setTokenTwoAmount}
+            fromAmountChanged={setTokenTwoAmount}
+            selectedToken={selectedToToken}
+            onTokenSelect={setSelectedToToken}
+            disabled={transactionState !== "idle"}
+            formattedBalance={formattedToBalance}
+            fee={fee}
+            setSlippage={setSlippage}
+          />
+          <div className="flex justify-center items-center my-4 mt-6">
+            <button
+              className={`px-4 py-2 border rounded-l ${isStable ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
+                }`}
+              onClick={() => setIsStable(true)}
+            >
+              Stable
+            </button>
+            <button
+              className={`px-4 py-2 border rounded-r ${!isStable ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
+                }`}
+              onClick={() => setIsStable(false)}
+            >
+              Volatile
+            </button>
+          </div>
 
-        <div>
-          <p className="font-medium text-left mb-2 text-[hsl(220,8%,35%)]">Reserve Info</p>
-          <div className="grid md:grid-cols-2" >
-            <div className="border border-secondary border-b-transparent md:border-b-secondary md:border-r-transparent flex flex-col items-start px-3 py-2" >
-              <p className="text-light">WMATIC</p>
-              <p className="text-lg font-bold">1,194.15</p>
-            </div>
+          <div>
+            <p className="font-medium text-left mb-2 text-[hsl(220,8%,35%)]">Reserve Info</p>
+            <div className="grid md:grid-cols-2" >
+              <div className="border border-secondary border-b-transparent md:border-b-secondary md:border-r-transparent flex flex-col items-start px-3 py-2" >
+                <p className="text-light">WETH</p>
+                <p className="text-lg font-bold">1,194.15</p>
+              </div>
 
-            <div className="border border-secondary flex flex-col items-start px-3 py-2" >
-              <p className="text-light">DYST</p>
-              <p className="text-lg font-bold">19,262,538.96</p>
+              <div className="border border-secondary flex flex-col items-start px-3 py-2" >
+                <p className="text-light">DCC</p>
+                <p className="text-lg font-bold">19,262,538.96</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="my-4">
-          <p className="font-medium text-left mb-2 text-[hsl(220,8%,35%)]">Your Balances - WMATIC/DYST</p>
-          <div className="grid md:grid-cols-2" >
-            <div className="border border-secondary border-b-transparent md:border-b-secondary md:border-r-transparent flex flex-col items-start px-3 py-2" >
-              <p className="text-light">Pooled</p>
-              <p className="text-lg font-bold">0.00</p>
-            </div>
+          <div className="my-4">
+            <p className="font-medium text-left mb-2 text-[hsl(220,8%,35%)]">Your Balances - WETH/DCC</p>
+            <div className="grid md:grid-cols-2" >
+              <div className="border border-secondary border-b-transparent md:border-b-secondary md:border-r-transparent flex flex-col items-start px-3 py-2" >
+                <p className="text-light">Pooled</p>
+                <p className="text-lg font-bold">0.00</p>
+              </div>
 
-            <div className="border border-secondary flex flex-col items-start px-3 py-2" >
-              <p className="text-light">Staked</p>
-              <p className="text-lg font-bold">0.00</p>
+              <div className="border border-secondary flex flex-col items-start px-3 py-2" >
+                <p className="text-light">Staked</p>
+                <p className="text-lg font-bold">0.00</p>
+              </div>
             </div>
           </div>
-        </div>
 
-        <button
-          onClick={handleButtonClick}
-          // disabled={isButtonDisabled()}
-          className={`py-2 rounded-full mt-4 w-full 
+          <button
+            onClick={handleButtonClick}
+            disabled={isButtonDisabled()}
+            className={`py-2 rounded-full mt-4 w-full 
           ${isInsufficientBalance()
-              ? "bg-red-500 hover:bg-red-600"
-              : isTransactionCompleted
-                ? "bg-green-500 hover:bg-green-600"
-                : transactionState === "error" || approvalState === "error"
-                  ? "bg-red-500 hover:bg-red-600"
-                  : "button_bg"
-            } 
+                ? "bg-red-500 hover:bg-red-600"
+                : isTransactionCompleted
+                  ? "bg-green-500 hover:bg-green-600"
+                  : transactionState === "error" || approvalState === "error"
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "button_bg"
+              } 
           text-white 
           transition-all duration-200
           
           hover:shadow-lg
+          ${isButtonDisabled() ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"} 
         `}
-        // ${isButtonDisabled() ? "opacity-50000 cursor-not-alloweddd" : "hover:shadow-lg"} 
-        >
-          {getButtonText()}
-        </button>
+          >
+            {getButtonText()}
+          </button>
 
-        {(transactionState === "error" || approvalState === "error") && (
-          <p className="text-red-500 mt-2">{errorMessage}</p>
-        )}
+          {(transactionState === "error" || approvalState === "error") && (
+            <p className="text-red-500 mt-2">{errorMessage}</p>
+          )}
+        </div>
       </div>
-    </div>
     </>
   );
 };
