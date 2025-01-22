@@ -27,7 +27,7 @@ export const callContractWait = async (
   console.log({
     account,
     sendValue: sendValue ?? 0,
-    method
+    method,
   })
   await contract.methods[method](...params)
     .estimateGas({from: account, value: sendValue ?? '0'})

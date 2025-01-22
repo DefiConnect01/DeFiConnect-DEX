@@ -1,5 +1,6 @@
 // GENERAL
 export const ERROR = "ERROR";
+export const ADD_LIQUIDITY_CALLBACK = "ADD_LIQUIDITY_CALLBACK";
 export const STORE_UPDATED = "STORE_UPDATED";
 export const TX_PENDING = "TX_PENDING";
 export const TX_SUBMITTED = "TX_SUBMITTED";

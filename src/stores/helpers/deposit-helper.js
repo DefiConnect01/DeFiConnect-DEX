@@ -47,6 +47,7 @@ export const createPairDeposit = async (
         emitter.emit(ACTIONS.ERROR, "Pair already exists")
         await callback();
         console.log("Pair already exists")
+        emitter.emit(ACTIONS.ADD_LIQUIDITY_CALLBACK, { token0, token1, amount0, amount1, isStable, slippage })
         return null;
       }
     }
@@ -307,6 +308,8 @@ export const createPairDeposit = async (
       account,
       deadline,
     ];
+    console.log("hreeeeeeeeeeeeeeeeeeeee")
+    console.log(params)
     let sendValue = null;
 
     if (token0.address === CONTRACTS.FTM_SYMBOL) {
@@ -340,7 +343,6 @@ export const createPairDeposit = async (
       CONTRACTS.ROUTER_ADDRESS
     );
 
-    console.log(params)
     callContractWait(
       web3,
       routerContract,
