@@ -5,12 +5,15 @@ export default {
   theme: {
     extend: {
       colors: {
+        primary:"#140084",
+        primaryBackground: "#2B1990",
         lightBackground: "#ffffff",
         purple:"#854CFF",
         darkBackground: "#060A1A",
         headerBg: "#0A0D26",
         mainBg: "#060A1A",
         secondary:"#652400",
+        secondaryBg:"#140084",
         lightText: "#1b1b23",
         darkText: "#ffffff",
         accent: "#8f60ff",

@@ -153,12 +153,12 @@ const WithdrawLiquidity = () => {
         <div>
           <p className="font-medium text-left mb-2 text-[hsl(220,8%,35%)]">Your Balances - {selectedFromToken?.symbol}/{selectedToToken?.symbol}</p>
           <div className="grid md:grid-cols-2">
-            <div className="border border-secondary border-b-transparent md:border-b-secondary md:border-r-transparent flex flex-col items-start px-3 py-2">
+            <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2">
               <p className="text-light">Pooled</p>
               <p className="text-lg font-bold">{pooledBalance}</p>
             </div>
 
-            <div className="border border-secondary flex flex-col items-start px-3 py-2">
+            <div className="border border-secondaryBg flex flex-col items-start px-3 py-2">
               <p className="text-light">Staked</p>
               <p className="text-lg font-bold">{stakedBalance}</p>
             </div>
@@ -188,12 +188,12 @@ const WithdrawLiquidity = () => {
         <div className="my-4">
           <p className="font-medium text-left mb-2 text-[hsl(220,8%,35%)]">Price Info</p>
           <div className="grid md:grid-cols-2">
-            <div className="border border-secondary border-b-transparent md:border-b-secondary md:border-r-transparent flex flex-col items-start px-3 py-2">
+            <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2">
               <p className="text-light">{selectedFromToken?.symbol}</p>
               <p className="text-lg font-bold">{token0Price}</p>
             </div>
 
-            <div className="border border-secondary flex flex-col items-start px-3 py-2">
+            <div className="border border-secondaryBg flex flex-col items-start px-3 py-2">
               <p className="text-light">{selectedToToken?.symbol}</p>
               <p className="text-lg font-bold">{token1Price}</p>
             </div>

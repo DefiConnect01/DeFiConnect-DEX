@@ -50,9 +50,13 @@ export  const TransactionsButton =({closeSidebar})=>{
     navigate('/transactions');
     closeSidebar();
   };
-  return <ButtonList onClick={handleTransactionsClick} border>
-        Transactions
-  </ButtonList>
+  return <button onClick={handleTransactionsClick} 
+  className="button_border text-white rounded-full py-2 px-6 sm:px-8 bg-primaryBackground">
+    Transactions
+  </button>
+  // return <ButtonList onClick={handleTransactionsClick} border>
+  //       Transactions
+  // </ButtonList>
 }
 const Sidebar = ({ closeSidebar, toggleDarkMode, isConnected }) => (
   <div className="relative w-[100%] left-0 z-30 gap-3 mt-12 flex px-6 items-start flex-col h-[100%] md:hidden">
@@ -90,61 +94,12 @@ const Footer = ({ isDarkMode }) => (
       <p className={` ${isDarkMode ? "text-white" : "text-black"} text-sm`}>DefiConnect</p>
     </div>
     <div className="flex gap-6 text-[#fffff]">
-      {
-        isDarkMode && ( 
-          <>
-            <FaTelegramPlane className="w-6 h-6 hover:cursor-pointer" />
-            <FaXTwitter className="w-6 h-6 hover:cursor-pointer" />
-            <FaGithub className="w-6 h-6 hover:cursor-pointer" /> 
-          </>)
-      }
-      {
-        !isDarkMode && (
-          <> 
-            <svg
-              className="h-8 w-8"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-            >
-              <defs>
-                <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#140084" />
-                  <stop offset="100%" stopColor="#652400" />
-                </linearGradient>
-              </defs>
-              <FaTelegramPlane style={{ fill: "url(#gradient)" }} className="w-6 h-6 hover:cursor-pointer" />
-            </svg>
-
-            <svg
-              className="h-8 w-8"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-            >
-              <defs>
-                <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#140084" />
-                  <stop offset="100%" stopColor="#652400" />
-                </linearGradient>
-              </defs>
-              <FaXTwitter style={{ fill: "url(#gradient)" }} className="w-6 h-6 hover:cursor-pointer" />
-            </svg>
-
-            <svg
-              className="h-8 w-8"
-              xmlns="http://www.w3.org/2000/svg"
-              viewBox="0 0 24 24"
-            >
-              <defs>
-                <linearGradient id="gradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#140084" />
-                  <stop offset="100%" stopColor="#652400" />
-                </linearGradient>
-              </defs>
-              <FaGithub  style={{ fill: "url(#gradient)" }} className="w-6 h-6 hover:cursor-pointer" />
-            </svg>
-          </>
-        )
-      }
+      <>
+        <FaTelegramPlane className="w-6 h-6 text-primary dark:text-white hover:cursor-pointer" />
+        <FaXTwitter className="w-6 h-6 text-primary dark:text-white hover:cursor-pointer" />
+        <FaGithub className="w-6 h-6 text-primary dark:text-white hover:cursor-pointer" /> 
+      </>
+      
     </div>
   </div>
 );

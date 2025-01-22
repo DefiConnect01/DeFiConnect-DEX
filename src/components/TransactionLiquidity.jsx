@@ -273,12 +273,12 @@ const TransactionLiquidity = () => {
           <div>
             <p className="font-medium text-left mb-2 text-[hsl(220,8%,35%)]">Reserve Info</p>
             <div className="grid md:grid-cols-2" >
-              <div className="border border-secondary border-b-transparent md:border-b-secondary md:border-r-transparent flex flex-col items-start px-3 py-2" >
+              <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2" >
                 <p className="text-light">WETH</p>
                 <p className="text-lg font-bold">1,194.15</p>
               </div>
 
-              <div className="border border-secondary flex flex-col items-start px-3 py-2" >
+              <div className="border border-secondaryBg flex flex-col items-start px-3 py-2" >
                 <p className="text-light">DCC</p>
                 <p className="text-lg font-bold">19,262,538.96</p>
               </div>
@@ -288,12 +288,12 @@ const TransactionLiquidity = () => {
           <div className="my-4">
             <p className="font-medium text-left mb-2 text-[hsl(220,8%,35%)]">Your Balances - WETH/DCC</p>
             <div className="grid md:grid-cols-2" >
-              <div className="border border-secondary border-b-transparent md:border-b-secondary md:border-r-transparent flex flex-col items-start px-3 py-2" >
+              <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2" >
                 <p className="text-light">Pooled</p>
                 <p className="text-lg font-bold">0.00</p>
               </div>
 
-              <div className="border border-secondary flex flex-col items-start px-3 py-2" >
+              <div className="border border-secondaryBg flex flex-col items-start px-3 py-2" >
                 <p className="text-light">Staked</p>
                 <p className="text-lg font-bold">0.00</p>
               </div>

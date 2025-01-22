@@ -12,8 +12,8 @@ const PoolTable = () => {
   return (
     <div className="m-5 overflow-x-auto min-h-[400px]">
       <div className="flex justify-start mb-8 mt-2">
-        <Link to="/liquidity" className="flex items-center bg-headerBg border border-secondary pr-2 ">
-          <span className="bg-secondary text-white py-3 px-2 mr-2 text-xl "><FiPlusSquare /></span>
+        <Link to="/liquidity" className="flex items-center bg-headerBg border border-secondaryBg pr-2 ">
+          <span className="bg-secondaryBg text-white py-3 px-2 mr-2 text-xl "><FiPlusSquare /></span>
           <span className={`text-white font-bold py-2 px-3`}>Add Liquidity</span>
         </Link>
       </div>
@@ -28,7 +28,7 @@ const PoolTable = () => {
               {headerGroup.headers.map((column) => (
                 <th
                   {...column.getHeaderProps()}
-                  className="border border-secondary px-4 py-2 whitespace-nowrap text-white"
+                  className="border border-secondaryBg px-4 py-2 whitespace-nowrap text-white"
                 >
                   {column.render("Header")}
                 </th>
@@ -47,7 +47,7 @@ const PoolTable = () => {
                 {row.cells.map((cell) => (
                   <td
                     {...cell.getCellProps()}
-                    className="border border-secondary px-4 py-3 whitespace-nowrap text-white"
+                    className="border border-secondaryBg px-4 py-3 whitespace-nowrap text-white"
                   >
                     {cell.render("Cell")}
                   </td>
