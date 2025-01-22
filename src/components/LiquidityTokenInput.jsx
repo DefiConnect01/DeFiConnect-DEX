@@ -61,7 +61,7 @@ const TokenInput = ({
             <div className="flex justify-between">
               <input
                 type="number"
-                value={amount}
+                value={Math.abs(amount) === 0 ? "" : Math.abs(amount)}
                 onChange={(e) => handleAmountChange(e.target.value)}
                 disabled={disabled}
                 placeholder="0.0"
@@ -87,7 +87,7 @@ const TokenInput = ({
         )}
 
         <em className="mr-auto mt-2 text-sm">
-          ${(Number(getDisplayAmount()) * (price || 0)).toFixed(2)}
+          ${(Math.abs(Number(getDisplayAmount())) * (price || 0)).toFixed(2)}
         </em>
       </div>
 

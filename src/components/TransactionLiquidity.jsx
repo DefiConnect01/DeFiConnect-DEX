@@ -98,7 +98,53 @@ const TransactionLiquidity = () => {
     }
   }, [selectedFromToken, selectedToToken, amount, handleAmountChange]);
 
+  useEffect(() => {
+    const depositReturnedLiquidity = () => {
+      setDepositLoading(false)
+      setTokenTwoAmount("")
+      setTokenOneAmount("");
+      toast.success("Transaction completed")
+    };
 
+    const depositReturnedPair = () => {
+      setDepositLoading(false)
+      setTokenTwoAmount("")
+      setTokenOneAmount("");
+      toast.info("Pair Created")
+    };
+
+    const errorReturned = () => {
+      setDepositLoading(false)
+      // toast.error("Transaction failed")
+    };
+
+    const addLiquidityCallback = (params) => {
+      setDepositLoading(true)
+      stores.dispatcher.dispatch({
+        type: ACTIONS.ADD_LIQUIDITY,
+        content: {
+          ...params,
+          pair: {
+            token0: selectedFromToken,
+            token1: selectedToToken,
+            isStable
+          },
+        }
+      });
+    }
+
+    stores.emitter.on(ACTIONS.LIQUIDITY_ADDED, depositReturnedLiquidity);
+    stores.emitter.on(ACTIONS.PAIR_CREATED, depositReturnedPair);
+    stores.emitter.on(ACTIONS.ADD_LIQUIDITY_CALLBACK, addLiquidityCallback);
+    stores.emitter.on(ACTIONS.ERROR, errorReturned);
+
+    return () => {
+      stores.emitter.removeListener(ACTIONS.LIQUIDITY_ADDED, depositReturnedLiquidity);
+      stores.emitter.removeListener(ACTIONS.PAIR_CREATED, depositReturnedPair);
+      stores.emitter.removeListener(ACTIONS.ADD_LIQUIDITY_CALLBACK, addLiquidityCallback);
+      stores.emitter.removeListener(ACTIONS.ERROR, errorReturned);
+    }
+  }, [])
 
   const [isTransactionCompleted, setIsTransactionCompleted] = useState(false);
   const [approvalState, setApprovalState] = useState("idle");
@@ -144,13 +190,14 @@ const TransactionLiquidity = () => {
 
   // Check if button should be disabled
   const isButtonDisabled = useCallback(() => {
+    if (depositLoading) return true
     if (!tokenOneAmount || !tokenTwoAmount) return true;
     if (isInsufficientBalance()) return true;
     if (isTransactionCompleted) return false;
 
     return ["sending", "confirming"].includes(transactionState) ||
       ["approving", "confirming"].includes(approvalState);
-  }, [tokenOneAmount, tokenTwoAmount, isTransactionCompleted, transactionState, approvalState, isInsufficientBalance]);
+  }, [depositLoading, tokenOneAmount, tokenTwoAmount, isTransactionCompleted, transactionState, approvalState, isInsufficientBalance]);
 
   // Handle button click
   const handleButtonClick = useCallback(async () => {
@@ -158,27 +205,18 @@ const TransactionLiquidity = () => {
     // if (isButtonDisabled()) return;
     setDepositLoading(true)
 
-    try {
-        stores.dispatcher.dispatch({
-          type: ACTIONS.CREATE_PAIR_AND_DEPOSIT,
-          content: {
-            token0: selectedFromToken,
-            token1: selectedToToken,
-            amount0: tokenOneAmount,
-            amount1: tokenTwoAmount,
-            isStable: isStable,
-            slippage: 10 // TODO: create a UI for setting slippage
-          }
-        });
-    } catch (err) {
-      toast.error('Transaction failed. Please try again.');
-      setTransactionState("error");
-    } finally {
-      toast.success("Transaction completed")
-      setTokenTwoAmount("")
-      setTokenOneAmount("")
-      console.log("done")
-    }
+    stores.dispatcher.dispatch({
+      type: ACTIONS.CREATE_PAIR_AND_DEPOSIT,
+      content: {
+        token0: selectedFromToken,
+        token1: selectedToToken,
+        amount0: tokenOneAmount,
+        amount1: tokenTwoAmount,
+        isStable: isStable,
+        slippage: 10 // TODO: create a UI for setting slippage
+      }
+    });
+    
   }, [isTransactionCompleted, isButtonDisabled]);
 
   return (
