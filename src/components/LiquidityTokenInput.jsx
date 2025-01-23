@@ -67,10 +67,10 @@ const TokenInput = ({
                 className="dark:text-white font-normal sm:text-2xl bg-transparent outline-none w-full placeholder:text-black dark:placeholder:text-white"
               />
               <div className="flex gap-1">
-                <PercentageButton setSlippage={setSlippage} percentage={10} formattedBalance={formattedBalance} setAmount={setAmount} />
-                <PercentageButton setSlippage={setSlippage} percentage={25} formattedBalance={formattedBalance} setAmount={setAmount} />
-                <PercentageButton setSlippage={setSlippage} percentage={50} formattedBalance={formattedBalance} setAmount={setAmount} />
-                <PercentageButton setSlippage={setSlippage} percentage="MAX" formattedBalance={formattedBalance} setAmount={setAmount} />
+                <PercentageButton setSlippage={setSlippage} percentage={10} formattedBalance={formattedBalance} setAmount={fromAmountChanged} />
+                <PercentageButton setSlippage={setSlippage} percentage={25} formattedBalance={formattedBalance} setAmount={fromAmountChanged} />
+                <PercentageButton setSlippage={setSlippage} percentage={50} formattedBalance={formattedBalance} setAmount={fromAmountChanged} />
+                <PercentageButton setSlippage={setSlippage} percentage="MAX" formattedBalance={formattedBalance} setAmount={fromAmountChanged} />
               </div>
             </div>
             {fee && (

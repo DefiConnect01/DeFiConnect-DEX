@@ -500,7 +500,7 @@ const TransactionInterface = () => {
         case "confirming": return "Confirming Approval...";
         case "approved": return "Proceed with Transfer";
         case "error": return "Approval Failed - Try Again";
-        default: return "Approve Token";
+        // default: return "Approve Token";
       }
     }
   };
