@@ -666,7 +666,7 @@ const TransactionInterface = () => {
           formattedBalance={formattedFromBalance}
           fee={fee}
           setSlippage={setSlippage}
-            fromAmountChanged={fromAmountChanged}
+          fromAmountChanged={fromAmountChanged}
         />
         <SwitchDirection
           disabled={transactionState !== "idle"}

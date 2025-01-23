@@ -63,7 +63,7 @@ const Sidebar = ({ closeSidebar, toggleDarkMode, isConnected }) => (
     <TransactionsButton closeSidebar={closeSidebar}/>
     <NetworkButton />
     <ConnectButton isConnected={isConnected} />
-    <BridgeInfo />
+    {/* <BridgeInfo /> */}
     <div
       className="hover:bg-[hsl(240,1%,56%)] rounded-md p-2 w-full"
       onClick={toggleDarkMode}

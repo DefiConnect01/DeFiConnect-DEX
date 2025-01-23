@@ -11,8 +11,7 @@ const TokenInput = ({
   onTokenSelect,
   disabled,
   formattedBalance,
-  price,
-  isDarkMode,
+  isDarkMode = true,
   fee,
   isReadOnly = false,
   fromAmountChanged,
@@ -87,7 +86,7 @@ const TokenInput = ({
         )}
 
         <em className="mr-auto mt-2 text-sm">
-          ${(Math.abs(Number(getDisplayAmount())) * (price || 0)).toFixed(2)}
+          ${(Math.abs(Number(getDisplayAmount()))).toFixed(2)}
         </em>
       </div>
 
