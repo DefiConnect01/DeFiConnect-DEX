@@ -59,8 +59,8 @@ const TokenInput = ({
           <div className="text-left">
             <div className="flex justify-between">
               <input
-                type="number"
-                value={Math.abs(amount) === 0 ? "" : Math.abs(amount)}
+                type="text"
+                value={amount}
                 onChange={(e) => handleAmountChange(e.target.value)}
                 disabled={disabled}
                 placeholder="0.0"

@@ -263,7 +263,7 @@ const TransactionInterface = () => {
   );
 
   const fromAmountChanged = (value) => {
-    console.log({swapList})
+    console.log(value)
     setFromAmountError(false);
     setFromAmountValue(value);
     setQuote(null);
@@ -276,7 +276,6 @@ const TransactionInterface = () => {
       sethidequote(false);
       setQuoteLoading(true);
       setQuoteError(false);
-      console.log({s1: swapList[0], s2: swapList[1]})
       calculateReceiveAmount(value, swapList[0], swapList[1]);
     }
   };
