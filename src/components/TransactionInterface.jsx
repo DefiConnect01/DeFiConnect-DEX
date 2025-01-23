@@ -495,7 +495,7 @@ const TransactionInterface = () => {
       }
     } else {
       switch (approvalState) {
-        case "idle": return "Approve Token";
+        // case "idle": return "Approve Token";
         case "approving": return "Approving...";
         case "confirming": return "Confirming Approval...";
         case "approved": return "Proceed with Transfer";
