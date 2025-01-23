@@ -169,8 +169,10 @@ const TransactionInterface = () => {
   useEffect(
     function () {
       const errorReturned = () => {
+        if (quoteLoading) {
+          toast.error("Error swapping tokens")
+        }
         setQuoteLoading(false);
-        toast.error("Error swapping tokens")
       };
 
       const quoteReturned = (val) => {
