@@ -4,6 +4,7 @@ import App from './App';
 import TransactionHistory from './components/TransactionHistory';
 import TransactionMenu from './components/TransactionMenu';
 import LiquidityMenu from './components/LiquidityMenu';
+import TransactionLock from './components/lock/TransactionLock';
 
 function AppRouter() {
     // console.log("Rendering AppRouter");
@@ -16,6 +17,9 @@ function AppRouter() {
                     </>} />
                     <Route path="liquidity" element={<>
                         <LiquidityMenu />
+                    </>} />
+                    <Route path="lock" element={<>
+                        <TransactionLock />
                     </>} />
                     <Route path="transactions" element={<>
                         <TransactionHistory />

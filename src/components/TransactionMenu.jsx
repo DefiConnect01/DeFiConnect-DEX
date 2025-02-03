@@ -2,6 +2,7 @@ import React from 'react'
 import TransactionInterface from './TransactionInterface';
 import PoolTable from './PoolTable';
 import ComingSoon from './ComingSoon';
+import VestTable from './lock/VestTable';
 
 function TransactionMenu() {
 
@@ -64,7 +65,7 @@ function TransactionMenu() {
 
                 {activeTab === "lock" && (
                     <>
-                        <ComingSoon/>
+                        <VestTable/>
                     </>
                 )}
 

@@ -15,7 +15,7 @@ function TransactionMenu() {
 
     return (
         <>
-            <div className="flex justify-start mb-4">
+            <div className="flex justify-start mb-4 ml-6">
                 <Link to="/" className="flex items-center bg-headerBg border border-secondaryBg pr-2 ">
                     <span className="bg-secondaryBg text-white py-3 px-2 mr-2 text-xl"><MdArrowBackIosNew /></span>
                     <span className="font-bold py-2 px-3 text-white">Back</span>

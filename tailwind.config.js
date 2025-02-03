@@ -17,8 +17,10 @@ export default {
         lightText: "#1b1b23",
         darkText: "#ffffff",
         accent: "#8f60ff",
-      lightModeGray:"#f1f3f3",
-    darkModeGray:"#23232c"},
+        lightModeGray:"#f1f3f3",
+        darkModeGray:"#23232c",
+        textGray: "#c6cdd2"
+  },
     },
   },
   plugins: [],
