@@ -11,9 +11,6 @@ import {
 } from "wagmi";
 import { abi, ethereumAddress, cybriaAddress } from "../constants";
 import { toast } from 'react-toastify';
-// import SwitchDirection from "./SwitchDirections";
-// import TokenInput from "./TokenInput";
-import tokenList from "../constants/tokenList.json";
 import { useAppKitAccount } from "@reown/appkit/react";
 import stores from "../stores";
 import BigNumber from "bignumber.js";
@@ -55,8 +52,6 @@ const TransactionInterface = () => {
   
   // ============================================
   const multiSwapStore = stores.multiSwapStore;
-  const [fromAmount, setFromAmount] = useState("");
-  const [toAmount, setToAmount] = useState("");
   const [slippage, setSlippage] = useState(0.5);
 
   const [quoteLoading, setQuoteLoading] = useState(false);
@@ -92,28 +87,6 @@ const TransactionInterface = () => {
   const { writeContractAsync } = useWriteContract();
 
   const isETH = swapList[0]?.symbol === "ETH";
-
-
-  const handleSwitch = () => {
-    const tempToken = selectedFromToken;
-    setSelectedFromToken(selectedToToken);
-    setSelectedToToken(tempToken);
-    setFromAmount(""); // Clear input when switching
-    setToAmount("");
-  };
-
-  const handleFromAmountChange = (value) => {
-    setFromAmount(value);
-    // Implement logic to calculate the "to" amount based on price/rate here
-    // Example placeholder logic:
-    const rate = 1; // Replace with actual rate fetching logic
-    setToAmount((value * rate).toFixed(selectedToToken?.decimals || 2));
-  };
-
-  const handleToAmountChange = (value) => {
-    setToAmount(value);
-    // Implement reverse calculation logic here if necessary
-  };
 
   // use useEeffect to update token balance on switch
   const { data: fromBalanceData } = useBalance({
@@ -620,42 +593,6 @@ const TransactionInterface = () => {
     <>
     <div className="ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
       <div className="p-2">
-        {/* <TokenInput
-          label="From"
-          setSelectTokenModal={setSelectTokenModal}
-          amount={fromAmountValue}
-          setAmount={setFromAmountValue}
-          tokenDetails={swapList[0]}
-          selectedToken={swapList[0]["symbol"]}
-          disabled={isTransactionCompleted}
-          formattedFromBalance={formattedFromBalance}
-          cybaPrice={cybaPrice}
-          isDarkMode={isDarkMode}
-          fee={fee}
-          fromChain={fromChain}
-          fromAmountChanged={fromAmountChanged}
-
-        />
-        <SwitchDirection
-          swapList={swapList}
-          setSwapList={setSwapList}
-          fromAmountChanged={fromAmountChanged}
-          fromAmountValue={fromAmountValue}
-          disabled={isTransactionCompleted}
-        />
-        <TokenInput
-          label="To"
-          fromChain={fromChain}
-          tokenDetails={swapList[1]}
-          selectedToken={swapList[1]["symbol"]}
-          isReadOnly
-          amount={amount}
-          cybaPrice={cybaPrice}
-          isDarkMode={isDarkMode}
-          fee={fee}
-          toAmountValue={toAmountValue}
-        /> */}
-
         <TokenInput
           label="From"
           amount={fromAmountValue}

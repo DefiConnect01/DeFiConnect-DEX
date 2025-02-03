@@ -8,10 +8,7 @@ import { FaXTwitter } from "react-icons/fa6";
 import { PiSunFill } from "react-icons/pi";
 
 // Asset Image imports
-// import LogoFooter from "./assets/logo_footer.png";
-// import LogoFooterDark from "./assets/logo_footer_dark.png";
 import Logo from "./assets/logo.png";
-// import PageBackground from "./assets/bg_bridge.png";
 import PageBackground from "./assets/bridge-backg.png";
 
 // Component imports
@@ -19,11 +16,8 @@ import AddCustomToken from "./components/AddCustomToken";
 import SelectTokenModal from "./components/SelectTokenModal";
 import Header from "./components/Header";
 import BridgeInfo from "./components/BridgeInfo";
-import TransactionInterface from "./components/TransactionInterface";
 
 // Hooks imports
-import { useAccount } from "wagmi";
-import ButtonList from "./components/shared/ButtonList";
 import { useAppKitAccount } from "@reown/appkit/react";
 
 
