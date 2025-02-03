@@ -142,8 +142,10 @@ const TransactionInterface = () => {
   useEffect(
     function () {
       const errorReturned = () => {
+        if (quoteLoading) {
+          toast.error("Error swapping tokens")
+        }
         setQuoteLoading(false);
-        toast.error("Error swapping tokens")
       };
 
       const quoteReturned = (val) => {
@@ -236,7 +238,7 @@ const TransactionInterface = () => {
   );
 
   const fromAmountChanged = (value) => {
-    console.log({swapList})
+    console.log(value)
     setFromAmountError(false);
     setFromAmountValue(value);
     setQuote(null);
@@ -249,7 +251,6 @@ const TransactionInterface = () => {
       sethidequote(false);
       setQuoteLoading(true);
       setQuoteError(false);
-      console.log({s1: swapList[0], s2: swapList[1]})
       calculateReceiveAmount(value, swapList[0], swapList[1]);
     }
   };
@@ -468,12 +469,12 @@ const TransactionInterface = () => {
       }
     } else {
       switch (approvalState) {
-        case "idle": return "Approve Token";
+        // case "idle": return "Approve Token";
         case "approving": return "Approving...";
         case "confirming": return "Confirming Approval...";
         case "approved": return "Proceed with Transfer";
         case "error": return "Approval Failed - Try Again";
-        default: return "Approve Token";
+        // default: return "Approve Token";
       }
     }
   };
@@ -603,7 +604,7 @@ const TransactionInterface = () => {
           formattedBalance={formattedFromBalance}
           fee={fee}
           setSlippage={setSlippage}
-            fromAmountChanged={fromAmountChanged}
+          fromAmountChanged={fromAmountChanged}
         />
         <SwitchDirection
           disabled={transactionState !== "idle"}

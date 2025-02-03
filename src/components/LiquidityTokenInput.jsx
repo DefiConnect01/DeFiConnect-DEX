@@ -11,8 +11,7 @@ const TokenInput = ({
   onTokenSelect,
   disabled,
   formattedBalance,
-  price,
-  isDarkMode,
+  isDarkMode = true,
   fee,
   isReadOnly = false,
   fromAmountChanged,
@@ -60,18 +59,18 @@ const TokenInput = ({
           <div className="text-left">
             <div className="flex justify-between">
               <input
-                type="number"
-                value={Math.abs(amount) === 0 ? "" : Math.abs(amount)}
+                type="text"
+                value={amount}
                 onChange={(e) => handleAmountChange(e.target.value)}
                 disabled={disabled}
                 placeholder="0.0"
                 className="dark:text-white font-normal sm:text-2xl bg-transparent outline-none w-full placeholder:text-black dark:placeholder:text-white"
               />
               <div className="flex gap-1">
-                <PercentageButton setSlippage={setSlippage} percentage={10} formattedBalance={formattedBalance} setAmount={setAmount} />
-                <PercentageButton setSlippage={setSlippage} percentage={25} formattedBalance={formattedBalance} setAmount={setAmount} />
-                <PercentageButton setSlippage={setSlippage} percentage={50} formattedBalance={formattedBalance} setAmount={setAmount} />
-                <PercentageButton setSlippage={setSlippage} percentage="MAX" formattedBalance={formattedBalance} setAmount={setAmount} />
+                <PercentageButton setSlippage={setSlippage} percentage={10} formattedBalance={formattedBalance} setAmount={fromAmountChanged} />
+                <PercentageButton setSlippage={setSlippage} percentage={25} formattedBalance={formattedBalance} setAmount={fromAmountChanged} />
+                <PercentageButton setSlippage={setSlippage} percentage={50} formattedBalance={formattedBalance} setAmount={fromAmountChanged} />
+                <PercentageButton setSlippage={setSlippage} percentage="MAX" formattedBalance={formattedBalance} setAmount={fromAmountChanged} />
               </div>
             </div>
             {fee && (
@@ -87,7 +86,7 @@ const TokenInput = ({
         )}
 
         <em className="mr-auto mt-2 text-sm">
-          ${(Math.abs(Number(getDisplayAmount())) * (price || 0)).toFixed(2)}
+          ${(Math.abs(Number(getDisplayAmount()))).toFixed(2)}
         </em>
       </div>
 
