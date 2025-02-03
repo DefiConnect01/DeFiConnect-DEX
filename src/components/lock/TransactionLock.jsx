@@ -13,6 +13,7 @@ import LockDate from "./LockDate";
 import LockInput from "./LockInput";
 import { Link } from "react-router-dom";
 import { MdArrowBackIosNew } from "react-icons/md";
+import moment from "moment";
 
 
 const TransactionLock = () => {
@@ -32,7 +33,7 @@ const TransactionLock = () => {
   const [depositLoading, setDepositLoading] = useState(false);
   const [tokenOneAmount, setTokenOneAmount] = useState("")
   const [tokenTwoAmount, setTokenTwoAmount] = useState("")
-  
+
   const [lockTime, setLockTime] = useState(7)
 
   const { address } = useAppKitAccount()
@@ -264,7 +265,7 @@ const TransactionLock = () => {
             <div className="grid md:grid-cols-2 my-3" >
               <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2" >
                 <p className="text-light">
-                    0 veDYST
+                    0 veDCC
                 </p>
                 <p className="text-lg font-bold">
                     Voting power
@@ -272,15 +273,15 @@ const TransactionLock = () => {
               </div>
 
               <div className="border border-secondaryBg flex flex-col items-start px-3 py-2" >
-                <p className="text-light">expires in a year</p>
-                <p className="text-lg font-bold">until 2026/01/29</p>
+                <p className="text-light">expires in {lockTime} days</p>
+                <p className="text-lg font-bold">until {moment().add(lockTime, 'days').format("YYYY-DD-MM")}</p>
               </div>
             </div>
           </div>
 
           <div className="my-4">
             <p className="font-medium text-xs text-left mb-2 text-black dark:text-white">
-                1 DYST locked for 1 years = 0.25 veDYST
+                1 DCC locked for 1 years = 0.25 veDCC
             </p>
            
           </div>
