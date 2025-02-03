@@ -469,12 +469,10 @@ const TransactionInterface = () => {
       }
     } else {
       switch (approvalState) {
-        // case "idle": return "Approve Token";
         case "approving": return "Approving...";
         case "confirming": return "Confirming Approval...";
         case "approved": return "Proceed with Transfer";
         case "error": return "Approval Failed - Try Again";
-        // default: return "Approve Token";
       }
     }
   };
