@@ -47,8 +47,19 @@ const createNetworks = async () => {
     // rpcUrl: `https://66665.rpc.thirdweb.com/${import.meta.env.VITE_THIRDWEB_SECRET_KEY}`,
     imagesrc: "/creator.png"
   };
+  const plumeDevnet = {
+    id: "eip155:66665",
+    name: "Plume Devnet",
+    chainId: 98864,
+    chainNamespace: "eip155",
+    currency: "ETH",
+    explorerUrl: "https://test-explorer.plumenetwork.xyz/",
+    rpcUrl: "https://test-rpc.plumenetwork.xyz",
+    // rpcUrl: `https://66665.rpc.thirdweb.com/${import.meta.env.VITE_THIRDWEB_SECRET_KEY}`,
+    imagesrc: "https://i.ibb.co/WvprkVGD/Full-Logo-Black.png"
+  };
 
-  return [creatorTestnet];
+  return [creatorTestnet, plumeDevnet];
 };
 
 const AppKitProvider = ({ children }) => {
