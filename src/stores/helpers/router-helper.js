@@ -1,6 +1,7 @@
 import BigNumber from "bignumber.js";
 import { ACTIONS, CONTRACTS, DIRECT_SWAP_ROUTES } from "../constants";
 import { formatBN, parseBN, buildRoutes, getPrice, getAmountOut, retryForSwapQuote } from '../../lib/utils';
+import tokenList from "../constants/tokenlist.json";
 
 export const quoteAddLiquidity = async (
   payload,
@@ -240,12 +241,12 @@ export const quoteSwap = async (
       let amountIn = bestAmountOut.receiveAmounts[i];
 
       try {
-        const tokenInDecimals = 18;
+        // const tokenInDecimals = 18;
         // TODO: get token decimals
         // TODO: uncomment and fix
-        // const tokenInDecimals = baseAssets
-        //   .filter(a => a?.address?.toLowerCase() === bestAmountOut.routes[i].from?.toLowerCase())[0]
-        //   .decimals
+        const tokenInDecimals = tokenList
+          .filter(a => a?.address?.toLowerCase() === bestAmountOut.routes[i].from?.toLowerCase())[0]
+          .decimals
 
         const reserves = await libraryContract.methods
           .getNormalizedReserves(
