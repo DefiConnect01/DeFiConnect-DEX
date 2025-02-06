@@ -16,11 +16,11 @@ import SwitchDirection from "./LiquiditySwitchDirection";
 import stores from '../stores';
 import { ACTIONS, CONTRACTS } from '../stores/constants/constants';
 import { useAppKitAccount } from "@reown/appkit/react";
-<<<<<<< HEAD
+
 import { FaBullseye, FaLessThanEqual } from "react-icons/fa6";
-=======
+
 import BigNumber from "bignumber.js";
->>>>>>> cf4fbe25f3c7c6f2c2a50312cfe5378bb831accd
+
 
 
 const TransactionLiquidity = () => {
