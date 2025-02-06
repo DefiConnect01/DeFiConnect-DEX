@@ -16,6 +16,7 @@ import SwitchDirection from "./LiquiditySwitchDirection";
 import stores from '../stores';
 import { ACTIONS } from '../stores/constants/constants';
 import { useAppKitAccount } from "@reown/appkit/react";
+import { FaBullseye, FaLessThanEqual } from "react-icons/fa6";
 
 
 const TransactionLiquidity = () => {
@@ -29,7 +30,7 @@ const TransactionLiquidity = () => {
   const [amount, setAmount] = useState("");
   const [slippage, setSlippage] = useState(1);
   const [fee, setFee] = useState(null);
-  const [isStable, setIsStable] = useState(true);
+  const [isStable, setIsStable] = useState(false);
   const [transactionState, setTransactionState] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [depositLoading, setDepositLoading] = useState(false);
