@@ -49,7 +49,7 @@ const WithdrawLiquidity = () => {
           setPair(currentPair);
           
           // Update balances
-          setPooledBalance(parseFloat(currentPair.balance).toFixed(2) || "0.00");
+          setPooledBalance(parseFloat(currentPair.balance).toFixed(6) || "0.00");
           setStakedBalance(currentPair.gauge?.balance || "0.00");
           
           // Update prices if available
