@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 import { useAppKitAccount } from "@reown/appkit/react";
 import stores from "../stores";
 import BigNumber from "bignumber.js";
-import { ACTIONS, DEFAULT_ASSET_FROM, DEFAULT_ASSET_TO } from "../stores/constants/constants";
+import { ACTIONS, DEFAULT_ASSET_FROM, DEFAULT_ASSET_TO, CONTRACTS } from "../stores/constants/constants";
 import TokenInput from "./LiquidityTokenInput";
 import SwitchDirection from "./LiquiditySwitchDirection";
 
@@ -248,10 +248,14 @@ const TransactionInterface = () => {
       setToAmountValue("");
       sethidequote(true);
     } else {
-      sethidequote(false);
-      setQuoteLoading(true);
-      setQuoteError(false);
-      calculateReceiveAmount(value, swapList[0], swapList[1]);
+      if (swapList[0]?.symbol === CONTRACTS.WFTM_SYMBOL || swapList[1]?.symbol === CONTRACTS.WFTM_SYMBOL) {
+        console.log("Wrap or unwrap")
+      } else {
+        sethidequote(false);
+        setQuoteLoading(true);
+        setQuoteError(false);
+        calculateReceiveAmount(value, swapList[0], swapList[1]);
+      }
     }
   };
 
@@ -410,17 +414,7 @@ const TransactionInterface = () => {
     setTransactionState("error");
   };
   const isInsufficientBalance = () => {
-    if (!amount) return false;
-
-    const currentAmount = parseFloat(amount);
-    const balance = parseFloat(formattedFromBalance);
-
-    if (fromChain === "CYBRIA" && selectedToken === "CYBA" && fee) {
-      const feeInEther = parseFloat(formatUnits(fee, 18));
-      return currentAmount + feeInEther > balance;
-    }
-
-    return currentAmount > balance;
+    return quote && parseFloat(fromAmountValue) > parseFloat(formattedFromBalance)
   };
 
   const getButtonText = () => {
@@ -434,7 +428,6 @@ const TransactionInterface = () => {
     }
 
     if (isInsufficientBalance()) {
-      toast.info('Insufficient balance');
       return "Insufficient Balance";
     }
     // if (loading) {
@@ -446,8 +439,20 @@ const TransactionInterface = () => {
       return "Start New Transaction";
     }
 
-    if (quote) {
+    if ((swapList[0]?.symbol === CONTRACTS.FTM_SYMBOL && swapList[1]?.symbol === CONTRACTS.WFTM_SYMBOL)) {
+      return 'Wrap'
+    }
+
+    if (swapList[0]?.symbol === CONTRACTS.WFTM_SYMBOL && swapList[1]?.symbol === CONTRACTS.FTM_SYMBOL) {
+      return 'Unwrap'
+    }
+
+    if (quote && parseFloat(fromAmountValue) < parseFloat(formattedFromBalance)) {
       return "Swap"
+    } 
+    
+    if (!quote && fromAmountValue) {
+      return "Route unavailable"
     }
 
     if (isFetchingFee) {
@@ -481,6 +486,7 @@ const TransactionInterface = () => {
     if (isInsufficientBalance()) return true;
     if (isTransactionCompleted) return false;
     if (!fromAmountValue || fromAmountValue == 0) return true;
+    if (!quote && fromAmountValue) return true;
     if (quoteLoading) return true;
     if (loading) return true
 
@@ -629,7 +635,7 @@ const TransactionInterface = () => {
                 : transactionState === "error" || approvalState === "error"
                   ? "bg-red-500 hover:bg-red-600"
                   : "button_bg"
-            } 
+            }
           text-white 
           transition-all duration-200
           ${isButtonDisabled() ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"}

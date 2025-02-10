@@ -17,7 +17,7 @@ export const VE_TOKEN_ABI = abis.veTokenABI
 
 export const WFTM_ADDRESS = '0x46961dBC53AF28CE82479f6e1eA10F6477CfEca3'
 export const WFTM_NAME = 'ETH'
-export const WFTM_SYMBOL = 'ETH'
+export const WFTM_SYMBOL = 'WETH'
 export const WFTM_DECIMALS = 18
 export const WFTM_LOGO = 'https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0/logo.png'
 export const WFTM_ABI = abis.wftmABI
