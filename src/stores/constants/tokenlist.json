@@ -1,4 +1,28 @@
 [
+  {
+    "name": "Ether",
+    "symbol": "ETH",
+    "address": "ETH",
+    "decimals": 18,
+    "chainId": 66665,
+    "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
+  },
+  {
+    "name": "Defi Connect Token",
+    "symbol": "DCC",
+    "address": "0xf53EcB45A7D0048fb73Be03ab1776eb00f953D41",
+    "decimals": 18,
+    "chainId": 66665, 
+    "logoURI": "https://i.ibb.co/Z6hz0Dq/deficonnectcredit1.png"
+  },
+  {
+      "name": "WrappedEther",
+      "symbol": "WETH",
+      "address": "0x46961dBC53AF28CE82479f6e1eA10F6477CfEca3",
+      "decimals": 18,
+      "chainId": 66665,
+      "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
+  },
     {
       "name": "Tungsten",
       "symbol": "TGS",
@@ -22,30 +46,6 @@
         "decimals": 18,
         "chainId": 66665,
         "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
-    },
-    {
-        "name": "Ether",
-        "symbol": "ETH",
-        "address": "ETH",
-        "decimals": 18,
-        "chainId": 66665,
-        "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
-    },
-    {
-      "name": "Defi Connect Token",
-      "symbol": "DCC",
-      "address": "0xf53EcB45A7D0048fb73Be03ab1776eb00f953D41",
-      "decimals": 18,
-      "chainId": 66665, 
-      "logoURI": "https://i.ibb.co/Z6hz0Dq/deficonnectcredit1.png"
-    },
-    {
-      "name": "Veritasium",
-      "symbol": "VTS",
-      "address": "0x205D6afE82EC32e271162f0C80dADd37ED94Ee35",
-      "decimals": 18,
-      "chainId": 66665, 
-      "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
     },
     {
       "name": "Ether",

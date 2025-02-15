@@ -109,6 +109,7 @@ function App() {
   const [selectTokenModal, setSelectTokenModal] = useState(false);
   const [addCustomToken, setAddCustomToken] = useState(false);
   const { address, isConnected } = useAppKitAccount();
+  console.log("[METAMASK CONNECTION]",{address, isConnected})
 
   const location = useLocation()
   const isHomePage = location.pathname === '/';

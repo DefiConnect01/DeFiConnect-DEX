@@ -369,6 +369,7 @@ export const createPairDeposit = async (
           if (token1.address === CONTRACTS.FTM_SYMBOL) {
             tok1 = CONTRACTS.WFTM_ADDRESS;
           }
+
           const pairFor = await getPairAddressByTokens(web3, tok0, tok1, isStable);
 
           // SUBMIT CREATE GAUGE TRANSACTION
@@ -586,6 +587,15 @@ export const removeLiquidity = async (
     const { token0, token1, pair, percent, slippage } = payload.content;
     console.log({payload})
 
+    let tok0 = token0.address;
+    let tok1 = token1.address;
+    if (token0.address === CONTRACTS.FTM_SYMBOL) {
+      tok0 = CONTRACTS.WFTM_ADDRESS;
+    }
+    if (token1.address === CONTRACTS.FTM_SYMBOL) {
+      tok1 = CONTRACTS.WFTM_ADDRESS;
+    }
+
     // ADD TRNASCTIONS TO TRANSACTION QUEUE DISPLAY
     let allowanceTXID = getTXUUID();
     let withdrawTXID = getTXUUID();
@@ -674,8 +684,8 @@ export const removeLiquidity = async (
 
     const quoteRemove = await routerContract.methods
       .quoteRemoveLiquidity(
-        token0.address,
-        token1.address,
+        tok0,
+        tok1,
         pair.isStable,
         sendAmount
       )
@@ -694,8 +704,8 @@ export const removeLiquidity = async (
       routerContract,
       "removeLiquidity",
       [
-        token0.address,
-        token1.address,
+        tok0,
+        tok1,
         pair.isStable,
         sendAmount,
         sendAmount0Min,

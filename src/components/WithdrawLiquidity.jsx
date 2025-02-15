@@ -2,14 +2,14 @@ import React, { useContext, useState, useEffect } from "react";
 import { AppDataContext } from "../context/appContext";
 import { toast } from 'react-toastify';
 import stores from '../stores';
-import { ACTIONS } from '../stores/constants/constants';
+import { ACTIONS, CONTRACTS } from '../stores/constants/constants';
 import BigNumber from "bignumber.js";
 
 const WithdrawLiquidity = () => {
   const { selectedFromToken, selectedToToken } = useContext(AppDataContext);
   
   // UI States
-  const [option, setOption] = useState("Unstake");
+  const [option, setOption] = useState("Remove");
   const [errorMessage, setErrorMessage] = useState("Error - Try Again");
   const [amount, setAmount] = useState("");
   const [slippage, setSlippage] = useState(10);
@@ -31,19 +31,25 @@ const WithdrawLiquidity = () => {
       try {
         // Get pairs from store
         const pairs = stores.stableSwapStore.getStore("pairs");
+
+        const token0IsETH =  selectedFromToken.address == "ETH";
+        const token1IsETH =  selectedToToken.address == "ETH";
         
         // Find pair for selected tokens
         const currentPair = await stores.stableSwapStore.getPair(
-          selectedFromToken.address,
-          selectedToToken.address,
+          token0IsETH ? CONTRACTS.WFTM_ADDRESS : selectedFromToken.address,
+          token1IsETH ? CONTRACTS.WFTM_ADDRESS : selectedToToken.address,
           stable
         );
+
+        console.log({selectedFromToken, selectedToToken, currentPair})
         
         if (currentPair) {
+          toast.success("Pair fetched successfully")
           setPair(currentPair);
           
           // Update balances
-          setPooledBalance(parseFloat(currentPair.balance).toFixed(2) || "0.00");
+          setPooledBalance(parseFloat(currentPair.balance).toFixed(6) || "0.00");
           setStakedBalance(currentPair.gauge?.balance || "0.00");
           
           // Update prices if available
@@ -57,6 +63,8 @@ const WithdrawLiquidity = () => {
             setToken0Price(price0);
             setToken1Price(price1);
           }
+        } else {
+          toast.info("Pair doesn't exist")
         }
       } catch (error) {
         console.error('Error updating pair data:', error);
@@ -172,19 +180,19 @@ const WithdrawLiquidity = () => {
         <div className="flex justify-center items-center mb-4">
           <button
             className={`px-4 py-2 border rounded-l ${
-              option === "Unstake" ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
-            }`}
-            onClick={() => setOption("Unstake")}
-          >
-            Unstake LP
-          </button>
-          <button
-            className={`px-4 py-2 border rounded-r ${
               option === "Remove" ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
             }`}
             onClick={() => setOption("Remove")}
           >
             Remove LP
+          </button>
+          <button
+            className={`px-4 py-2 border rounded-r ${
+              option === "Unstake" ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
+            }`}
+            onClick={() => setOption("Unstake")}
+          >
+            Unstake LP
           </button>
         </div>
 

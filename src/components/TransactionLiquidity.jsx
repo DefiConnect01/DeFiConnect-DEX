@@ -14,8 +14,9 @@ import TokenInput from "./LiquidityTokenInput";
 import SwitchDirection from "./LiquiditySwitchDirection";
 
 import stores from '../stores';
-import { ACTIONS } from '../stores/constants/constants';
+import { ACTIONS, CONTRACTS } from '../stores/constants/constants';
 import { useAppKitAccount } from "@reown/appkit/react";
+import BigNumber from "bignumber.js";
 
 
 const TransactionLiquidity = () => {
@@ -33,8 +34,15 @@ const TransactionLiquidity = () => {
   const [transactionState, setTransactionState] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [depositLoading, setDepositLoading] = useState(false);
-  const [tokenOneAmount, setTokenOneAmount] = useState("")
-  const [tokenTwoAmount, setTokenTwoAmount] = useState("")
+  const [tokenOneAmount, setTokenOneAmount] = useState("");
+  const [tokenTwoAmount, setTokenTwoAmount] = useState("");
+  const [pair, setPair] = useState(null);
+  const [pooledBalance, setPooledBalance] = useState("0.00");
+  const [stakedBalance, setStakedBalance] = useState("0.00");
+
+  // Price Info States
+  const [token0Price, setToken0Price] = useState("0.00");
+  const [token1Price, setToken1Price] = useState("0.00");
 
   const { address } = useAppKitAccount()
 
@@ -113,8 +121,9 @@ const TransactionLiquidity = () => {
       toast.info("Pair Created")
     };
 
-    const errorReturned = () => {
+    const errorReturned = (e) => {
       setDepositLoading(false)
+      console.log("Error", {e})
       // toast.error("Transaction failed")
     };
 
@@ -133,18 +142,62 @@ const TransactionLiquidity = () => {
       });
     }
 
+    const ssUpdated = async () => {
+      try {
+        const token0IsETH =  selectedFromToken.address == "ETH";
+        const token1IsETH =  selectedToToken.address == "ETH";
+        
+        // Find pair for selected tokens
+        const currentPair = await stores.stableSwapStore.getPair(
+          token0IsETH ? CONTRACTS.WFTM_ADDRESS : selectedFromToken.address,
+          token1IsETH ? CONTRACTS.WFTM_ADDRESS : selectedToToken.address,
+          isStable
+        );
+
+        console.log({selectedFromToken, selectedToToken, currentPair})
+        
+        if (currentPair) {
+          setPair(currentPair);
+          
+          // Update balances
+          setPooledBalance(parseFloat(currentPair.balance).toFixed(2) || "0.00");
+          setStakedBalance(currentPair.gauge?.balance || "0.00");
+          
+          // Update prices if available
+          if (currentPair.reserve0 && currentPair.reserve1) {
+            const price0 = BigNumber(currentPair.reserve1)
+              .div(currentPair.reserve0)
+              .toFixed(2);
+            const price1 = BigNumber(currentPair.reserve0)
+              .div(currentPair.reserve1)
+              .toFixed(2);
+            setToken0Price(price0);
+            setToken1Price(price1);
+          }
+        }
+      } catch (error) {
+        console.error('Error updating pair data:', error);
+      }
+    };
+    // Initial update
+    ssUpdated();
+    
+    // Subscribe to events
+    stores.emitter.on(ACTIONS.UPDATED, ssUpdated);
     stores.emitter.on(ACTIONS.LIQUIDITY_ADDED, depositReturnedLiquidity);
     stores.emitter.on(ACTIONS.PAIR_CREATED, depositReturnedPair);
     stores.emitter.on(ACTIONS.ADD_LIQUIDITY_CALLBACK, addLiquidityCallback);
     stores.emitter.on(ACTIONS.ERROR, errorReturned);
 
     return () => {
+      // Cleanup listeners
+      stores.emitter.removeListener(ACTIONS.UPDATED, ssUpdated);
       stores.emitter.removeListener(ACTIONS.LIQUIDITY_ADDED, depositReturnedLiquidity);
       stores.emitter.removeListener(ACTIONS.PAIR_CREATED, depositReturnedPair);
       stores.emitter.removeListener(ACTIONS.ADD_LIQUIDITY_CALLBACK, addLiquidityCallback);
       stores.emitter.removeListener(ACTIONS.ERROR, errorReturned);
     }
-  }, [])
+  }, [selectedFromToken, selectedToToken, isStable])
 
   const [isTransactionCompleted, setIsTransactionCompleted] = useState(false);
   const [approvalState, setApprovalState] = useState("idle");
@@ -275,13 +328,13 @@ const TransactionLiquidity = () => {
             <p className="font-medium text-left mb-2 text-black dark:text-[hsl(220,8%,35%)]">Reserve Info</p>
             <div className="grid md:grid-cols-2" >
               <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2" >
-                <p className="text-light">WETH</p>
-                <p className="text-lg font-bold">1,194.15</p>
+                <p className="text-light">{selectedFromToken.symbol}</p>
+                <p className="text-lg font-bold">{token0Price}</p>
               </div>
 
               <div className="border border-secondaryBg flex flex-col items-start px-3 py-2" >
-                <p className="text-light">DCC</p>
-                <p className="text-lg font-bold">19,262,538.96</p>
+                <p className="text-light">{selectedToToken.symbol}</p>
+                <p className="text-lg font-bold">{token1Price}</p>
               </div>
             </div>
           </div>
@@ -291,12 +344,12 @@ const TransactionLiquidity = () => {
             <div className="grid md:grid-cols-2" >
               <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2" >
                 <p className="text-light">Pooled</p>
-                <p className="text-lg font-bold">0.00</p>
+                <p className="text-lg font-bold">{pooledBalance}</p>
               </div>
 
               <div className="border border-secondaryBg flex flex-col items-start px-3 py-2" >
                 <p className="text-light">Staked</p>
-                <p className="text-lg font-bold">0.00</p>
+                <p className="text-lg font-bold">{stakedBalance}</p>
               </div>
             </div>
           </div>

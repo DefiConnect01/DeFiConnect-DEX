@@ -14,7 +14,7 @@ import { toast } from 'react-toastify';
 import { useAppKitAccount } from "@reown/appkit/react";
 import stores from "../stores";
 import BigNumber from "bignumber.js";
-import { ACTIONS, DEFAULT_ASSET_FROM, DEFAULT_ASSET_TO } from "../stores/constants/constants";
+import { ACTIONS, DEFAULT_ASSET_FROM, DEFAULT_ASSET_TO, CONTRACTS } from "../stores/constants/constants";
 import TokenInput from "./LiquidityTokenInput";
 import SwitchDirection from "./LiquiditySwitchDirection";
 
@@ -210,13 +210,33 @@ const TransactionInterface = () => {
         setQuoteLoading(false);
       };
       const wrapReturned = () => {
+        toast.success("🎉 Wrapped Successfully!")
         setLoading(false);
+        setFromAmountValue("");
+        setToAmountValue("");
+        sethidequote(false);
+        // basically calculates nothing (because when swap returns we want the from amount to be 0)
+        calculateReceiveAmount(0, swapList[0], swapList[1]);
+        setQuote(null);
+        setQuoteLoading(false);
+      };
+      const unwrapReturned = () => {
+        console.log(111)
+        toast("🎉 Unwrapped Successfully!")
+        setLoading(false);
+        setFromAmountValue("");
+        setToAmountValue("");
+        sethidequote(false);
+        // basically calculates nothing (because when swap returns we want the from amount to be 0)
+        // calculateReceiveAmount(0, swapList[0], swapList[1]);
+        setQuote(null);
+        setQuoteLoading(false);
       };
 
       stores.emitter.on(ACTIONS.ERROR, errorReturned);
       stores.emitter.on(ACTIONS.UPDATED, ssUpdated);
       stores.emitter.on(ACTIONS.WRAP_RETURNED, wrapReturned);
-      stores.emitter.on(ACTIONS.UNWRAP_RETURNED, wrapReturned);
+      stores.emitter.on(ACTIONS.UNWRAP_RETURNED, unwrapReturned);
       stores.emitter.on(ACTIONS.SWAP_RETURNED, swapReturned);
       stores.emitter.on(ACTIONS.QUOTE_SWAP_RETURNED, quoteReturned);
 
@@ -226,7 +246,7 @@ const TransactionInterface = () => {
         stores.emitter.removeListener(ACTIONS.ERROR, errorReturned);
         stores.emitter.removeListener(ACTIONS.UPDATED, ssUpdated);
         stores.emitter.removeListener(ACTIONS.WRAP_RETURNED, wrapReturned);
-        stores.emitter.removeListener(ACTIONS.UNWRAP_RETURNED, wrapReturned);
+        stores.emitter.removeListener(ACTIONS.UNWRAP_RETURNED, unwrapReturned);
         stores.emitter.removeListener(ACTIONS.SWAP_RETURNED, swapReturned);
         stores.emitter.removeListener(
           ACTIONS.QUOTE_SWAP_RETURNED,
@@ -248,10 +268,15 @@ const TransactionInterface = () => {
       setToAmountValue("");
       sethidequote(true);
     } else {
-      sethidequote(false);
-      setQuoteLoading(true);
-      setQuoteError(false);
-      calculateReceiveAmount(value, swapList[0], swapList[1]);
+      if (swapList[0]?.symbol === CONTRACTS.WFTM_SYMBOL || swapList[1]?.symbol === CONTRACTS.WFTM_SYMBOL) {
+        console.log("Wrap or unwrap")
+        calculateReceiveAmount(value, swapList[0], swapList[1])
+      } else {
+        sethidequote(false);
+        setQuoteLoading(true);
+        setQuoteError(false);
+        calculateReceiveAmount(value, swapList[0], swapList[1]);
+      }
     }
   };
 
@@ -410,17 +435,7 @@ const TransactionInterface = () => {
     setTransactionState("error");
   };
   const isInsufficientBalance = () => {
-    if (!amount) return false;
-
-    const currentAmount = parseFloat(amount);
-    const balance = parseFloat(formattedFromBalance);
-
-    if (fromChain === "CYBRIA" && selectedToken === "CYBA" && fee) {
-      const feeInEther = parseFloat(formatUnits(fee, 18));
-      return currentAmount + feeInEther > balance;
-    }
-
-    return currentAmount > balance;
+    return quote && parseFloat(fromAmountValue) > parseFloat(formattedFromBalance)
   };
 
   const getButtonText = () => {
@@ -434,7 +449,6 @@ const TransactionInterface = () => {
     }
 
     if (isInsufficientBalance()) {
-      toast.info('Insufficient balance');
       return "Insufficient Balance";
     }
     // if (loading) {
@@ -446,8 +460,20 @@ const TransactionInterface = () => {
       return "Start New Transaction";
     }
 
-    if (quote) {
+    if ((swapList[0]?.symbol === CONTRACTS.FTM_SYMBOL && swapList[1]?.symbol === CONTRACTS.WFTM_SYMBOL)) {
+      return 'Wrap'
+    }
+
+    if (swapList[0]?.symbol === CONTRACTS.WFTM_SYMBOL && swapList[1]?.symbol === CONTRACTS.FTM_SYMBOL) {
+      return 'Unwrap'
+    }
+
+    if (quote && parseFloat(fromAmountValue) < parseFloat(formattedFromBalance)) {
       return "Swap"
+    } 
+    
+    if (!quote && fromAmountValue) {
+      return "Route unavailable"
     }
 
     if (isFetchingFee) {
@@ -478,11 +504,14 @@ const TransactionInterface = () => {
   };
 
   const isButtonDisabled = () => {
+    console.log({loading})
+    if (loading) return true;
+    if (!address) return true;
     if (isInsufficientBalance()) return true;
     if (isTransactionCompleted) return false;
     if (!fromAmountValue || fromAmountValue == 0) return true;
+    if (!quote && fromAmountValue) return true;
     if (quoteLoading) return true;
-    if (loading) return true
 
     if (["sending", "confirming"].includes(transactionState)) return true;
     if (["approving", "confirming"].includes(approvalState)) return true;
@@ -491,24 +520,52 @@ const TransactionInterface = () => {
   };
 
   const makeSwap = async() => {
+    setLoading(true)
     try {
-      setLoading(true)
-      await stores.stableSwapStore.swap({
-        content: {
-          fromAsset: swapList[0],
-          toAsset: swapList[1],
-          fromAmount: fromAmountValue,
-          quote: quote,
-          // TODO: make slippage value dynamic
-          slippage: 50,
-        }
-      })
+      
+      if (swapList[0]?.symbol === CONTRACTS.WFTM_SYMBOL) { //Unwrap
+        stores.dispatcher.dispatch({
+          type: ACTIONS.UNWRAP,
+          content: {
+            fromAsset: swapList[0],
+            toAsset: swapList[1],
+            fromAmount: fromAmountValue,
+            toAmount: quote.output.finalValue,
+            quote: quote,
+            slippage: slippage,
+          },
+        });
+      } else if (swapList[0]?.symbol === CONTRACTS.FTM_SYMBOL) { //Wrap
+        stores.dispatcher.dispatch({
+          type: ACTIONS.WRAP,
+          content: {
+            fromAsset: swapList[0],
+            toAsset: swapList[1],
+            fromAmount: fromAmountValue,
+            toAmount: quote.output.finalValue,
+            quote: quote,
+            // TODO: make slippage dynamic
+            slippage: 50,
+          },
+        });
+      } else {
+
+        await stores.stableSwapStore.swap({
+          content: {
+            fromAsset: swapList[0],
+            toAsset: swapList[1],
+            fromAmount: fromAmountValue,
+            quote: quote,
+            // TODO: make slippage value dynamic
+            slippage: 50,
+          }
+        })
+      }
       await stores.stableSwapStore.loadBaseAssets()
     } catch (e) {
       // toast.error("Error occurred")
       console.log('error swapping', e)
     } finally {
-      setLoading(false)
       console.log("Done swapping")
     }
   }
@@ -631,7 +688,7 @@ const TransactionInterface = () => {
                 : transactionState === "error" || approvalState === "error"
                   ? "bg-red-500 hover:bg-red-600"
                   : "button_bg"
-            } 
+            }
           text-white 
           transition-all duration-200
           ${isButtonDisabled() ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"}
