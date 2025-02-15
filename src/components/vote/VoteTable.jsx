@@ -1,20 +1,19 @@
 import React, { useState } from "react";
 import { useTable } from "react-table";
-import { vestTableColumns, vestData } from "../../constants/tableConfig";
+import { voteTableColumns, voteData } from "../../constants/tableConfig";
 import { Link } from "react-router-dom";
 import { FiPlusSquare } from "react-icons/fi";
 
-const VestTable = () => {
-  // const [addLiquidity, setLiquidity] = useState(false);
+const VoteTable = () => {
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns: vestTableColumns, data: vestData });
+    useTable({ columns: voteTableColumns, data: voteData });
 
   return (
     <div className="m-5 overflow-x-auto min-h-[400px]">
       <div className="flex justify-start mb-8 mt-2">
         <Link to="/lock" className="flex items-center bg-headerBg border border-secondaryBg pr-2 ">
           <span className="bg-secondaryBg text-white py-3 px-2 mr-2 text-xl "><FiPlusSquare /></span>
-          <span className={`text-white font-bold py-2 px-3`}>Create Lock</span>
+          <span className={`text-white font-bold py-2 px-3`}>Create Bribe</span>
         </Link>
       </div>
 
@@ -61,4 +60,4 @@ const VestTable = () => {
   );
 };
 
-export default VestTable;
+export default VoteTable;

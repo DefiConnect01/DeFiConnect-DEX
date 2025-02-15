@@ -12,7 +12,7 @@ import { useAppKitAccount } from "@reown/appkit/react";
 import LockDate from "./LockDate";
 import LockInput from "./LockInput";
 import { Link } from "react-router-dom";
-import { MdArrowBackIosNew } from "react-icons/md";
+import { GiReturnArrow } from "react-icons/gi";
 import moment from "moment";
 
 
@@ -212,11 +212,11 @@ const TransactionLock = () => {
     <>
       <div className="flex justify-start mb-4">
           <Link to="/" className="flex items-center bg-headerBg border border-secondaryBg pr-2 ">
-              <span className="bg-secondaryBg text-white py-3 px-2 mr-2 text-xl"><MdArrowBackIosNew /></span>
+              <span className="bg-secondaryBg text-white py-3 px-2 mr-2 text-xl"><GiReturnArrow /></span>
               <span className="font-bold py-2 px-3 text-white">Back</span>
           </Link>
       </div>
-      <div className="ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
+      <div className="shadow-glow shadow-glow-hover ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
         <div className="p-2">
           <LockInput
             setLockValue={setLockValue}

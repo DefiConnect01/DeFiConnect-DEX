@@ -4,6 +4,9 @@ export default {
   darkMode: "class", // or 'media' for system preference
   theme: {
     extend: {
+      backgroundImage: {
+        'custom-gradient': 'linear-gradient(to right, #140084, #060A1A, #140084)',
+      },
       colors: {
         primary:"#140084",
         primaryBackground: "#2B1990",

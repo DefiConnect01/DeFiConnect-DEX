@@ -148,10 +148,13 @@ const WithdrawLiquidity = () => {
   };
 
   return (
-    <div className="min-h-[400px] ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
+    <>
+    {/* <div class="animated-border-box-glow"></div> */}
+    <div className="shadow-glow shadow-glow-hover min-h-[400px] ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-8 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
       <div className="p-2">
         <div>
-          <p className="font-medium text-left mb-2 text-[hsl(220,8%,35%)]">Your Balances - {selectedFromToken?.symbol}/{selectedToToken?.symbol}</p>
+        {/* text-[hsl(220,8%,35%)] */}
+          <p className="font-medium text-left mb-2 text-black dark:text-[hsl(220,8%,35%)]">Your Balances - {selectedFromToken?.symbol}/{selectedToToken?.symbol}</p>
           <div className="grid md:grid-cols-2">
             <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2">
               <p className="text-light">Pooled</p>
@@ -165,7 +168,7 @@ const WithdrawLiquidity = () => {
           </div>
         </div>
         
-        <p className="font-medium text-center mt-4 mb-2 text-[hsl(220,8%,35%)]">Choose the action</p>
+        <p className="font-medium text-center mt-4 mb-2 text-black dark:text-[hsl(220,8%,35%)]">Choose the action</p>
         <div className="flex justify-center items-center mb-4">
           <button
             className={`px-4 py-2 border rounded-l ${
@@ -186,7 +189,7 @@ const WithdrawLiquidity = () => {
         </div>
 
         <div className="my-4">
-          <p className="font-medium text-left mb-2 text-[hsl(220,8%,35%)]">Price Info</p>
+          <p className="font-medium text-left mb-2 text-black dark:text-[hsl(220,8%,35%)]">Price Info</p>
           <div className="grid md:grid-cols-2">
             <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2">
               <p className="text-light">{selectedFromToken?.symbol}</p>
@@ -223,6 +226,7 @@ const WithdrawLiquidity = () => {
         )} */}
       </div>
     </div>
+    </>
   );
 };
 
