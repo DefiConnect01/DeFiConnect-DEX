@@ -9,8 +9,25 @@ body {
   height: 100%;
 }
 
-
 @layer utilities {
+  /* Custom bluish-purple shadow utility */
+  .shadow-glow {
+    box-shadow: 1.5px 1.5px 20px #B3A4F7, 1px 1px 15px #8A75DD, 0.5px 0.5px 10px #5C4BAF;
+    transition: box-shadow 0.3s ease-in-out;
+  }
+
+  .shadow-glow-hover:hover {
+    box-shadow: 2px 2px 22px #B3A4F7, 1.5px 1.5px 17px #8A75DD, 0.5px 0.5px 12px #5C4BAF;
+  }
+
+  /* Glassmorphic effect utility */
+  .glassmorphic {
+    @apply bg-white bg-opacity-20 backdrop-blur-lg shadow-lg border border-opacity-20 border-white;
+  }
+
+  .glassmorphic-dark {
+    @apply bg-primary/20 backdrop-blur-lg shadow-lg border border-primary/20;
+  }
 
   input[type='number']::-webkit-inner-spin-button,
   input[type='number']::-webkit-outer-spin-button {
@@ -65,3 +82,160 @@ body {
           mask-composite: exclude; 
 }
 
+.bg_custom{
+  background: linear-gradient(to right, #140084, #060A1A, #140084);
+}
+
+/* diamond shape */
+.glow {
+  position: relative;
+  width: 0px;
+  height: 100%;
+  min-height: 100vh;
+  background: transparent;
+  /* box-shadow: 1px 1px 0 #2D82B7, 0 0 20px 5px #2F0AFF, inset 2px 2px 0 #9EE6E2; */
+  animation: glow 2s infinite ease-in-out;
+}
+
+
+/* Animates box shadow glow effect */
+/* @keyframes glow {
+  0%, 100% {
+    box-shadow: 1px 1px #23409c, 0 0 20px 8px #186cc4, inset 2px 2px #59c8d1;
+  }
+  50% {
+    box-shadow: 1px 1px #23409c, 0 0 24px 10px #186cc4, inset 2px 2px #59c8d1;
+  }
+} */
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 1px 1px #140084, 0 0 20px 8px #2F1B99, inset 2px 2px #6B5CB8;
+  }
+  50% {
+    box-shadow: 1px 1px #140084, 0 0 24px 10px #2F1B99, inset 2px 2px #6B5CB8;
+  }
+}
+
+.glow_red {
+  position: relative;
+  width: 0px;
+  height: 100%;
+  min-height: 100vh;
+  background: transparent;
+  /* box-shadow: 1px 1px 0 #2D82B7, 0 0 20px 5px #2F0AFF, inset 2px 2px 0 #9EE6E2; */
+  animation: glow_red 2s infinite ease-in-out;
+}
+
+
+/* Animates box shadow glow effect */
+@keyframes glow_red {
+  0%, 100% {
+    box-shadow: 1px 1px #401700, 0 0 20px 8px #652400, inset 2px 2px #8B4E26;
+  }
+  50% {
+    box-shadow: 1px 1px #401700, 0 0 24px 10px #652400, inset 2px 2px #8B4E26;
+  }
+}
+
+
+/* Animated border */
+.animated-border-box, .animated-border-box-glow{
+  /* max-height: 200px;
+  max-width: 250px; */
+  max-height: fit-content ;
+  height: 100%;
+  width: 100%;
+  position: absolute;
+  overflow: hidden; 
+  z-index: 0;
+  /* Border Radius */
+	border-radius: 10px;
+}
+
+.animated-border-box{
+  position: relative;
+}
+
+.animated-border-box-glow{
+  overflow: hidden;
+  /* Glow Blur */
+  filter: blur(20px);
+}
+
+.animated-border-box:before, .animated-border-box-glow:before {
+  content: '';
+  z-index: -2;
+  text-align: center;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%) rotate(0deg);
+  position: absolute;
+	width: 99999px;
+	height: 99999px;
+	background-repeat: no-repeat;
+	background-position: 0 0;
+  /*border color, change middle color*/
+	background-image: conic-gradient(rgba(0,0,0,0), #23409c, rgba(0,0,0,0) 25%);
+  /* change speed here */
+	animation: rotate 4s linear infinite;
+}
+
+.animated-border-box:after {
+	content: '';
+	position: absolute;
+	z-index: -1;
+  /* border width */
+	left: 5px;
+	top: 5px;
+  /* double the px from the border width left */
+	width: calc(100% - 10px);
+	height: calc(100% - 10px);
+  /*bg color*/
+	background: #060A1A;
+  /*box border radius*/
+	border-radius: 7px;
+}
+
+@keyframes rotate {
+	100% {
+		transform: translate(-50%, -50%) rotate(1turn);
+	}
+}
+
+
+.bg_div {
+  position: relative;
+  /* width: 250px;
+  height: 250px; */
+  width: 100%;
+  height: 100%;
+  background-color: #060A1A;
+  box-shadow: inset 2px 2px 10px rgba(0, 0, 0, 0.3);
+}
+.bg_div:after {
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: -1;
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+  filter: blur(40px);
+  transform: scale(1.1);
+  background: linear-gradient(90deg, #0fffc1, #7e0fff);
+  background-size: 200% 200%;
+  animation: animateGlow 10s ease infinite;
+}
+@keyframes animateGlow {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

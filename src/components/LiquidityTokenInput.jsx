@@ -30,7 +30,7 @@ const TokenInput = ({
   return (
     <div>
       <div className={`${label === "To" ? "-mt-2" : ""} ml-2 text-start`}>
-        <p className="font-medium dark:text-[hsl(220,8%,60%)] text-[hsl(220,8%,35%)] text-sm sm:text-base">
+        <p className="font-medium dark:text-[hsl(220,8%,60%)] text-primary text-sm sm:text-base mb-2">
           {label}
         </p>
       </div>
