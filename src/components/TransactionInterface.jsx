@@ -313,8 +313,6 @@ const TransactionInterface = () => {
     }
   }, [fromBalanceData]);
 
-
-
   useEffect(() => {
     if (fromChain === "CYBRIA" && selectedToken === "CYBA") {
       setNeedsApproval(false);
