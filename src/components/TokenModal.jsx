@@ -104,7 +104,7 @@ const SelectTokenModal = ({
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-sm">{parseFloat(token?.data?.formatted).toFixed(2)}<span className="font-bold"> {token?.symbol}</span></p> 
+                      <p className="text-sm">{parseFloat(token?.data?.formatted || 0).toFixed(2)}<span className="font-bold"> {token?.symbol}</span></p> 
                       <p className="text-xs text-gray-500">{token.decimals} decimals</p>
                     </div>
                   </div>
