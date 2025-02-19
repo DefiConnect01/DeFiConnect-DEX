@@ -12,12 +12,12 @@ body {
 @layer utilities {
   /* Custom bluish-purple shadow utility */
   .shadow-glow {
-    box-shadow: 1.5px 1.5px 20px #B3A4F7, 1px 1px 15px #8A75DD, 0.5px 0.5px 10px #5C4BAF;
+    box-shadow: 1.5px 1.5px 10px #B3A4F7, 1px 1px 7.5px #8A75DD, 0.5px 0.5px 5px #5C4BAF;
     transition: box-shadow 0.3s ease-in-out;
   }
 
   .shadow-glow-hover:hover {
-    box-shadow: 2px 2px 22px #B3A4F7, 1.5px 1.5px 17px #8A75DD, 0.5px 0.5px 12px #5C4BAF;
+    box-shadow: 2px 2px 11px #B3A4F7, 1.5px 1.5px 8px #8A75DD, 0.5px 0.5px 6px #5C4BAF;
   }
 
   /* Glassmorphic effect utility */
@@ -27,6 +27,10 @@ body {
 
   .glassmorphic-dark {
     @apply bg-primary/20 backdrop-blur-lg shadow-lg border border-primary/20;
+  }
+
+  .glassmorphic-black {
+    @apply bg-mainBg/50 backdrop-blur-lg shadow-lg border border-black/20;
   }
 
   input[type='number']::-webkit-inner-spin-button,

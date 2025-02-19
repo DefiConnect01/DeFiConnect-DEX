@@ -45,7 +45,7 @@ export  const TransactionsButton =({closeSidebar})=>{
     closeSidebar();
   };
   return <button onClick={handleTransactionsClick} 
-  className="button_border text-primary dark:text-white rounded-full py-2 px-6 sm:px-8">
+  className="border border-white/10 bg-black dark:bg-[#141625] hover:bg-black/90 text-white  dark:text-white rounded-full py-2 px-6 sm:px-8">
     Transactions
   </button>
   // return <ButtonList onClick={handleTransactionsClick} border>

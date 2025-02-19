@@ -1,8 +1,8 @@
 import React from 'react'
 import TransactionLiquidity from './TransactionLiquidity';
-import { Link } from 'react-router-dom';
-import { GiReturnArrow } from "react-icons/gi";
 import WithdrawLiquidity from './WithdrawLiquidity';
+import NavigateButton from './shared/NavigateButton';
+import { GiReturnArrow } from "react-icons/gi";
 
 function TransactionMenu() {
 
@@ -15,10 +15,7 @@ function TransactionMenu() {
     return (
         <>
             <div className="flex justify-start mb-4 ml-6">
-                <Link to="/" className="flex items-center bg-headerBg border border-secondaryBg pr-2 ">
-                    <span className="bg-secondaryBg text-white py-3 px-2 mr-2 text-xl"><GiReturnArrow /></span>
-                    <span className="font-bold py-2 px-3 text-white">Back</span>
-                </Link>
+                <NavigateButton text="Back" link="/" icon={<GiReturnArrow />}/>
             </div>
 
             <div className="w-[95vw] max-w-[450px] mx-auto grid grid-cols-2 text-sm font-medium text-center border-b text-gray-500 border-gray-200 dark:border-gray-700 ">

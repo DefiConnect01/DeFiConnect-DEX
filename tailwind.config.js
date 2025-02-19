@@ -22,7 +22,8 @@ export default {
         accent: "#8f60ff",
         lightModeGray:"#f1f3f3",
         darkModeGray:"#23232c",
-        textGray: "#c6cdd2"
+        textGray: "#c6cdd2",
+        black:"#0c0c0c",
   },
     },
   },
