@@ -199,7 +199,7 @@ const TransactionInterface = () => {
       };
 
       const swapReturned = (event) => {
-        toast.success('🎉 Transaction successfull!');
+        toast.success('🎉 Swapped Successfully!');
         setLoading(false);
         setFromAmountValue("");
         setToAmountValue("");
@@ -502,7 +502,6 @@ const TransactionInterface = () => {
   };
 
   const isButtonDisabled = () => {
-    console.log({loading})
     if (loading) return true;
     if (!address) return true;
     if (isInsufficientBalance()) return true;
@@ -521,7 +520,7 @@ const TransactionInterface = () => {
     setLoading(true)
     try {
       
-      if (swapList[0]?.symbol === CONTRACTS.WFTM_SYMBOL) { //Unwrap
+      if (swapList[0]?.symbol === CONTRACTS.WFTM_SYMBOL && swapList[1]?.symbol === CONTRACTS.FTM_SYMBOL) { //Unwrap
         stores.dispatcher.dispatch({
           type: ACTIONS.UNWRAP,
           content: {
@@ -533,7 +532,7 @@ const TransactionInterface = () => {
             slippage: slippage,
           },
         });
-      } else if (swapList[0]?.symbol === CONTRACTS.FTM_SYMBOL) { //Wrap
+      } else if (swapList[0]?.symbol === CONTRACTS.FTM_SYMBOL && swapList[1]?.symbol === CONTRACTS.WFTM_SYMBOL) { //Wrap
         stores.dispatcher.dispatch({
           type: ACTIONS.WRAP,
           content: {
