@@ -54,11 +54,11 @@ const WithdrawLiquidity = () => {
           
           // Update prices if available
           if (currentPair.reserve0 && currentPair.reserve1) {
-            const price0 = BigNumber(currentPair.reserve1)
-              .div(currentPair.reserve0)
+            const price0 = BigNumber(currentPair.reserve0)
+              // .div(currentPair.reserve0)
               .toFixed(2);
-            const price1 = BigNumber(currentPair.reserve0)
-              .div(currentPair.reserve1)
+            const price1 = BigNumber(currentPair.reserve1)
+              // .div(currentPair.reserve1)
               .toFixed(2);
             setToken0Price(price0);
             setToken1Price(price1);

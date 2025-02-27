@@ -46,7 +46,6 @@ export const createPairDeposit = async (
       if (pairFor && pairFor !== ZERO_ADDRESS) {
         emitter.emit(ACTIONS.ERROR, "Pair already exists")
         await callback();
-        console.log("Pair already exists")
         emitter.emit(ACTIONS.ADD_LIQUIDITY_CALLBACK, { token0, token1, amount0, amount1, isStable, slippage })
         return null;
       }
