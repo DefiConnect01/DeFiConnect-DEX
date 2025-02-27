@@ -48,14 +48,6 @@
         "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
     },
     {
-      "name": "Ether",
-      "symbol": "ETH",
-      "address": "0x46961dBC53AF28CE82479f6e1eA10F6477CfEca3", 
-      "decimals": 18,
-      "chainId": 66665,
-      "logoURI":"https://i.ibb.co/rGJ8WyX/eth-logo.png"
-    },
-    {
       "name": "USDT",
       "symbol": "USDT",
       "address": "0xB0517790d29753429D63eFe95be5879EDc8c3311",

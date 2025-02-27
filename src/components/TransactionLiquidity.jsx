@@ -375,6 +375,8 @@ const TransactionLiquidity = () => {
       return "Insufficient Balance";
     }
 
+    if (selectedFromToken?.address == selectedToToken?.address) return "Same Token";
+
     if (isTransactionCompleted) {
       return "Start New Transaction";
     }
@@ -402,7 +404,8 @@ const TransactionLiquidity = () => {
 
   // Check if button should be disabled
   const isButtonDisabled = useCallback(() => {
-    if (depositLoading) return true
+    if (selectedFromToken?.address == selectedToToken?.address) return true;
+    if (depositLoading) return true;
     if (!tokenOneAmount || !tokenTwoAmount) return true;
     if (isInsufficientBalance()) return true;
     if (isTransactionCompleted) return false;

@@ -451,10 +451,8 @@ const TransactionInterface = () => {
     if (isInsufficientBalance()) {
       return "Insufficient Balance";
     }
-    // if (loading) {
-    //   // toast.info('Swapping...');
-    //   return "swapping..."
-    // }
+
+    if (swapList[0]?.address == swapList[1]?.address) return "Same Token";
 
     if (isTransactionCompleted) {
       return "Start New Transaction";
@@ -504,6 +502,7 @@ const TransactionInterface = () => {
   };
 
   const isButtonDisabled = () => {
+    if (swapList[0]?.address == swapList[1]?.address) return true;
     if (loading) return true;
     if (!address) return true;
     if (isInsufficientBalance()) return true;
