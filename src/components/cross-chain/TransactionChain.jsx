@@ -1,6 +1,6 @@
 import React, { useContext, useState, useCallback, useEffect } from "react";
 import { useOutletContext } from 'react-router-dom';
-import { AppDataContext } from "../context/appContext";
+import { AppDataContext } from "../../context/appContext";
 import { parseEther, formatUnits, parseUnits } from "viem";
 import {
   useWriteContract,
@@ -9,15 +9,16 @@ import {
   useSwitchChain,
   useBalance
 } from "wagmi";
-import { abi, ethereumAddress, cybriaAddress } from "../constants";
+import { abi, ethereumAddress, cybriaAddress } from "../../constants";
 import { toast } from 'react-toastify';
 import { useAppKitAccount } from "@reown/appkit/react";
-import stores from "../stores";
+import stores from "../../stores";
 import BigNumber from "bignumber.js";
-import { ACTIONS, DEFAULT_ASSET_FROM, DEFAULT_ASSET_TO, CONTRACTS } from "../stores/constants/constants";
-import TokenInput from "./LiquidityTokenInput";
-import SwitchDirection from "./LiquiditySwitchDirection";
-import SearchBar from "./search/SearchBar";
+import { ACTIONS, DEFAULT_ASSET_FROM, DEFAULT_ASSET_TO, CONTRACTS } from "../../stores/constants/constants";
+import TokenInput from "../LiquidityTokenInput";
+import SwitchDirection from "../LiquiditySwitchDirection";
+import SearchBar from "../search/SearchBar";
+import ChainSelection from "./ChainSelection";
 
 
 const CHAIN_IDS = {
@@ -39,7 +40,7 @@ const TOKENS = {
   }
 };
 
-const TransactionInterface = () => {
+const TransactionChain = () => {
   const { setSelectTokenModal, isDarkMode } = useOutletContext();
   const { 
     selectedFromToken,
@@ -615,40 +616,25 @@ const TransactionInterface = () => {
     setApprovalTxHash(null);
   };
 
-  const handleAmountChange = useCallback((value) => {
-      if (!value || value === "") {
-        setAmount("");
-        return;
-      }
+  const { data: toBalanceData } = useBalance({
+          address,
+          token: selectedToToken.address === "ETH" ? null : selectedToToken.address
+        });
   
-      // Validate input is a valid number
-      const numValue = parseFloat(value);
-      if (isNaN(numValue)) return;
-  
-      // Limit decimal places based on token decimals
-      const decimals = selectedFromToken?.decimals || 18;
-      const parts = value.split('.');
-      if (parts[1] && parts[1].length > decimals) {
-        value = `${parts[0]}.${parts[1].slice(0, decimals)}`;
-      }
-  
-      setAmount(value);
-    }, [selectedFromToken]);
-
-    const { data: toBalanceData } = useBalance({
-        address,
-        token: selectedToToken.address === "ETH" ? null : selectedToToken.address
-      });
-
-    const formattedToBalance = toBalanceData
-      ? Number(formatUnits(toBalanceData.value, selectedToToken.decimals)).toFixed(2)
-      : "0";
+  const formattedToBalance = toBalanceData
+    ? Number(formatUnits(toBalanceData.value, selectedToToken.decimals)).toFixed(2)
+    : "0";
 
   return (
     <>
     <div className="w-full flex justify-center items-center">
       <SearchBar/>
     </div>
+
+    <div className="w-full flex justify-center items-center">
+      <ChainSelection/>
+    </div>
+
     <div 
     className="shadow-glow shadow-glow-hover ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-8 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
       <div className="p-2">
@@ -709,4 +695,4 @@ const TransactionInterface = () => {
 
 
 
-export default TransactionInterface;
+export default TransactionChain;

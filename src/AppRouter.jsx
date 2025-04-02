@@ -5,8 +5,9 @@ import TransactionHistory from './components/TransactionHistory';
 import TransactionMenu from './components/TransactionMenu';
 import LiquidityMenu from './components/LiquidityMenu';
 import TransactionLock from './components/lock/TransactionLock';
-import TransactionBribe from './components/vote/TransactionBribe';
+// import TransactionBribe from './components/vote/TransactionBribe';
 import TransactionLoan from './components/loan/TransactionLoan';
+import TransactionChain from './components/cross-chain/TransactionChain';
 
 function AppRouter() {
     // console.log("Rendering AppRouter");
@@ -28,6 +29,9 @@ function AppRouter() {
                     </>} /> */}
                     <Route path="loan" element={<>
                         <TransactionLoan />
+                    </>} />
+                    <Route path="cross-chain" element={<>
+                        <TransactionChain />
                     </>} />
                     <Route path="transactions" element={<>
                         <TransactionHistory />

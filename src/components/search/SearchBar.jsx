@@ -1,55 +1,82 @@
-import React, { useState } from 'react';
-import { Search, ArrowRight } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { FaSearch, FaArrowRight } from 'react-icons/fa';
 
 const SearchBar = () => {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [searchValue, setSearchValue] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+  const inputRef = useRef(null);
+  const containerRef = useRef(null);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (searchValue.trim()) {
-      console.log('Search submitted:', searchValue);
-      // You can replace this with your actual search function
-      setSearchValue('');
+    if (searchTerm.trim()) {
+      console.log('Search submitted:', searchTerm);
+      setSearchTerm('');
+      setIsExpanded(false);
     }
   };
 
+  const handleClickOutside = (event) => {
+    if (containerRef.current && !containerRef.current.contains(event.target)) {
+      setIsExpanded(false);
+    }
+  };
+
+  useEffect(() => {
+    if (isExpanded && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isExpanded]);
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
   return (
-    <div className="relative flex items-center justify-end w-64">
-      <form 
-        onSubmit={handleSubmit}
-        className={`flex items-center transition-all duration-300 ease-in-out bg-white rounded-full border border-gray-300 shadow-sm ${
-          isExpanded ? 'w-full pl-3 pr-1' : 'w-10 h-10'
-        }`}
-        onMouseEnter={() => setIsExpanded(true)}
-        onMouseLeave={() => !searchValue && setIsExpanded(false)}
-      >
-        <Search 
-          className={`transition-all ${
-            isExpanded ? 'w-5 h-5 text-gray-500' : 'w-5 h-5 m-auto text-gray-700'
-          }`}
-        />
+    <div 
+      ref={containerRef}
+      className="relative"
+      onMouseEnter={() => setIsExpanded(true)}
+    >
+      <div className={`flex items-center transition-all duration-300 glassmorphic rounded-full shadow-md overflow-hidden ${
+        isExpanded ? 'w-64 pl-4 pr-2 py-2' : 'w-12 h-12 justify-center'
+      }`}>
         
-        <input
-          type="text"
-          value={searchValue}
-          onChange={(e) => setSearchValue(e.target.value)}
-          placeholder="Search..."
-          className={`outline-none bg-transparent transition-all ${
-            isExpanded ? 'w-full ml-2 py-2' : 'w-0 p-0'
-          }`}
-        />
-        
-        <button 
-          type="submit" 
-          className={`flex items-center justify-center p-2 ml-1 rounded-full bg-blue-500 hover:bg-blue-600 transition-all ${
-            isExpanded ? 'opacity-100' : 'opacity-0 w-0 p-0'
-          }`}
-          disabled={!isExpanded}
-        >
-          <ArrowRight size={16} className="text-white" />
-        </button>
-      </form>
+        {!isExpanded ? (
+          <button 
+            className="flex items-center justify-center w-full h-full text-gray-600 dark:text-white hover:text-gray-800"
+            onClick={() => setIsExpanded(true)}
+          >
+            <FaSearch size={20} />
+          </button>
+        ) : (
+          <form onSubmit={handleSubmit} className="flex w-full items-center">
+            <FaSearch size={18} className="text-gray-500 dark:text-white mr-2" />
+            <input
+              ref={inputRef}
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search..."
+              className="flex-1 outline-none  bg-transparent"
+            />
+            <button 
+              type="submit"
+              className={`ml-2 w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
+                searchTerm.trim() 
+                  ? 'bg-primary/80 text-white hover:bg-primary' 
+                  : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+              }`}
+              disabled={!searchTerm.trim()}
+            >
+              <FaArrowRight size={16} />
+            </button>
+          </form>
+        )}
+      </div>
     </div>
   );
 };
