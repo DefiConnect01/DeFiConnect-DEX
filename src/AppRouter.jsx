@@ -6,6 +6,7 @@ import TransactionMenu from './components/TransactionMenu';
 import LiquidityMenu from './components/LiquidityMenu';
 import TransactionLock from './components/lock/TransactionLock';
 import TransactionBribe from './components/vote/TransactionBribe';
+import TransactionLoan from './components/loan/TransactionLoan';
 
 function AppRouter() {
     // console.log("Rendering AppRouter");
@@ -22,8 +23,11 @@ function AppRouter() {
                     <Route path="lock" element={<>
                         <TransactionLock />
                     </>} />
-                    <Route path="bribe" element={<>
+                    {/* <Route path="bribe" element={<>
                         <TransactionBribe />
+                    </>} /> */}
+                    <Route path="loan" element={<>
+                        <TransactionLoan />
                     </>} />
                     <Route path="transactions" element={<>
                         <TransactionHistory />

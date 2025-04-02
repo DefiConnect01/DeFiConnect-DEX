@@ -4,6 +4,7 @@ import PoolTable from './PoolTable';
 import ComingSoon from './ComingSoon';
 import VestTable from './lock/VestTable';
 import VoteTable from './vote/VoteTable';
+import LoanTable from './loan/LoanTable';
 
 function TransactionMenu() {
 
@@ -34,10 +35,15 @@ function TransactionMenu() {
                         "dark:text-white dark:glassmorphic active glassmorphic-dark dark:hover:glassmorphic" : 
                         "hover:text-gray-600 dark:hover:text-gray-300 dark:hover:bg-darkModeGray"}`}>Lock</button>
                 </div>
-                <div className="me-2">
+                {/* <div className="me-2">
                     <button onClick={() => handleActive("vote")} className={`w-full inline-block p-4 rounded-t-lg ${activeTab === "vote" ?
                         "dark:text-white dark:glassmorphic active glassmorphic-dark dark:hover:glassmorphic" : 
                         "hover:text-gray-600 dark:hover:text-gray-300 dark:hover:bg-darkModeGray"}`}>Vote</button>
+                </div> */}
+                <div className="me-2">
+                    <button onClick={() => handleActive("loan")} className={`w-full inline-block p-4 rounded-t-lg ${activeTab === "loan" ?
+                        "dark:text-white dark:glassmorphic active glassmorphic-dark dark:hover:glassmorphic" : 
+                        "hover:text-gray-600 dark:hover:text-gray-300 dark:hover:bg-darkModeGray"}`}>Loan</button>
                 </div>
                 <div className="me-2">
                     <button onClick={() => handleActive("reward")} className={`w-full inline-block p-4 rounded-t-lg ${activeTab === "reward" ?
@@ -70,11 +76,17 @@ function TransactionMenu() {
                     </>
                 )}
 
-                {activeTab === "vote" && (
+                {activeTab === "loan" && (
+                    <>
+                        <LoanTable/>
+                    </>
+                )}
+
+                {/* {activeTab === "vote" && (
                     <>
                         <VoteTable/>
                     </>
-                )}
+                )} */}
 
                 {activeTab === "reward" && (
                     <>
