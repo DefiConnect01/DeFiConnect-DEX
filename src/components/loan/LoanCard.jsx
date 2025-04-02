@@ -8,14 +8,13 @@ const LoanCard = ({ token = "DCC", duration = 10, amount = "1.5" }) => {
   const [timer, setTimer] = useState(null);
   const [showModal, setShowModal] = useState(false);
   
-  // Mock wallet data (in a real app, this would come from a wallet connection)
   const [walletData, setWalletData] = useState({
     address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
     balance: "1.8",
     fee: "0.05"
   });
 
-  // Check if user has sufficient funds
+  
   const hasSufficientFunds = parseFloat(walletData.balance) >= parseFloat(amount);
 
   // Format time remaining as MM:SS
@@ -59,7 +58,6 @@ const LoanCard = ({ token = "DCC", duration = 10, amount = "1.5" }) => {
     // Additional liquidation logic would go here
   };
 
-  // Clear timer on component unmount
   useEffect(() => {
     return () => {
       if (timer) {
@@ -117,7 +115,7 @@ const LoanCard = ({ token = "DCC", duration = 10, amount = "1.5" }) => {
         </div>
       </div>
 
-      {/* Render the Approval Modal as a separate component */}
+      
       {showModal && (
         <LoanApprovalModal
           onClose={handleCloseModal}
