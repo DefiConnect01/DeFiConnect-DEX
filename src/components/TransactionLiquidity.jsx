@@ -30,7 +30,7 @@ const TransactionLiquidity = () => {
   const [amount, setAmount] = useState("");
   const [slippage, setSlippage] = useState(1);
   const [fee, setFee] = useState(null);
-  const [isStable, setIsStable] = useState(true);
+  const [isStable, setIsStable] = useState(false);
   const [transactionState, setTransactionState] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [depositLoading, setDepositLoading] = useState(false);
@@ -481,18 +481,18 @@ const TransactionLiquidity = () => {
           />
           <div className="flex justify-center items-center my-4 mt-6">
             <button
-              className={`px-4 py-2 border rounded-l ${isStable ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
-                }`}
-              onClick={() => setIsStable(true)}
-            >
-              Stable
-            </button>
-            <button
-              className={`px-4 py-2 border rounded-r ${!isStable ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
+              className={`px-4 py-2 border rounded-l ${!isStable ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
                 }`}
               onClick={() => setIsStable(false)}
             >
               Volatile
+            </button>
+            <button
+              className={`px-4 py-2 border rounded-r ${isStable ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
+                }`}
+              onClick={() => setIsStable(true)}
+            >
+              Stable
             </button>
           </div>
 
