@@ -62,7 +62,7 @@ const ChainSelection = ({ onSelect }) => {
                 {selectedChain.icon}
               </div>
               <div className="flex flex-col items-start">
-                <span className="font-medium">{selectedChain.name}</span>
+                <span className="font-medium text-black">{selectedChain.name}</span>
                 <span className="text-xs text-gray-500">{selectedChain.symbol}</span>
               </div>
             </>

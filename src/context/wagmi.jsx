@@ -48,7 +48,19 @@ const createNetworks = async () => {
     imagesrc: "/creator.png"
   };
 
-  return [creatorTestnet];
+  const u2uTestnet = {
+    id: "eip155:2484",
+    name: "U2U Network Nebulas",
+    chainId: 2484,
+    chainNamespace: "eip155",
+    currency: "U2U",
+    explorerUrl: "https://explorer.creatorchain.io/stats",
+    rpcUrl: "https://rpc-nebulas-testnet.u2u.xyz",
+    // rpcUrl: https://66665.rpc.thirdweb.com/${import.meta.env.VITE_THIRDWEB_SECRET_KEY},
+    imagesrc: "/logoU2u.jpeg"
+  };
+
+  return [creatorTestnet, u2uTestnet];
 };
 
 const AppKitProvider = ({ children }) => {
