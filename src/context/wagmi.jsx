@@ -36,18 +36,6 @@ const createNetworks = async () => {
   //   imagesrc: cybaLogoUrl
   // };
 
-  const creatorTestnet = {
-    id: "eip155:66665",
-    name: "Creator Testnet",
-    chainId: 66665,
-    chainNamespace: "eip155",
-    currency: "ETH",
-    explorerUrl: "https://explorer.creatorchain.io/stats",
-    rpcUrl: "https://rpc.creatorchain.io",
-    // rpcUrl: `https://66665.rpc.thirdweb.com/${import.meta.env.VITE_THIRDWEB_SECRET_KEY}`,
-    imagesrc: "/creator.png"
-  };
-
   const u2uTestnet = {
     id: "eip155:2484",
     name: "U2U Network Nebulas",
@@ -58,6 +46,18 @@ const createNetworks = async () => {
     rpcUrl: "https://rpc-nebulas-testnet.u2u.xyz",
     // rpcUrl: https://66665.rpc.thirdweb.com/${import.meta.env.VITE_THIRDWEB_SECRET_KEY},
     imagesrc: "/logoU2u.jpeg"
+  };
+
+  const creatorTestnet = {
+    id: "eip155:66665",
+    name: "Creator Testnet",
+    chainId: 66665,
+    chainNamespace: "eip155",
+    currency: "ETH",
+    explorerUrl: "https://explorer.creatorchain.io/stats",
+    rpcUrl: "https://rpc.creatorchain.io",
+    // rpcUrl: `https://66665.rpc.thirdweb.com/${import.meta.env.VITE_THIRDWEB_SECRET_KEY}`,
+    imagesrc: "/creator.png"
   };
 
   return [creatorTestnet, u2uTestnet];
