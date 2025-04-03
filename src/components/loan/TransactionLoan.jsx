@@ -6,15 +6,15 @@ import {
 } from "wagmi";
 import { toast } from 'react-toastify';
 import { useAppKitAccount } from "@reown/appkit/react";
-
+import LoanDate from "./LoanDate";
+import LoanInput from "./LoanInput";
 import { Link } from "react-router-dom";
 import { GiReturnArrow } from "react-icons/gi";
 import moment from "moment";
-import VoteExchange from "./VoteExchange";
-import VoteInput from "./VoteInput";
+import LoanExchange from "./LoanExchange";
 
 
-const TransactionBribe = () => {
+const TransactionLoan = () => {
   const {
     selectedFromToken,
     selectedToToken,
@@ -23,13 +23,15 @@ const TransactionBribe = () => {
   } = useContext(AppDataContext);
 
   const [amount, setAmount] = useState("");
-  const [bribeValue, setBribeValue] = useState(0);
+  const [lockValue, setLockValue] = useState(0);
   const [fee, setFee] = useState(null);
   const [transactionState, setTransactionState] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [depositLoading, setDepositLoading] = useState(false);
   const [tokenOneAmount, setTokenOneAmount] = useState("")
   const [tokenTwoAmount, setTokenTwoAmount] = useState("")
+
+  const [LoanTime, setLoanTime] = useState(7)
 
   const { address } = useAppKitAccount()
 
@@ -73,7 +75,7 @@ const TransactionBribe = () => {
     }
 
     if (!tokenOneAmount || !tokenTwoAmount) {
-      return "Enter Amount";
+      return "Approve Transaction";
     }
 
     switch (transactionState) {
@@ -101,8 +103,6 @@ const TransactionBribe = () => {
   const handleButtonClick = useCallback(async () => {
 
     setDepositLoading(true);
-    console.log(moment().add(lockTime, 'days').format("DD-MM-YYYY"));
-    console.log(lockValue)
     
   }, [isTransactionCompleted, isButtonDisabled]);
 
@@ -116,37 +116,92 @@ const TransactionBribe = () => {
       </div>
       <div className="shadow-glow shadow-glow-hover ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
         <div className="p-2">
-        <VoteExchange
-            label=""
-            selectedToken={selectedFromToken}
-            onTokenSelect={setSelectedFromToken}
+            <LoanExchange
+                label=""
+                selectedToken={selectedFromToken}
+                onTokenSelect={setSelectedFromToken}
+                />
+            <div className="my-4"></div>
+          <LoanInput
+            setLockValue={setLockValue}
           />
+          <div className="my-4"></div>
+          <LoanDate
+            loanTime={LoanTime}
+          />
+          <div className="flex items-center my-4 mt-6 rounded-full border ">
+            <button
+              className={`px-4 py-1 w-full rounded-full text-sm ${LoanTime === 7 ? "bg-primary text-white" : ""
+                }`}
+              onClick={() => setLoanTime(7)}
+            >
+              1 week
+            </button>
+            <button
+              className={`px-4 py-1 w-full rounded-full text-sm ${LoanTime === 30 ? "bg-primary text-white" : ""
+                }`}
+              onClick={() => setLoanTime(30)}
+            >
+              1 month
+            </button>
 
-        <div className="my-4"></div>
+            <button
+              className={`px-4 py-1 w-full rounded-full text-sm ${LoanTime === 188 ? "bg-primary text-white" : ""
+                }`}
+              onClick={() => setLoanTime(188)}
+            >
+              6 months
+            </button>
+            <button
+              className={`px-4 py-1 w-full rounded-full text-sm ${LoanTime === 365 ? "bg-primary text-white" : ""
+                }`}
+              onClick={() => setLoanTime(365)}
+            >
+              1 year
+            </button>
+          </div>
 
-        <VoteInput
-        setBribeValue={setBribeValue}
-        />
-          
+          <div className="mt-6">
+            <p className="font-medium text-xs text-left mb-2 text-black dark:text-white">
+                Loan period should be multiples of 1 week
+                (e.g. 28, 35, 42 days, etc.)
+            </p>
+            <div className="grid md:grid-cols-2 my-3" >
+              <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2" >
+                <p className="text-light">
+                    0 veDCC
+                </p>
+                <p className="text-lg font-bold">
+                    Loan Amount
+                </p>
+              </div>
 
-        <div className="mt-6">
-        <p className="font-medium text-xs text-left mb-2 text-black dark:text-white">
-            You are creating a bribe of 0.00 to incentivize Vesters to vote for the / Pool
-        </p>
-        </div>
+              <div className="border border-secondaryBg flex flex-col items-start px-3 py-2" >
+                <p className="text-light">expires in {LoanTime} days</p>
+                <p className="text-lg font-bold">until {moment().add(LoanTime, 'days').format("YYYY-DD-MM")}</p>
+              </div>
+            </div>
+          </div>
 
-        <button
-        onClick={handleButtonClick}
-        disabled={isButtonDisabled()}
-        className={`py-2 rounded-full mt-4 w-full 
-        ${isInsufficientBalance()
-            ? "bg-red-500 hover:bg-red-600"
-            : isTransactionCompleted
-                ? "bg-green-500 hover:bg-green-600"
-                : transactionState === "error" || approvalState === "error"
+          <div className="my-4">
+            <p className="font-medium text-xs text-left mb-2 text-black dark:text-white">
+                Interest percentage 20%
+            </p>
+           
+          </div>
+
+          <button
+            onClick={handleButtonClick}
+            disabled={isButtonDisabled()}
+            className={`py-2 rounded-full mt-4 w-full 
+          ${isInsufficientBalance()
                 ? "bg-red-500 hover:bg-red-600"
-                : "button_bg"
-            } 
+                : isTransactionCompleted
+                  ? "bg-green-500 hover:bg-green-600"
+                  : transactionState === "error" || approvalState === "error"
+                    ? "bg-red-500 hover:bg-red-600"
+                    : "button_bg"
+              } 
           text-white 
           transition-all duration-200
           
@@ -168,4 +223,4 @@ const TransactionBribe = () => {
 
 
 
-export default TransactionBribe;
+export default TransactionLoan;

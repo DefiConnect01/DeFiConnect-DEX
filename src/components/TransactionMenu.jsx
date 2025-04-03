@@ -4,6 +4,8 @@ import PoolTable from './PoolTable';
 import ComingSoon from './ComingSoon';
 import VestTable from './lock/VestTable';
 import VoteTable from './vote/VoteTable';
+import LoanTable from './loan/LoanTable';
+import TransactionChain from './cross-chain/TransactionChain';
 
 function TransactionMenu() {
 
@@ -34,16 +36,26 @@ function TransactionMenu() {
                         "dark:text-white dark:glassmorphic active glassmorphic-dark dark:hover:glassmorphic" : 
                         "hover:text-gray-600 dark:hover:text-gray-300 dark:hover:bg-darkModeGray"}`}>Lock</button>
                 </div>
-                <div className="me-2">
+                {/* <div className="me-2">
                     <button onClick={() => handleActive("vote")} className={`w-full inline-block p-4 rounded-t-lg ${activeTab === "vote" ?
                         "dark:text-white dark:glassmorphic active glassmorphic-dark dark:hover:glassmorphic" : 
                         "hover:text-gray-600 dark:hover:text-gray-300 dark:hover:bg-darkModeGray"}`}>Vote</button>
+                </div> */}
+                <div className="me-2">
+                    <button onClick={() => handleActive("loan")} className={`w-full inline-block p-4 rounded-t-lg ${activeTab === "loan" ?
+                        "dark:text-white dark:glassmorphic active glassmorphic-dark dark:hover:glassmorphic" : 
+                        "hover:text-gray-600 dark:hover:text-gray-300 dark:hover:bg-darkModeGray"}`}>Loan</button>
                 </div>
                 <div className="me-2">
+                    <button onClick={() => handleActive("cross-chain")} className={`w-full inline-block p-4 rounded-t-lg ${activeTab === "cross-chain" ?
+                        "dark:text-white dark:glassmorphic active glassmorphic-dark dark:hover:glassmorphic" : 
+                        "hover:text-gray-600 dark:hover:text-gray-300 dark:hover:bg-darkModeGray"}`}>Cross Chain</button>
+                </div>
+                {/* <div className="me-2">
                     <button onClick={() => handleActive("reward")} className={`w-full inline-block p-4 rounded-t-lg ${activeTab === "reward" ?
                         "dark:text-white dark:glassmorphic active glassmorphic-dark dark:hover:glassmorphic" : 
                         "hover:text-gray-600 dark:hover:text-gray-300 dark:hover:bg-darkModeGray"}`}>Reward</button>
-                </div>
+                </div> */}
                 <div className="me-2">
                     <button onClick={() => handleActive("migrate")} className={`w-full inline-block p-4 rounded-t-lg ${activeTab === "migrate" ?
                         "dark:text-white dark:glassmorphic active glassmorphic-dark dark:hover:glassmorphic" : 
@@ -70,17 +82,29 @@ function TransactionMenu() {
                     </>
                 )}
 
-                {activeTab === "vote" && (
+                {activeTab === "loan" && (
                     <>
-                        <VoteTable/>
+                        <LoanTable/>
                     </>
                 )}
 
-                {activeTab === "reward" && (
+                {activeTab === "cross-chain" && (
+                    <>
+                        <TransactionChain/>
+                    </>
+                )}  
+
+                {/* {activeTab === "vote" && (
+                    <>
+                        <VoteTable/>
+                    </>
+                )} */}
+
+                {/* {activeTab === "reward" && (
                     <>
                         <ComingSoon/>
                     </>
-                )}
+                )} */}
 
                 {activeTab === "migrate" && (
                     <>

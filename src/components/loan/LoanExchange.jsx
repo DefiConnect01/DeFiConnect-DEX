@@ -3,11 +3,11 @@ import { AppDataContext } from "../../context/appContext";
 import SelectTokenModal from "../TokenModal";
 import PercentageButton from "../PercentageButton";
 
-const VoteExchange = ({
-  label,
-  selectedToken,
-  onTokenSelect,
-  isDarkMode = true,
+const LoanExchange = ({
+    label,
+    selectedToken,
+    onTokenSelect,
+    isDarkMode = true,
 }) => {
   const [selectTokenModal, setSelectTokenModal] = useState(false);
   const { tokenList } = useContext(AppDataContext);
@@ -60,4 +60,4 @@ const VoteExchange = ({
   );
 };
 
-export default VoteExchange;
+export default LoanExchange;
