@@ -24,7 +24,7 @@ async function createBlobUrl(svgPath) {
 // Create networks configuration
 const createNetworks = async () => {
   const cybaLogoUrl = await createBlobUrl(cybaLogo);
-  const u2ulogoUrl  = await ccreateBlobUrl(u2uLogo)
+  // const u2ulogoUrl  = await ccreateBlobUrl(u2uLogo)
 
   TODO: `Uncomment and update creator mainnet below`
   // const creator = {
@@ -38,6 +38,17 @@ const createNetworks = async () => {
   //   imagesrc: cybaLogoUrl
   // };
 
+  const u2uTestnet = {
+    id: "eip155:2484",
+    name: "U2U Network Nebulas",
+    chainId: 2484,
+    chainNamespace: "eip155",
+    currency: "U2U",
+    explorerUrl: "https://explorer.creatorchain.io/stats",
+    rpcUrl: "https://rpc-nebulas-testnet.u2u.xyz",
+    // rpcUrl: `https://66665.rpc.thirdweb.com/${import.meta.env.VITE_THIRDWEB_SECRET_KEY}`,
+    imagesrc: "/logoU2u.jpg"
+  };
   const creatorTestnet = {
     id: "eip155:66665",
     name: "Creator Testnet",
@@ -51,21 +62,9 @@ const createNetworks = async () => {
   };
 
 
-const u2uTestnet = {
-  id: "eip155:2484",
-  name: "U2U Network Nebulas",
-  chainId: 2484,
-  chainNamespace: "eip155",
-  currency: "U2U",
-  explorerUrl: "https://explorer.creatorchain.io/stats",
-  rpcUrl: "https://rpc-nebulas-testnet.u2u.xyz",
-  // rpcUrl: `https://66665.rpc.thirdweb.com/${import.meta.env.VITE_THIRDWEB_SECRET_KEY}`,
-  imagesrc: "/logoU2u.jpg"
-};
 
-return [creatorTestnet, u2uTestnet];
+return [u2uTestnet, creatorTestnet];
 };
-
 const AppKitProvider = ({ children }) => {
   const [networks, setNetworks] = React.useState([]);
   const queryClient = new QueryClient();
