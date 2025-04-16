@@ -2,6 +2,7 @@ import BigNumber from "bignumber.js";
 import { v4 as uuidv4 } from "uuid";
 // import { assetIcons } from "../public/images/assets/asset-icons";
 import { ALLOWED_DUPLICATE_SYMBOLS } from "../stores/constants"
+// import  CONTRACT_TESTNET from "../stores/constants/contractsTestnet"
 import { clsx } from "clsx";
 import { twMerge } from "tailwind-merge"
 
@@ -320,7 +321,8 @@ export const removeDuplicate = (arr) => {
     // if (item.symbol in assetIcons) {
     //   item.logoURI = '/images/assets/' + assetIcons[item.symbol]
     // }
-    if (ALLOWED_DUPLICATE_SYMBOLS.includes(item.symbol)) {
+    // if (CONTRACT_TESTNET.ALLOWED_DUPLICATE_SYMBOLS.includes(item.symbol)) {
+      if (ALLOWED_DUPLICATE_SYMBOLS.includes(item.symbol)) {
       acc[item.address.toLowerCase()] = item;
     } else {
       acc[item.symbol] = item;

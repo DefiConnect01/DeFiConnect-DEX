@@ -12,6 +12,7 @@ import { Link } from "react-router-dom";
 import { GiReturnArrow } from "react-icons/gi";
 import moment from "moment";
 import LoanExchange from "./LoanExchange";
+import SearchBar from "../search/SearchBar";
 
 
 const TransactionLoan = () => {
@@ -23,7 +24,7 @@ const TransactionLoan = () => {
   } = useContext(AppDataContext);
 
   const [amount, setAmount] = useState("");
-  const [lockValue, setLockValue] = useState(0);
+  const [loanValue, setLoanValue] = useState(0);
   const [fee, setFee] = useState(null);
   const [transactionState, setTransactionState] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -31,7 +32,7 @@ const TransactionLoan = () => {
   const [tokenOneAmount, setTokenOneAmount] = useState("")
   const [tokenTwoAmount, setTokenTwoAmount] = useState("")
 
-  const [LoanTime, setLoanTime] = useState(7)
+  const [LoanTime, setLoanTime] = useState(30)
 
   const { address } = useAppKitAccount()
 
@@ -108,28 +109,41 @@ const TransactionLoan = () => {
 
   return (
     <>
+    
       <div className="flex justify-start mb-4">
           <Link to="/" className="flex items-center bg-headerBg border border-secondaryBg pr-2 ">
               <span className="bg-secondaryBg text-white py-3 px-2 mr-2 text-xl"><GiReturnArrow /></span>
               <span className="font-bold py-2 px-3 text-white">Back</span>
           </Link>
       </div>
+
+      <div className="w-full flex justify-center items-center my-4">
+        <SearchBar/>
+      </div>
+
       <div className="shadow-glow shadow-glow-hover ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
         <div className="p-2">
             <LoanExchange
-                label=""
+                label="Collateral Token"
                 selectedToken={selectedFromToken}
                 onTokenSelect={setSelectedFromToken}
                 />
+              <div className="my-4"></div>
+            <LoanExchange
+                label="Loan Token"
+                selectedToken={selectedToToken}
+                onTokenSelect={setSelectedToToken}
+                />
             <div className="my-4"></div>
           <LoanInput
-            setLockValue={setLockValue}
+            setLoanValue={setLoanValue}
+            selectedToken={selectedToToken}
           />
           <div className="my-4"></div>
           <LoanDate
-            loanTime={LoanTime}
+            loanTime={30}
           />
-          <div className="flex items-center my-4 mt-6 rounded-full border ">
+          {/* <div className="flex items-center my-4 mt-6 rounded-full border ">
             <button
               className={`px-4 py-1 w-full rounded-full text-sm ${LoanTime === 7 ? "bg-primary text-white" : ""
                 }`}
@@ -159,13 +173,13 @@ const TransactionLoan = () => {
             >
               1 year
             </button>
-          </div>
+          </div> */}
 
           <div className="mt-6">
-            <p className="font-medium text-xs text-left mb-2 text-black dark:text-white">
+            {/* <p className="font-medium text-xs text-left mb-2 text-black dark:text-white">
                 Loan period should be multiples of 1 week
                 (e.g. 28, 35, 42 days, etc.)
-            </p>
+            </p> */}
             <div className="grid md:grid-cols-2 my-3" >
               <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2" >
                 <p className="text-light">

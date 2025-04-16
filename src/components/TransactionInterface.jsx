@@ -20,11 +20,18 @@ import SwitchDirection from "./LiquiditySwitchDirection";
 import SearchBar from "./search/SearchBar";
 
 
+// const CHAIN_IDS = {
+//   CYBRIA: 6661,
+//   BASE_SEPOLIA: 84532,
+//   ETHEREUM: 1
+// };
+
 const CHAIN_IDS = {
   CYBRIA: 6661,
   BASE_SEPOLIA: 84532,
   ETHEREUM: 1
 };
+
 
 const TOKENS = {
   CYBRIA: {

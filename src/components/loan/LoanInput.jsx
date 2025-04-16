@@ -3,8 +3,9 @@ import { FaCalendarDay } from "react-icons/fa";
 import moment from "moment";
 import { PiCoinsBold } from "react-icons/pi";
 
-const VoteInput = ({
-  setBribeValue
+const LoanInput = ({
+  setLoanValue,
+  selectedToken
 }) => {
 
   return (
@@ -28,9 +29,9 @@ const VoteInput = ({
             type="number" 
             className="bg-inherit w-1/2 rounded-lg sm:p-2 p-1 text-right text-3xl font-semibold text-primary dark:text-textGray" 
             placeholder="0.00"
-            onClick={(e) => setBribeValue(e.target.value)}
+            onClick={(e) => setLoanValue(e.target.value)}
             />
-            <p className="font-bold ">DCC</p>
+            <p className="font-bold ">{selectedToken?.symbol || "DCC"}</p>
           </div>
 
         </div>
@@ -42,4 +43,4 @@ const VoteInput = ({
   );
 };
 
-export default VoteInput;
+export default LoanInput;

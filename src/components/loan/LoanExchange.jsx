@@ -34,7 +34,7 @@ const LoanExchange = ({
             <p className="sm:text-xl font-bold bg-transparent">{selectedToken.symbol}</p>
           </div>
           <div className="">
-            <p className="text-xl font-semibold">DAI/USDT</p>
+            <p className="text-xl font-semibold">{selectedToken.symbol}/USDT</p>
             <em className="flex text-[#58585e] dark:text-[hsl(0,0%,65%)] text-sm">
                 Stable Pool
             </em>
