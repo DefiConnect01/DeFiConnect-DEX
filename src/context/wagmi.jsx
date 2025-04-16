@@ -64,7 +64,7 @@ const createNetworks = async () => {
 
  
 
-  return [creatorTestnet, u2uTestnet];
+  return [u2uTestnet, creatorTestnet];
 };
 const AppKitProvider = ({ children }) => {
   const [networks, setNetworks] = React.useState([]);

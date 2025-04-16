@@ -1,18 +1,46 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { FaSearch, FaArrowRight } from 'react-icons/fa';
+import { FaSearch, FaArrowRight, FaSpinner } from 'react-icons/fa';
+import useOpenAIAnalysis from '../../hooks/useOpenAIAnalysis';
 
-const SearchBar = () => {
+const SearchBar = ({ 
+  parameterFormat, 
+  onAnalysisComplete, 
+  model = "gpt-3.5-turbo",
+  temperature = 0.2,
+  placeholder = "Search..."
+}) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const inputRef = useRef(null);
   const containerRef = useRef(null);
 
-  const handleSubmit = (e) => {
+  const apiKey = import.meta.env.VITE_OPENAI_KEY;
+
+  // Initialize the OpenAI analysis hook
+  const { analyzeText, loading, error } = useOpenAIAnalysis({
+    apiKey,
+    model,
+    temperature
+  });
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (searchTerm.trim()) {
-      console.log('Search submitted:', searchTerm);
-      setSearchTerm('');
-      setIsExpanded(false);
+      try {
+        // Analyze the search term with OpenAI
+        const result = await analyzeText(searchTerm, parameterFormat);
+        
+        // Call the callback with the analysis result and the original search term
+        if (result && onAnalysisComplete) {
+          onAnalysisComplete(result, searchTerm);
+        }
+        
+        // Reset search field after submission
+        setSearchTerm('');
+        setIsExpanded(false);
+      } catch (err) {
+        console.error('Error analyzing search term:', err);
+      }
     }
   };
 
@@ -41,6 +69,12 @@ const SearchBar = () => {
       className="relative"
       onMouseEnter={() => setIsExpanded(true)}
     >
+      {error && (
+        <div className="absolute -top-12 left-0 right-0 bg-red-100 text-red-800 p-2 rounded-md text-sm">
+          {error.message}
+        </div>
+      )}
+      
       <div className={`flex items-center transition-all duration-300 glassmorphic rounded-full shadow-md overflow-hidden ${
         isExpanded ? 'w-64 pl-4 pr-2 py-2' : 'w-12 h-12 justify-center'
       }`}>
@@ -60,19 +94,24 @@ const SearchBar = () => {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search..."
-              className="flex-1 outline-none  bg-transparent"
+              placeholder={placeholder}
+              className="flex-1 outline-none bg-transparent"
+              disabled={loading}
             />
             <button 
               type="submit"
               className={`ml-2 w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
-                searchTerm.trim() 
+                searchTerm.trim() && !loading
                   ? 'bg-primary/80 text-white hover:bg-primary' 
                   : 'bg-gray-200 text-gray-400 cursor-not-allowed'
               }`}
-              disabled={!searchTerm.trim()}
+              disabled={!searchTerm.trim() || loading}
             >
-              <FaArrowRight size={16} />
+              {loading ? (
+                <FaSpinner size={16} className="animate-spin" />
+              ) : (
+                <FaArrowRight size={16} />
+              )}
             </button>
           </form>
         )}
