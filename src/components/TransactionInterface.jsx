@@ -643,11 +643,29 @@ const TransactionInterface = () => {
     const formattedToBalance = toBalanceData
       ? Number(formatUnits(toBalanceData.value, selectedToToken.decimals)).toFixed(2)
       : "0";
+    
+    const [analysisResults, setAnalysisResults] = useState(null);
+    const [lastSearchTerm, setLastSearchTerm] = useState('');
 
+    const parameterFormat = {
+          fromAmountValue:0,
+          selectedFromToken:"",
+          formattedFromBalance:0,
+          setSlippage:0,
+          toAmountValue:0,
+          selectedToToken:"",
+          formattedToBalance:0,
+    };
+    const handleAnalysisComplete = (result, searchTerm) => {
+      setAnalysisResults(result);
+      setLastSearchTerm(searchTerm);
+      console.log('Analysis results:', result);
+    };
   return (
     <>
     <div className="w-full flex justify-center items-center">
-      <SearchBar/>
+      <SearchBar parameterFormat={parameterFormat}
+          onAnalysisComplete={handleAnalysisComplete} placeholder="Search with AI analysis..."/>
     </div>
     <div 
     className="shadow-glow shadow-glow-hover ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-8 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">

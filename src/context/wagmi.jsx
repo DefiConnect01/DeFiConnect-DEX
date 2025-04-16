@@ -60,7 +60,7 @@ const createNetworks = async () => {
     imagesrc: "/creator.png"
   };
 
-  return [creatorTestnet, u2uTestnet];
+  return [u2uTestnet, creatorTestnet];
 };
 
 const AppKitProvider = ({ children }) => {
