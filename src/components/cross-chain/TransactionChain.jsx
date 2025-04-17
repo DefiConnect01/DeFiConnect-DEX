@@ -21,24 +21,46 @@ import SearchBar from "../search/SearchBar";
 import ChainSelection from "./ChainSelection";
 
 
+// const CHAIN_IDS = {
+//   CYBRIA: 6661,
+//   BASE_SEPOLIA: 84532,
+//   ETHEREUM: 1
+// };
 const CHAIN_IDS = {
-  CYBRIA: 6661,
+  U2U: 284,
   BASE_SEPOLIA: 84532,
-  ETHEREUM: 1
+  CreatorTestnet:66665
 };
+// const TOKENS = {
+//   CYBRIA: {
+//     CYBA: "0x95622Fce49d65D1101f6FDa8b6325459A6188E52",
+//     // USDT: "0x102bd5D18b2f6800ef4dcaF5fCe131fbb52aeBA4",
+//   },
+//   BASE_SEPOLIA: {
+//     CYBA: "0xE5a4574B92A3D9528CFE9FC1a02F4983dBFd8aa1",
+//     // USDT: "0xd1e728572AD0F0Bd8AD9EEf614C353CdE527929B",
+//   }, ETHEREUM:{
+//     CYBA: "0x1063181dc986F76F7eA2Dd109e16fc596d0f522A"
+//   }
+// };
 
 const TOKENS = {
-  CYBRIA: {
-    CYBA: "0x95622Fce49d65D1101f6FDa8b6325459A6188E52",
+  U2UTestnet: {
+    U2U: "",
+    pUSDT: ""
     // USDT: "0x102bd5D18b2f6800ef4dcaF5fCe131fbb52aeBA4",
   },
   BASE_SEPOLIA: {
-    CYBA: "0xE5a4574B92A3D9528CFE9FC1a02F4983dBFd8aa1",
+    ETH: "",
+    USDT: ""
     // USDT: "0xd1e728572AD0F0Bd8AD9EEf614C353CdE527929B",
-  }, ETHEREUM:{
-    CYBA: "0x1063181dc986F76F7eA2Dd109e16fc596d0f522A"
+  },
+   CreatorTestnet:{
+    ETH: "",
+    USDT: ""
   }
 };
+
 
 const TransactionChain = () => {
   const { setSelectTokenModal, isDarkMode } = useOutletContext();

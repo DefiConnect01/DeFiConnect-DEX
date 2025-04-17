@@ -8,16 +8,22 @@ import TransactionLock from './components/lock/TransactionLock';
 // import TransactionBribe from './components/vote/TransactionBribe';
 import TransactionLoan from './components/loan/TransactionLoan';
 import TransactionChain from './components/cross-chain/TransactionChain';
+// import ZNSRegister from './components/ZNSRegister';
 
 function AppRouter() {
     // console.log("Rendering AppRouter");
     return (
         <Router>
             <Routes>
+            
                 <Route path="/" element={<App />}>
+               
                     <Route index element={<>
                         <TransactionMenu/>
                     </>} />
+                  
+                 
+               
                     <Route path="liquidity" element={<>
                         <LiquidityMenu />
                     </>} />

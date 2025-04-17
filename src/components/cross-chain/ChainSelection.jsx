@@ -8,15 +8,9 @@ const ChainSelection = ({ onSelect }) => {
   const dropdownRef = useRef(null);
 
   const chains = [
-    { id: 'ethereum', name: 'Ethereum', symbol: 'ETH', icon: <FaEthereum className="text-blue-500" />, color: 'bg-blue-100' },
-    { id: 'bitcoin', name: 'Bitcoin', symbol: 'BTC', icon: <SiBitcoin className="text-yellow-500" />, color: 'bg-yellow-100' },
-    { id: 'bsc', name: 'Binance Smart Chain', symbol: 'BSC', icon: <span className="text-yellow-500 font-bold">B</span>, color: 'bg-yellow-100' },
-    { id: 'polygon', name: 'Polygon', symbol: 'MATIC', icon: <span className="text-purple-500 font-bold">P</span>, color: 'bg-purple-100' },
-    { id: 'solana', name: 'Solana', symbol: 'SOL', icon: <span className="text-purple-500 font-bold">S</span>, color: 'bg-purple-100' },
-    { id: 'avalanche', name: 'Avalanche', symbol: 'AVAX', icon: <span className="text-red-500 font-bold">A</span>, color: 'bg-red-100' },
-    { id: 'polkadot', name: 'Polkadot', symbol: 'DOT', icon: <SiPolkadot className="text-pink-500" />, color: 'bg-pink-100' },
-    { id: 'litecoin', name: 'Litecoin', symbol: 'LTC', icon: <SiLitecoin className="text-gray-500" />, color: 'bg-gray-100' },
-    { id: 'dogecoin', name: 'Dogecoin', symbol: 'DOGE', icon: <SiDogecoin className="text-yellow-600" />, color: 'bg-yellow-100' }
+    { id: 'baseSepolia', name: 'BaseSepolia', symbol: 'ETH', icon: <FaEthereum className="text-blue-500" />, color: 'bg-blue-100' },
+    { id: 'u2uTestnet', name: 'U2uTestnet', symbol: 'U2U', icon: <SiBitcoin className="text-yellow-500" />, color: 'bg-yellow-100' },
+    { id: 'creatorTestnet', name: 'Creator', symbol: 'ETH', icon: <SiBitcoin className="text-yellow-500" />, color: 'bg-yellow-100' },
   ];
 
   useEffect(() => {

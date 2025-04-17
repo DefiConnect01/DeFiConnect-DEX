@@ -157,3 +157,17 @@ export const SEARCH_WHITELIST_RETURNED = "SEARCH_WHITELIST_RETURNED";
 
 //MIGRATE
 export const MIGRATE = "MIGRATE";
+
+//LOAN
+export const CREATE_LOAN = "CREATE_LOAN";
+export const APPROVE_LOAN = "APPROVE_LOAN";
+export const REPAY_LOAN = "REPAY_LOAN";
+export const WITHDRAW = "WITHDRAW";
+export const LIQUIDATE_LOAN = "LIQUIDATE_LOAN";
+export const GET_HEALTH_FACTOR = "GET_HEALTH_FACTOR";
+
+//CROSS_CHAIN
+export const SEND_NATIVE = "SEND_NATIVE";
+export const SEND_TOKEN = "SEND_TOKEN";
+export const RELAY_TOKEN = "RELAY_TOKEN";
+

@@ -2,7 +2,8 @@ import React, { Component, useState, useEffect } from "react";
 import { Typography, Button, CircularProgress, Tooltip } from "@mui/material";
 import classes from "./transactionQueue.module.css";
 
-import { ACTIONS, ETHERSCAN_URL } from "../../stores/constants/constants";
+import  { ACTIONS , ETHERSCAN_URL} from "../../stores/constants/constants";
+// import from "../../stores/constants/constants";
 import { formatAddress } from "../../lib/utils";
 
 export default function Transaction({ transaction }) {
