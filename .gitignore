@@ -28,3 +28,5 @@ bun.lockb
 roots.sst
 package-lock
 bun.lockb
+
+.env
