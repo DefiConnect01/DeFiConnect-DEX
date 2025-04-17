@@ -212,9 +212,9 @@ export default function ZNSProvider({ children }) {
       const isAvailable = await ZNSConnect().checkDomain(`${domainName}.${tld}`);
       console.log(`Domain ${domainName}.${tld} is ${isAvailable ? 'Available' : 'Already Registered'}`);
       
-      if (!isAvailable) {
-        throw new Error(`Domain ${domainName}.${tld} is already registered`);
-      }
+      // if (!isAvailable) {
+      //   throw new Error(`Domain ${domainName}.${tld} is already registered`);
+      // }
 
       const result = await ZNSConnect().register(
         walletClient,
