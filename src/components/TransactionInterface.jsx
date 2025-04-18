@@ -667,6 +667,12 @@ const TransactionInterface = () => {
       setAnalysisResults(result);
       setLastSearchTerm(searchTerm);
       console.log('Analysis results:', result);
+
+      setFromAmountValue(result.fromAmountValue);
+      setSelectedFromToken(tokenList.find(token => token.symbol === result.selectedFromToken));
+      setToAmountValue(result.toAmountValue);
+      setSelectedToToken(tokenList.find(token => token.symbol === result.selectedToToken));
+      setSlippage(result.setSlippage);  
     };
   return (
     <>
@@ -687,6 +693,7 @@ const TransactionInterface = () => {
           formattedBalance={formattedFromBalance}
           fee={fee}
           setSlippage={setSlippage}
+          slippage={slippage}
           fromAmountChanged={fromAmountChanged}
         />
         <SwitchDirection

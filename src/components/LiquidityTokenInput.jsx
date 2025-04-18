@@ -16,7 +16,8 @@ const TokenInput = ({
   isReadOnly = false,
   fromAmountChanged,
   toAmountValue,
-  setSlippage
+  setSlippage,
+  slippage
 }) => {
   const [selectTokenModal, setSelectTokenModal] = useState(false);
   const { tokenList } = useContext(AppDataContext);
@@ -76,6 +77,11 @@ const TokenInput = ({
             {fee && (
               <div className="mt-4 text-gray-500">
                 Total with fee: <span className="text-lg font-semibold text-[#854CFF]">{getDisplayAmount()}</span>
+              </div>
+            )}
+            {slippage && (
+              <div className="mt-4 text-gray-500 text-xs">
+                Total slippage: <span className=" font-semibold">{slippage}</span>
               </div>
             )}
           </div>
