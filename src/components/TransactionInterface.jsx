@@ -666,8 +666,7 @@ const TransactionInterface = () => {
     const handleAnalysisComplete = (result, searchTerm) => {
       setAnalysisResults(result);
       setLastSearchTerm(searchTerm);
-      console.log('Analysis results:', result);
-
+      
       setFromAmountValue(result.fromAmountValue);
       setSelectedFromToken(tokenList.find(token => token.symbol === result.selectedFromToken));
       setToAmountValue(result.toAmountValue);
