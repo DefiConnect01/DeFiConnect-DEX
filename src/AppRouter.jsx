@@ -8,6 +8,7 @@ import TransactionLock from './components/lock/TransactionLock';
 // import TransactionBribe from './components/vote/TransactionBribe';
 import TransactionLoan from './components/loan/TransactionLoan';
 import TransactionChain from './components/cross-chain/TransactionChain';
+import DomainTable from './components/domains/DomainTable';
 // import ZNSRegister from './components/ZNSRegister';
 
 function AppRouter() {
@@ -38,6 +39,9 @@ function AppRouter() {
                     </>} />
                     <Route path="cross-chain" element={<>
                         <TransactionChain />
+                    </>} />
+                    <Route path="domains" element={<>
+                        <DomainTable/>
                     </>} />
                     <Route path="transactions" element={<>
                         <TransactionHistory />

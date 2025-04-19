@@ -6,6 +6,7 @@ import VestTable from './lock/VestTable';
 import VoteTable from './vote/VoteTable';
 import LoanTable from './loan/LoanTable';
 import TransactionChain from './cross-chain/TransactionChain';
+import DomainTable from './domains/DomainTable';
 
 function TransactionMenu() {
 
@@ -57,9 +58,9 @@ function TransactionMenu() {
                         "hover:text-gray-600 dark:hover:text-gray-300 dark:hover:bg-darkModeGray"}`}>Reward</button>
                 </div> */}
                 <div className="me-2">
-                    <button onClick={() => handleActive("migrate")} className={`w-full inline-block p-4 rounded-t-lg ${activeTab === "migrate" ?
+                    <button onClick={() => handleActive("domains")} className={`w-full inline-block p-4 rounded-t-lg ${activeTab === "domains" ?
                         "dark:text-white dark:glassmorphic active glassmorphic-dark dark:hover:glassmorphic" : 
-                        "hover:text-gray-600 dark:hover:text-gray-300  dark:hover:bg-darkModeGray"}`}>Migrate</button>
+                        "hover:text-gray-600 dark:hover:text-gray-300  dark:hover:bg-darkModeGray"}`}>Domains</button>
                 </div>
             </div>
 
@@ -106,9 +107,9 @@ function TransactionMenu() {
                     </>
                 )} */}
 
-                {activeTab === "migrate" && (
+                {activeTab === "domains" && (
                     <>
-                        <ComingSoon/>
+                        <DomainTable/>
                     </>
                 )}
             </div>
