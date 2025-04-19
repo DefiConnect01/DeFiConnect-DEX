@@ -655,29 +655,51 @@ const TransactionInterface = () => {
     const [lastSearchTerm, setLastSearchTerm] = useState('');
 
     const parameterFormat = {
-          fromAmountValue:0,
-          selectedFromToken:"",
-          formattedFromBalance:0,
-          setSlippage:0,
-          toAmountValue:0,
-          selectedToToken:"",
-          formattedToBalance:0,
+      fromAmountValue: 0,
+      selectedFromToken: "",
+      formattedFromBalance: 0,
+      setSlippage: 0,
+      toAmountValue: 0,
+      selectedToToken: "",
+      formattedToBalance: 0,
+      isStable: false
     };
+    
+    // Improved handler with error checking
     const handleAnalysisComplete = (result, searchTerm) => {
+      
       setAnalysisResults(result);
       setLastSearchTerm(searchTerm);
       
-      setFromAmountValue(result.fromAmountValue);
-      setSelectedFromToken(tokenList.find(token => token.symbol === result.selectedFromToken));
-      setToAmountValue(result.toAmountValue);
-      setSelectedToToken(tokenList.find(token => token.symbol === result.selectedToToken));
-      setSlippage(result.setSlippage);  
+      if (!result) return;
+      
+      if (result.fromAmountValue !== undefined) {
+        setFromAmountValue(result.fromAmountValue);
+      }
+      
+      if (result.selectedFromToken) {
+        const fromToken = tokenList.find(token => token.symbol === result.selectedFromToken);
+        if (fromToken) setSelectedFromToken(fromToken);
+      }
+      
+      if (result.toAmountValue !== undefined) {
+        setToAmountValue(result.toAmountValue);
+      }
+      
+      if (result.selectedToToken) {
+        const toToken = tokenList.find(token => token.symbol === result.selectedToToken);
+        if (toToken) setSelectedToToken(toToken);
+      }
+      
+      if (result.setSlippage !== undefined) {
+        setSlippage(result.setSlippage);
+      }
     };
   return (
     <>
     <div className="w-full flex justify-center items-center">
       <SearchBar parameterFormat={parameterFormat}
-          onAnalysisComplete={handleAnalysisComplete} placeholder="Search with AI analysis..."/>
+          onAnalysisComplete={handleAnalysisComplete} placeholder="Swap with AI analysis..."/>
     </div>
     <div 
     className="shadow-glow shadow-glow-hover ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-8 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">

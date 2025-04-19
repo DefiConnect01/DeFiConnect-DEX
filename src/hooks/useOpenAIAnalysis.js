@@ -26,7 +26,6 @@ const useOpenAIAnalysis = ({ apiKey, model = "gpt-3.5-turbo", temperature = 0.2 
     try {
       // Create a structured prompt for OpenAI
       const parameters = Object.keys(parameterFormat);
-      console.log(parameters)
       
       const prompt = `
         Analyze the following text and extract values for these parameters: ${parameters.join(', ')}.

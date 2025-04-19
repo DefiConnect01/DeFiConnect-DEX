@@ -138,7 +138,7 @@ const TransactionChain = () => {
 
   // Contract reads
   const { data: allowance } = useReadContract({
-    address: TOKENS[fromChain][selectedToken],
+    address: TOKENS[fromChain][selectedToken] || "",
     abi: [
       {
         constant: true,

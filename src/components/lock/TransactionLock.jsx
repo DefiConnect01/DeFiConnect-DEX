@@ -108,6 +108,37 @@ const TransactionLock = () => {
     
   }, [isTransactionCompleted, isButtonDisabled]);
 
+  const [analysisResults, setAnalysisResults] = useState(null);
+  const [lastSearchTerm, setLastSearchTerm] = useState('');
+
+  const parameterFormat = {
+    lockValue:0,
+    lockTime: "365 days"
+  };
+  
+  const handleAnalysisComplete = (result, searchTerm) => {
+    setAnalysisResults(result);
+    setLastSearchTerm(searchTerm);
+    
+    if (!result) return;
+    
+    if (result.lockValue !== 0) {
+      setLockValue(result.lockValue);
+    }
+    
+    if (result.lockTime !== 0) {
+      const validLockTimes = ["7 days", "30 days", "365 days", "1460 days"];
+      
+      if (validLockTimes.includes(result.lockTime)) {
+        const lockDays = parseInt(result.lockTime);
+        setLockTime(lockDays);
+      } else {
+        setLockTime(365);
+      }
+    }
+
+  };
+
   return (
     <>
       <div className="flex justify-start mb-4">
@@ -118,13 +149,15 @@ const TransactionLock = () => {
       </div>
 
       <div className="w-full flex justify-center items-center my-4">
-        <SearchBar/>
+        <SearchBar parameterFormat={parameterFormat}
+          onAnalysisComplete={handleAnalysisComplete} placeholder="Set Lock with AI analysis..."/>
       </div>
 
       <div className="shadow-glow shadow-glow-hover ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
         <div className="p-2">
           <LockInput
             setLockValue={setLockValue}
+            lockValue = {lockValue}
           />
           <div className="my-4"></div>
           <LockDate
@@ -154,9 +187,9 @@ const TransactionLock = () => {
               1 year
             </button>
             <button
-              className={`px-4 py-1 w-full rounded-full text-sm ${lockTime === 1461 ? "bg-primary text-white" : ""
+              className={`px-4 py-1 w-full rounded-full text-sm ${lockTime === 1460 ? "bg-primary text-white" : ""
                 }`}
-              onClick={() => setLockTime(1461)}
+              onClick={() => setLockTime(1460)}
             >
               4 years
             </button>
@@ -164,8 +197,7 @@ const TransactionLock = () => {
 
           <div className="mt-6">
             <p className="font-medium text-xs text-left mb-2 text-black dark:text-white">
-                Lock period should be multiples of 1 week
-                (e.g. 28, 35, 42 days, etc.)
+                Lock period should be within the given time frame
             </p>
             <div className="grid md:grid-cols-2 my-3" >
               <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2" >

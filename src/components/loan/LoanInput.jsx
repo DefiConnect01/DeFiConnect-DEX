@@ -5,7 +5,8 @@ import { PiCoinsBold } from "react-icons/pi";
 
 const LoanInput = ({
   setLoanValue,
-  selectedToken
+  selectedToken,
+  loanValue
 }) => {
 
   return (
@@ -29,6 +30,7 @@ const LoanInput = ({
             type="number" 
             className="bg-inherit w-1/2 rounded-lg sm:p-2 p-1 text-right text-3xl font-semibold text-primary dark:text-textGray" 
             placeholder="0.00"
+            value={loanValue || ""}
             onClick={(e) => setLoanValue(e.target.value)}
             />
             <p className="font-bold ">{selectedToken?.symbol || "DCC"}</p>
