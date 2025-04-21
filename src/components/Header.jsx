@@ -154,13 +154,7 @@ const Header = ({ isDarkMode, toggleDarkMode, isConnected, address, toggleSideba
         </div>
       )}
       
-      {/* {error && (
-        <div className="text-red-500 text-sm">
-          {error} 
-          <button onClick={() => window.location.reload()}>Retry</button>
-        </div>
-      
-      )} */}
+    
       {/* <TransactionQueue setQueueLength={setTransactionQueueLength} /> */}
       <div className="hidden gap-8 items-center md:flex">
         {!isTransactionsPage && <TransactionsButton />}
