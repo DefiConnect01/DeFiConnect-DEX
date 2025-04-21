@@ -378,3 +378,49 @@ export const voteData = [
     }
   ]
   
+  export const domainTableColumns = [
+    {
+      Header: "Address",
+      accessor: "address",
+    },
+    {
+      Header: "Network",
+      accessor: "network",
+    },
+    {
+      Header: "Domain Name",
+      accessor: "domainName",
+    },
+    // {
+    //   Header: "My Vote",
+    //   accessor: "myVote",
+    //   cell: ({ row }) => {
+    //     return (
+    //       <div>
+    //         <div className='relative gap-1 flex flex-col item-center'>
+    //           <p className="font-bold text-sm">{row.getValue('fromMyVote')}</p>
+    //           <p className="font-bold text-xs">{row.getValue('toMyVote')}</p>
+    //         </div>
+    //       </div>
+    //     );
+    //   }
+    // }
+  ];
+
+  export const domainTableData = [
+    {
+      address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
+      network: "ETH",
+      domainName: "deficonnect.eth"
+    },
+    {
+      address: "0x8901DCA6383ea4FdBc3DAB9c40Dad674281CC7F1",
+      network: "BTC",
+      domainName: "tradingapp.btc"
+    },
+    {
+      address: "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
+      network: "DCC",
+      domainName: "liquidity.dcc"
+    }
+  ]

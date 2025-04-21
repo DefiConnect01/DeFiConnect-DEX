@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { FaEthereum, FaCaretDown, FaCheck } from 'react-icons/fa';
 import { SiBitcoin, SiLitecoin, SiDogecoin, SiPolkadot } from 'react-icons/si';
 
-const ChainSelection = ({ onSelect }) => {
+const ChainSelection = ({ onSelect, chain }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedChain, setSelectedChain] = useState(null);
   const dropdownRef = useRef(null);
@@ -79,7 +79,7 @@ const ChainSelection = ({ onSelect }) => {
                   {chain.icon}
                 </div>
                 <div className="flex flex-col items-start">
-                  <span className="font-medium">{chain.name}</span>
+                  <span className="font-medium text-black">{chain.name}</span>
                   <span className="text-xs text-gray-500">{chain.symbol}</span>
                 </div>
               </div>

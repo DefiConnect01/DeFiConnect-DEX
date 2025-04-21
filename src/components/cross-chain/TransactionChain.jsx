@@ -21,46 +21,25 @@ import SearchBar from "../search/SearchBar";
 import ChainSelection from "./ChainSelection";
 
 
-// const CHAIN_IDS = {
-//   CYBRIA: 6661,
-//   BASE_SEPOLIA: 84532,
-//   ETHEREUM: 1
-// };
 const CHAIN_IDS = {
-  U2U: 284,
+  CYBRIA: 6661,
   BASE_SEPOLIA: 84532,
-  CreatorTestnet:66665
+  ETHEREUM: 1
 };
-// const TOKENS = {
-//   CYBRIA: {
-//     CYBA: "0x95622Fce49d65D1101f6FDa8b6325459A6188E52",
-//     // USDT: "0x102bd5D18b2f6800ef4dcaF5fCe131fbb52aeBA4",
-//   },
-//   BASE_SEPOLIA: {
-//     CYBA: "0xE5a4574B92A3D9528CFE9FC1a02F4983dBFd8aa1",
-//     // USDT: "0xd1e728572AD0F0Bd8AD9EEf614C353CdE527929B",
-//   }, ETHEREUM:{
-//     CYBA: "0x1063181dc986F76F7eA2Dd109e16fc596d0f522A"
-//   }
-// };
+
 
 const TOKENS = {
-  U2UTestnet: {
-    U2U: "",
-    pUSDT: ""
+  CYBRIA: {
+    CYBA: "0x95622Fce49d65D1101f6FDa8b6325459A6188E52",
     // USDT: "0x102bd5D18b2f6800ef4dcaF5fCe131fbb52aeBA4",
   },
   BASE_SEPOLIA: {
-    ETH: "",
-    USDT: ""
+    CYBA: "0xE5a4574B92A3D9528CFE9FC1a02F4983dBFd8aa1",
     // USDT: "0xd1e728572AD0F0Bd8AD9EEf614C353CdE527929B",
-  },
-   CreatorTestnet:{
-    ETH: "",
-    USDT: ""
+  }, ETHEREUM:{
+    CYBA: "0x1063181dc986F76F7eA2Dd109e16fc596d0f522A"
   }
 };
-
 
 const TransactionChain = () => {
   const { setSelectTokenModal, isDarkMode } = useOutletContext();
@@ -638,23 +617,89 @@ const TransactionChain = () => {
     setApprovalTxHash(null);
   };
 
-  const { data: toBalanceData } = useBalance({
-          address,
-          token: selectedToToken.address === "ETH" ? null : selectedToToken.address
-        });
+  const handleAmountChange = useCallback((value) => {
+      if (!value || value === "") {
+        setAmount("");
+        return;
+      }
   
-  const formattedToBalance = toBalanceData
-    ? Number(formatUnits(toBalanceData.value, selectedToToken.decimals)).toFixed(2)
-    : "0";
+      // Validate input is a valid number
+      const numValue = parseFloat(value);
+      if (isNaN(numValue)) return;
+  
+      // Limit decimal places based on token decimals
+      const decimals = selectedFromToken?.decimals || 18;
+      const parts = value.split('.');
+      if (parts[1] && parts[1].length > decimals) {
+        value = `${parts[0]}.${parts[1].slice(0, decimals)}`;
+      }
+  
+      setAmount(value);
+    }, [selectedFromToken]);
+
+    const { data: toBalanceData } = useBalance({
+        address,
+        token: selectedToToken.address === "ETH" ? null : selectedToToken.address
+      });
+
+    const formattedToBalance = toBalanceData
+      ? Number(formatUnits(toBalanceData.value, selectedToToken.decimals)).toFixed(2)
+      : "0";
+    
+    const [analysisResults, setAnalysisResults] = useState(null);
+    const [lastSearchTerm, setLastSearchTerm] = useState('');
+
+    const parameterFormat = {
+      fromAmountValue: 0,
+      selectedFromToken: "",
+      formattedFromBalance: 0,
+      setSlippage: 0,
+      toAmountValue: 0,
+      selectedToToken: "",
+      formattedToBalance: 0,
+      isStable: false
+    };
+    
+    // Improved handler with error checking
+    const handleAnalysisComplete = (result, searchTerm) => {
+      
+      setAnalysisResults(result);
+      setLastSearchTerm(searchTerm);
+      
+      if (!result) return;
+      
+      if (result.fromAmountValue !== undefined) {
+        setFromAmountValue(result.fromAmountValue);
+      }
+      
+      if (result.selectedFromToken) {
+        const fromToken = tokenList.find(token => token.symbol === result.selectedFromToken);
+        if (fromToken) setSelectedFromToken(fromToken);
+      }
+      
+      if (result.toAmountValue !== undefined) {
+        setToAmountValue(result.toAmountValue);
+      }
+      
+      if (result.selectedToToken) {
+        const toToken = tokenList.find(token => token.symbol === result.selectedToToken);
+        if (toToken) setSelectedToToken(toToken);
+      }
+      
+      if (result.setSlippage !== undefined) {
+        setSlippage(result.setSlippage);
+      }
+    };
 
   return (
     <>
     <div className="w-full flex justify-center items-center">
-      <SearchBar/>
+      <SearchBar parameterFormat={parameterFormat}
+                onAnalysisComplete={handleAnalysisComplete} placeholder="Swap with AI analysis..."/>
     </div>
 
     <div className="w-full flex justify-center items-center">
-      <ChainSelection/>
+      <ChainSelection chain={""}/>
     </div>
 
     <div 

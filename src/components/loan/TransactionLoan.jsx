@@ -20,7 +20,8 @@ const TransactionLoan = () => {
     selectedFromToken,
     selectedToToken,
     setSelectedFromToken,
-    setSelectedToToken
+    setSelectedToToken,
+    tokenList
   } = useContext(AppDataContext);
 
   const [amount, setAmount] = useState("");
@@ -107,6 +108,40 @@ const TransactionLoan = () => {
     
   }, [isTransactionCompleted, isButtonDisabled]);
 
+  const [analysisResults, setAnalysisResults] = useState(null);
+    const [lastSearchTerm, setLastSearchTerm] = useState('');
+  
+    const parameterFormat = {
+      loanValue: 0,
+      selectedLoanToken: "",
+      selectedCollateralToken: ""
+    };
+    
+    const handleAnalysisComplete = (result, searchTerm) => {
+      setAnalysisResults(result);
+      setLastSearchTerm(searchTerm);
+  
+      console.log(result);
+      
+      if (!result) return;
+
+      
+      if (result.selectedLoanToken) {
+        const selectedToken = tokenList.find(token => token.symbol === result.selectedLoanToken);
+        if (selectedToken) setSelectedToToken(selectedToken);
+      }
+
+      if (result.selectedCollateralToken) {
+        const selectedToken = tokenList.find(token => token.symbol === result.selectedCollateralToken);
+        if (selectedToken) setSelectedFromToken(selectedToken);
+      }
+      
+      if (result.loanValue !== 0) {
+        setLoanValue(result.loanValue);
+      }
+  
+    };
+
   return (
     <>
     
@@ -118,7 +153,8 @@ const TransactionLoan = () => {
       </div>
 
       <div className="w-full flex justify-center items-center my-4">
-        <SearchBar/>
+        <SearchBar parameterFormat={parameterFormat}
+          onAnalysisComplete={handleAnalysisComplete} placeholder="Set Loan with AI analysis..."/>
       </div>
 
       <div className="shadow-glow shadow-glow-hover ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-4 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
@@ -138,6 +174,7 @@ const TransactionLoan = () => {
           <LoanInput
             setLoanValue={setLoanValue}
             selectedToken={selectedToToken}
+            loanValue={loanValue}
           />
           <div className="my-4"></div>
           <LoanDate
