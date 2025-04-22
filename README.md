@@ -1,11 +1,6 @@
-# DeFi Connect Credit Ve(3,3)Dex.
+# DeFi Connect Credit Unified RWA and DeFI Ecosystem.
 
-This is a dex that has a concentrated Liquidity.
-it is a dex that allows Liquidity Providers to reinvest their profits, 
-it means they could Stake their LPs to earn more rewards besides Swap fees.
-The rewards earned could also be use to gain Voting Power
-whereby users could participate in the Decision Making of the Platform
-based on their Voting Power.
+This is a Unified AI-powered RWA Lending, Cross-chain swap and Dex Platform. AI will assist you in Trading in the platform.
 
 Stack used
 Vite + React
