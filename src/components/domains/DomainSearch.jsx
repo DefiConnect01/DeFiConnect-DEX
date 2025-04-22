@@ -1,17 +1,30 @@
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { FaSearch, FaArrowRight, FaSpinner } from 'react-icons/fa';
+import {ZNSContext} from '../../context/znsContext';
+
 
 const DomainSearch = ({ placeholder = "Search..." }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
 
+  const {
+     domains, 
+     isLoading, 
+      error, 
+      registerDomain,
+      fetchRegisteredDomains
+
+  } = useContext(ZNSContext);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (searchTerm.trim()) {
+    const domainName = searchTerm.trim();
+    if (domainName) {
       try {
         setLoading(true);
         await new Promise(resolve => setTimeout(resolve, 1000));
         console.log(`Domain search submitted: ${searchTerm}`);
+        await registerDomain(domainName, 'ceo');
         setSearchTerm('');
       } catch (err) {
         console.error('Error analyzing search term:', err);
@@ -53,8 +66,19 @@ const DomainSearch = ({ placeholder = "Search..." }) => {
           </button>
         </form>
       </div>
-    </div>
+    {/* </div> */}
+
+
+<div className="mt-2 text-sm">
+{domains && (
+  <p className="text-green-500">Successfully registered: {domains}</p>
+)}
+{error && (
+  <p className="text-red-500">Error: {error}</p>
+)}
+</div>
+</div>
   );
-};
+}
 
 export default DomainSearch;

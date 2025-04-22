@@ -14,7 +14,7 @@ import stores from '../stores';
 import { CONNECTION_CONNECTED } from '../stores/constants/actions';
 import { ACTIONS } from '../stores/constants/constants';
 // import  ACTIONS  from '../stores/constants/constants';
-import { ZNSContext } from '../context/znsContext';
+ import { ZNSContext } from '../context/znsContext';
 
 
 const NetworkButton = () => (
@@ -23,9 +23,10 @@ const NetworkButton = () => (
   </div>
 );
 
-const ConnectButton = ({ isConnected, address, domain }) => {
+const ConnectButton = ({ isConnected, address }) => {
   // const { address, isConnected: connected } = useAppKitAccount()
-  const displayText = domain || (address ? trimAddress(address) : "Connect Wallet");
+  // const displayText = domain || (address ? trimAddress(address) : "Connect Wallet");
+  // const displayText = (address ? trimAddress(address) : "Connect Wallet");
   return (
     <div>
       <div className="hidden md:block lg:hidden">
@@ -37,8 +38,8 @@ const ConnectButton = ({ isConnected, address, domain }) => {
       <div className="md:hidden lg:block">
         <w3m-connect-button
           size="md"
-          // label={!isConnected ? "Connect Wallet" : `${trimAddress(address)}`}
-          label={!isConnected ? "Connect Wallet" : displayText}
+          label={!isConnected ? "Connect Wallet" : `${trimAddress(address)}`}
+          // label={!isConnected ? "Connect Wallet" : displayText}
 
         />
        
@@ -53,48 +54,28 @@ const Header = ({ isDarkMode, toggleDarkMode, isConnected, address, toggleSideba
   // const { domain } = useZNS();
   // console.log(domain);
  
-  const { domain, isLoading, error, registerDomain,   manualRetry } = useContext(ZNSContext);
+  // const { domains, isLoading, error } = useContext(ZNSContext);
   const navigate = useNavigate();
   const location = useLocation();
   const isTransactionsPage = location.pathname === '/transactions';
  
   const { chainId } = useAppKitNetwork();
 
-  const generateDomainName = (walletAddress, attemptIndex = 0) => {
-    if (!walletAddress) return '';
+  // const generateDomainName = (walletAddress, attemptIndex = 0) => {
+  //   if (!walletAddress) return '';
     
-    // Start with 0x and include the next 3 characters
-    let baseName = walletAddress.slice(0, 5).toLowerCase();
+  //   // Start with 0x and include the next 3 characters
+  //   let baseName = walletAddress.slice(0, 5).toLowerCase();
     
-    // Add a suffix based on attempt number if this isn't the first try
-    if (attemptIndex > 0) {
-      baseName += attemptIndex.toString();
-    }
-    
-    return baseName;
-  };
-
-  const handleRetry = async () => {
-    if (!isConnected || !address) {
-      console.error('Cannot retry: No wallet connected');
-      return;
-    }
-    
-    manualRetry
-  };
-  // const handleRetry = async () => {
-  //   try {
-  //     // Changed this to match the expected parameter structure
-  //     if (address) {
-  //       const suggestedDomain = address.slice(2, 6).toLowerCase();
-  //       await registerDomain(suggestedDomain, 'ceo');
-  //     }
-  //   } catch (err) {
-  //     console.error('Retry failed:', err);
+  //   // Add a suffix based on attempt number if this isn't the first try
+  //   if (attemptIndex > 0) {
+  //     baseName += attemptIndex.toString();
   //   }
+    
+  //   return baseName;
   // };
- 
-  console.log(domain);
+
+  
 
   
   useEffect(() => {
@@ -120,7 +101,7 @@ const Header = ({ isDarkMode, toggleDarkMode, isConnected, address, toggleSideba
         content: { connected: true },
       });
     }
-  //  registerDomain('aremson', 'ceo');
+  
 
   }, [isConnected, address]);
 
@@ -137,22 +118,22 @@ const Header = ({ isDarkMode, toggleDarkMode, isConnected, address, toggleSideba
         />
         <p className={` ${isDarkMode ? "text-white" : "text-black"} md:text-xl`}>DefiConnect
         {/* {domain && ` | ${domain}`} */}
-          {isLoading && ' (Registering domain...)'}
+          {/* {/* {isLoading && ' (Registering domain...)'} */}
         </p>
       </div>
 
-      {error && (
+      {/* {error && (
         <div className="text-red-500 text-sm">
-          {error}
-          <button 
+          {error} */}
+          {/* <button 
             onClick={handleRetry}
             disabled={isLoading}
             className="ml-2 px-2 py-1 bg-gray-100 rounded"
           >
             {isLoading ? 'Processing...' : 'Retry'}
           </button>
-        </div>
-      )}
+        </div> 
+        // )} */}
       
     
       {/* <TransactionQueue setQueueLength={setTransactionQueueLength} /> */}
@@ -160,7 +141,7 @@ const Header = ({ isDarkMode, toggleDarkMode, isConnected, address, toggleSideba
         {!isTransactionsPage && <TransactionsButton />}
         <NetworkButton />
         {/* <ConnectButton isConnected={isConnected} address={address} /> */}
-        <ConnectButton isConnected={isConnected} address={address} domain={domain} />
+        <ConnectButton isConnected={isConnected} address={address} />
         {/* <BridgeInfo /> */}
         <DarkModeToggle isDarkMode={isDarkMode} toggleDarkMode={toggleDarkMode} />
       </div>

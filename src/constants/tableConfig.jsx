@@ -1,4 +1,8 @@
 import { actions } from "react-table";
+// import { ZNSContext } from "../context/znsContext";
+// import { useContext } from "react";
+
+// const {address, domains} = useContext(ZNSContext);
 
 // tableConfig.js
 export const tableColumns = [
@@ -409,18 +413,18 @@ export const voteData = [
 
   export const domainTableData = [
     {
-      address: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
-      network: "ETH",
-      domainName: "deficonnect.eth"
+      address: '',
+      network: "Creator",
+      domainName: '.ceo'
     },
-    {
-      address: "0x8901DCA6383ea4FdBc3DAB9c40Dad674281CC7F1",
-      network: "BTC",
-      domainName: "tradingapp.btc"
-    },
-    {
-      address: "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
-      network: "DCC",
-      domainName: "liquidity.dcc"
-    }
+    // {
+    //   address: "0x8901DCA6383ea4FdBc3DAB9c40Dad674281CC7F1",
+    //   network: "BTC",
+    //   domainName: "tradingapp.btc"
+    // },
+    // {
+    //   address: "0x3fC91A3afd70395Cd496C647d5a6CC9D4B2b7FAD",
+    //   network: "DCC",
+    //   domainName: "liquidity.dcc"
+    // }
   ]

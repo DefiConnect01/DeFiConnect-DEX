@@ -8,7 +8,7 @@ const DomainTable = () => {
     useTable({ columns: domainTableColumns, data: domainTableData });
 
   return (
-    <div className="m-5 overflow-x-auto min-h-[400px]">
+    <div className="m-5 overflow -x-auto min-h-[400px]">
         <div className="w-full flex justify-center items-center my-4">
             <DomainSearch/>
         </div>
