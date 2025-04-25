@@ -7,7 +7,7 @@ import DomainSuccessModal from '../modal/DomainSuccessModal';
 const DomainSearch = ({ placeholder = "Search..." }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
-  const [modalOpen, setModalOpen] = useState(true);
+  const [modalOpen, setModalOpen] = useState(false);
 
 
   const {
@@ -44,7 +44,7 @@ const DomainSearch = ({ placeholder = "Search..." }) => {
   
   return (
     <>
-    <DomainSuccessModal domainName={"fello" || searchTerm.trim()} open={modalOpen} onClose={() => setModalOpen(false)} />
+    <DomainSuccessModal domainName={domains} open={modalOpen} onClose={() => setModalOpen(false)} />
     <div className="relative">
       <div className="flex items-center transition-all duration-300 glassmorphic rounded-full shadow-md overflow-hidden w-96 pl-4 pr-2 py-2">
         <form onSubmit={handleSubmit} className="flex w-full items-center">

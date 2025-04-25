@@ -3,8 +3,13 @@ import Confetti from "react-confetti";
 import { useWindowSize } from "@react-hook/window-size";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
+// import {ZNSContext} from "../../context/znsContext";
 
 export default function DomainSuccessModal({ domainName, open, onClose }) {
+  // const {
+  //      domains
+  
+  //   } = useContext(ZNSContext);
   const [width, height] = useWindowSize();
 
   if (!open) return null;
