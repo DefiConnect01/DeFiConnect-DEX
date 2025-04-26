@@ -14,8 +14,7 @@ const DomainSearch = ({ placeholder = "Search..." }) => {
      domains, 
      isLoading, 
       error, 
-      registerDomain,
-      fetchRegisteredDomains
+      registerDomain
 
   } = useContext(ZNSContext);
 
@@ -29,7 +28,6 @@ const DomainSearch = ({ placeholder = "Search..." }) => {
         console.log(`Domain search submitted: ${searchTerm}`);
         await registerDomain(domainName, 'ceo').then(() => {
           setModalOpen(true);
-          setSearchTerm('');
         });
         
       } catch (err) {
@@ -44,7 +42,10 @@ const DomainSearch = ({ placeholder = "Search..." }) => {
   
   return (
     <>
-    <DomainSuccessModal domainName={domains} open={modalOpen} onClose={() => setModalOpen(false)} />
+    <DomainSuccessModal domainName={searchTerm} open={modalOpen} onClose={() => {
+      setModalOpen(false);
+      setSearchTerm('');
+    }} />
     <div className="relative">
       <div className="flex items-center transition-all duration-300 glassmorphic rounded-full shadow-md overflow-hidden w-96 pl-4 pr-2 py-2">
         <form onSubmit={handleSubmit} className="flex w-full items-center">

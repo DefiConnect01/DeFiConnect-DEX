@@ -397,7 +397,7 @@ export default function ZNSProvider({ children }) {
               transport: custom(window.ethereum)
             });
 
-
+          
       // Check availability
       const fullDomain = `${domainName}.${tld}`;
       const isAvailable = await ZNSConnect().checkDomain(fullDomain);

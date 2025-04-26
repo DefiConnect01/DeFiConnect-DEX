@@ -1,11 +1,31 @@
-import React from "react";
+import React, { useContext, useMemo } from "react";
 import { useTable } from "react-table";
 import { domainTableColumns, domainTableData } from "../../constants/tableConfig";
 import DomainSearch from "./DomainSearch";
+import { ZNSContext } from "../../context/znsContext";
+import { useEffect } from "react";
+import { useAppKitAccount } from "@reown/appkit/react";
 
 const DomainTable = () => {
+  const { address } = useAppKitAccount();
+    const {
+       domains, 
+       isLoading
+    } = useContext(ZNSContext);
+
+    const data = useMemo(() => {
+        return domains !== undefined ? domains.map((domain) => {
+            return {  
+                address: address || "",
+                network: "Creator",
+                domainName: domain
+            }
+        }) : []
+    }
+    , [domains]);
+    
   const { getTableProps, getTableBodyProps, headerGroups, rows, prepareRow } =
-    useTable({ columns: domainTableColumns, data: domainTableData });
+    useTable({ columns: domainTableColumns, data: data });
 
   return (
     <div className="m-5 overflow -x-auto min-h-[400px]">
