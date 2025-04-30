@@ -26,6 +26,7 @@ const TransactionLoan = () => {
 
   const [amount, setAmount] = useState("");
   const [loanValue, setLoanValue] = useState(0);
+  const [collateralValue, setCollateralValue] = useState(0);
   const [fee, setFee] = useState(null);
   const [transactionState, setTransactionState] = useState("idle");
   const [errorMessage, setErrorMessage] = useState("");
@@ -113,6 +114,7 @@ const TransactionLoan = () => {
   
     const parameterFormat = {
       loanValue: 0,
+      collateralValue: 0,
       selectedLoanToken: "",
       selectedCollateralToken: ""
     };
@@ -139,6 +141,10 @@ const TransactionLoan = () => {
       if (result.loanValue !== 0) {
         setLoanValue(result.loanValue);
       }
+
+      if(result.collateralValue !== 0) {
+        setCollateralValue(result.collateralValue);
+      }
   
     };
 
@@ -164,6 +170,12 @@ const TransactionLoan = () => {
                 selectedToken={selectedFromToken}
                 onTokenSelect={setSelectedFromToken}
                 />
+              <div className="my-4"></div>
+              <LoanInput
+                setLoanValue={setCollateralValue}
+                selectedToken={selectedFromToken}
+                loanValue={collateralValue}
+              />
               <div className="my-4"></div>
             <LoanExchange
                 label="Loan Token"
