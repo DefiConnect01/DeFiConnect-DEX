@@ -28,15 +28,15 @@ function AppRouter() {
                     <Route path="liquidity" element={<>
                         <LiquidityMenu />
                     </>} />
-                    <Route path="lock" element={<>
+                    {/* <Route path="lock" element={<>
                         <TransactionLock />
-                    </>} />
+                    </>} /> */}
                     {/* <Route path="bribe" element={<>
                         <TransactionBribe />
                     </>} /> */}
-                    <Route path="loan" element={<>
+                    {/* <Route path="loan" element={<>
                         <TransactionLoan />
-                    </>} />
+                    </>} /> */}
                     <Route path="cross-chain" element={<>
                         <TransactionChain />
                     </>} />
