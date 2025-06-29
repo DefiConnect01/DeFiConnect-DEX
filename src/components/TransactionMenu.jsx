@@ -18,7 +18,7 @@ function TransactionMenu() {
 
     return (
         <>
-            <div className="w-[95vw] max-w-[1000px] mx-auto grid grid-cols-3 md:grid-cols-6 text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 mb-8">
+            <div className="w-[95vw] max-w-[1000px] mx-auto grid grid-cols-2 md:grid-cols-4 text-sm font-medium text-center text-gray-500 border-b border-gray-200 dark:border-gray-700 dark:text-gray-400 mb-8">
                 <div className="me-2">
                     <button onClick={() => handleActive("swap")} aria-current="page" className={`w-full inline-block p-4 ${activeTab === "swap" ?
                         "dark:text-white dark:glassmorphic active glassmorphic-dark dark:hover:glassmorphic" : 
