@@ -4,8 +4,6 @@ import { AppDataContext } from "../context/appContext";
 
 const SwitchDirection = ({ 
     disabled,
-    fromAmountChanged,
-    fromAmountValue,
     className
   }) => {
     const { 
@@ -22,10 +20,6 @@ const SwitchDirection = ({
       setSelectedFromToken(selectedToToken);
       setSelectedToToken(selectedFromToken);
   
-      // Update amount if needed
-      if (fromAmountChanged && fromAmountValue) {
-        fromAmountChanged(fromAmountValue);
-      }
     };
   
     return (

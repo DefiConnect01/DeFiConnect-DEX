@@ -171,3 +171,6 @@ export const SEND_NATIVE = "SEND_NATIVE";
 export const SEND_TOKEN = "SEND_TOKEN";
 export const RELAY_TOKEN = "RELAY_TOKEN";
 
+
+// new
+export const UPDATE_WALLET_STATE = 'UPDATE_WALLET_STATE'

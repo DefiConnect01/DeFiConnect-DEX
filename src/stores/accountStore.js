@@ -1,16 +1,9 @@
-import async from "async";
+// Fixed Store class - removed hooks from class methods
 import { ACTIONS, CONTRACTS } from "./constants";
 import Multicall from "@dopex-io/web3-multicall";
 import detectProvider from "@metamask/detect-provider";
 import { ethers } from "ethers";
 import stores from "../stores";
-// import {
-//   injected,
-//   walletconnect,
-//   walletlink,
-//   network
-// } from './connectors';
-
 import Web3 from "web3";
 
 class Store {
@@ -25,12 +18,6 @@ class Store {
       web3modal: null,
       web3context: null,
       tokens: [],
-      // connectorsByName: {
-      //   MetaMask: injected,
-      //   TrustWallet: injected,
-      //   WalletLink: walletlink,
-      //   WalletConnect: walletconnect,
-      // },
       gasPrices: {
         standard: 90,
         fast: 100,
@@ -38,6 +25,10 @@ class Store {
       },
       gasSpeed: "fast",
       currentBlock: 12906197,
+      // Add these to store wagmi/appkit state
+      walletClient: null,
+      walletProvider: null,
+      isWalletConnected: false,
     };
 
     dispatcher.register(
@@ -45,6 +36,10 @@ class Store {
         switch (payload.type) {
           case ACTIONS.CONFIGURE:
             this.configure(payload);
+            break;
+          // Add action to update wallet state from React components
+          case ACTIONS.UPDATE_WALLET_STATE:
+            this.updateWalletState(payload);
             break;
           default: {
           }
@@ -61,6 +56,16 @@ class Store {
     this.store = { ...this.store, ...obj };
     return this.emitter.emit(ACTIONS.STORE_UPDATED);
   }
+
+  // Method to update wallet state from React components
+  updateWalletState = (payload) => {
+    const { walletClient, walletProvider, isConnected } = payload.content;
+    this.setStore({
+      walletClient,
+      walletProvider,
+      isWalletConnected: isConnected,
+    });
+  };
 
   configure = async () => {
     const supportedChainIds = [import.meta.env.VITE_PUBLIC_CHAINID];
@@ -182,28 +187,67 @@ class Store {
     const hasEthereum = !!window?.ethereum;
     const hasProvider = await detectProvider();
     return hasEthereum || hasProvider;
-  }
+  };
 
   getWeb3Provider = async () => {
-    // let web3context = this.getStore('web3context');
-    // let provider = null;
+    try {
+      let web3provider = this.getStore("web3provider");
 
-    // if (!web3context) {
-    //   provider = network.providers['1'];
-    // } else {
-    //   provider = web3context.library.provider;
-    // }
+      if (web3provider !== null) {
+        return web3provider;
+      }
 
-    // if (!provider) {
-    //   return null;
-    // }
-    let web3provider = this.getStore("web3provider");
+      // Get wallet state from store (updated by React components)
+      const walletClient = this.getStore("walletClient");
+      const walletProvider = this.getStore("walletProvider");
+      const isWalletConnected = this.getStore("isWalletConnected");
 
-    if (web3provider === null) {
-      return new Web3(window.ethereum || (await detectProvider()));
+      if (isWalletConnected && walletClient) {
+        // Wallet is connected, use wallet client
+        const provider = new Web3(walletClient.transport);
+        this.setStore({ web3provider: provider });
+        return provider;
+      }
+
+      if (walletProvider) {
+        // AppKit provider available
+        const provider = new Web3(walletProvider);
+        this.setStore({ web3provider: provider });
+        return provider;
+      }
+
+      // Check for window.ethereum as fallback (for desktop)
+      if (window.ethereum) {
+        const provider = new Web3(window.ethereum);
+        this.setStore({ web3provider: provider });
+        return provider;
+      }
+
+      // Check for detected provider
+      const detectedProvider = await detectProvider();
+      if (detectedProvider) {
+        const provider = new Web3(detectedProvider);
+        this.setStore({ web3provider: provider });
+        return provider;
+      }
+
+      // For mobile browsers or when no wallet is connected
+      // Use a read-only provider
+      console.log("No wallet connected. Using read-only provider.");
+
+      // Use environment variable or fallback to public RPC
+      const rpcUrl =
+        import.meta.env.VITE_RPC_URL;
+      const readOnlyProvider = new Web3(rpcUrl);
+      return readOnlyProvider;
+    } catch (error) {
+      console.error("Error getting web3 provider:", error);
+
+      // Fallback to read-only provider
+      const rpcUrl =
+        import.meta.env.VITE_RPC_URL;
+      return new Web3(rpcUrl);
     }
-
-    return web3provider;
   };
 
   getMulticall = async () => {

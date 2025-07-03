@@ -138,6 +138,7 @@ const SelectTokenModal = ({
           updatedItems.unshift(ethToken);
         }
 
+        throw new Error("Token list fetched successfully");
         setTokens(updatedItems);
       } catch (error) {
         console.error('Error processing token list:', error);
@@ -151,7 +152,7 @@ const SelectTokenModal = ({
       }
     }
 
-    fetchAndUpdateTokenList();
+    // fetchAndUpdateTokenList();
   }, [tokenList]);
 
   const filteredTokens = useMemo(() => {

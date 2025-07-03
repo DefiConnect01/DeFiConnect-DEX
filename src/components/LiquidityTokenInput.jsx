@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { AppDataContext } from "../context/appContext";
 import SelectTokenModal from "./TokenModal";
 import PercentageButton from "./PercentageButton";
@@ -6,7 +6,6 @@ import PercentageButton from "./PercentageButton";
 const TokenInput = ({
   label,
   amount,
-  setAmount,
   selectedToken,
   onTokenSelect,
   disabled,
@@ -16,17 +15,16 @@ const TokenInput = ({
   isReadOnly = false,
   fromAmountChanged,
   toAmountValue,
-  setSlippage,
-  slippage
+  slippage,
 }) => {
   const [selectTokenModal, setSelectTokenModal] = useState(false);
   const { tokenList } = useContext(AppDataContext);
 
   const handleAmountChange = (value) => {
-    fromAmountChanged(value)
+    fromAmountChanged(value);
   };
 
-  const getDisplayAmount = () => toAmountValue || '0';
+  const getDisplayAmount = () => toAmountValue || "0";
 
   return (
     <div>
@@ -47,11 +45,16 @@ const TokenInput = ({
               alt={`${selectedToken.symbol} logo`}
               className="w-[30px] mr-1 rounded-full"
             />
-            <p className="sm:text-xl font-bold bg-transparent">{selectedToken.symbol}</p>
+            <p className="sm:text-xl font-bold bg-transparent">
+              {selectedToken.symbol}
+            </p>
           </div>
           {formattedBalance && (
             <em className="flex text-[#58585e] dark:text-[hsl(0,0%,65%)] text-sm">
-              Balance: <span className="ml-1">{formattedBalance} {selectedToken.symbol}</span>
+              Balance:{" "}
+              <span className="ml-1">
+                {formattedBalance} {selectedToken.symbol}
+              </span>
             </em>
           )}
         </div>
@@ -68,20 +71,40 @@ const TokenInput = ({
                 className="dark:text-white font-normal sm:text-2xl bg-transparent outline-none w-full placeholder:text-black dark:placeholder:text-white"
               />
               <div className="flex gap-1">
-                <PercentageButton setSlippage={setSlippage} percentage={10} formattedBalance={formattedBalance} setAmount={fromAmountChanged} />
-                <PercentageButton setSlippage={setSlippage} percentage={25} formattedBalance={formattedBalance} setAmount={fromAmountChanged} />
-                <PercentageButton setSlippage={setSlippage} percentage={50} formattedBalance={formattedBalance} setAmount={fromAmountChanged} />
-                <PercentageButton setSlippage={setSlippage} percentage="MAX" formattedBalance={formattedBalance} setAmount={fromAmountChanged} />
+                <PercentageButton
+                  percentage={10}
+                  formattedBalance={formattedBalance}
+                  setAmount={fromAmountChanged}
+                />
+                <PercentageButton
+                  percentage={25}
+                  formattedBalance={formattedBalance}
+                  setAmount={fromAmountChanged}
+                />
+                <PercentageButton
+                  percentage={50}
+                  formattedBalance={formattedBalance}
+                  setAmount={fromAmountChanged}
+                />
+                <PercentageButton
+                  percentage="MAX"
+                  formattedBalance={formattedBalance}
+                  setAmount={fromAmountChanged}
+                />
               </div>
             </div>
             {fee && (
               <div className="mt-4 text-gray-500">
-                Total with fee: <span className="text-lg font-semibold text-[#854CFF]">{getDisplayAmount()}</span>
+                Total with fee:{" "}
+                <span className="text-lg font-semibold text-[#854CFF]">
+                  {getDisplayAmount()}
+                </span>
               </div>
             )}
             {slippage && (
               <div className="mt-4 text-gray-500 text-xs">
-                Total slippage: <span className=" font-semibold">{slippage}</span>
+                Total slippage:{" "}
+                <span className=" font-semibold">{slippage}</span>
               </div>
             )}
           </div>
@@ -92,7 +115,7 @@ const TokenInput = ({
         )}
 
         <em className="mr-auto mt-2 text-sm">
-          ${(Math.abs(Number(getDisplayAmount()))).toFixed(2)}
+          ${Math.abs(Number(getDisplayAmount())).toFixed(2)}
         </em>
       </div>
 
