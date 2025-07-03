@@ -1,24 +1,16 @@
-import React, { useContext, useState, useCallback, useEffect } from "react";
+import { useContext, useState, useCallback, useEffect } from "react";
 import { AppDataContext } from "../context/appContext";
-import { parseEther, formatUnits, parseUnits } from "viem";
-import {
-  useWriteContract,
-  useAccount,
-  useWaitForTransactionReceipt,
-  useReadContract,
-  useSwitchChain,
-  useBalance
-} from "wagmi";
-import { toast } from 'react-toastify';
+import { formatUnits } from "viem";
+import { useBalance } from "wagmi";
+import { toast } from "react-toastify";
 import TokenInput from "./LiquidityTokenInput";
 import SwitchDirection from "./LiquiditySwitchDirection";
 
-import stores from '../stores';
-import { ACTIONS, CONTRACTS } from '../stores/constants/constants';
+import stores from "../stores";
+import { ACTIONS, CONTRACTS } from "../stores/constants/constants";
 import { useAppKitAccount } from "@reown/appkit/react";
 import BigNumber from "bignumber.js";
 import SearchBar from "./search/SearchBar";
-
 
 const TransactionLiquidity = () => {
   const {
@@ -50,48 +42,66 @@ const TransactionLiquidity = () => {
   // Keep track of which field the user last modified
   const [lastModified, setLastModified] = useState(null); // 'one' or 'two'
 
-  const { address } = useAppKitAccount()
+  const { address } = useAppKitAccount();
+
 
   const { data: fromBalanceData } = useBalance({
-      address,
-      chainId: selectedFromToken?.chainId,
-      token: selectedFromToken.address === "ETH" ? undefined : selectedFromToken?.address, // Token is undefined for ETH
-    });
+    address,
+    chainId: selectedFromToken?.chainId,
+    token:
+      selectedFromToken.address === "ETH"
+        ? undefined
+        : selectedFromToken?.address, // Token is undefined for ETH
+  });
 
   const { data: toBalanceData } = useBalance({
-      address,
-      chainId: selectedToToken?.chainId,
-      token: selectedToToken.address === "ETH" ? undefined : selectedToToken?.address, // Token is undefined for ETH
-    });
+    address,
+    chainId: selectedToToken?.chainId,
+    token:
+      selectedToToken.address === "ETH" ? undefined : selectedToToken?.address, // Token is undefined for ETH
+  });
 
+
+  console.log({
+    fromBalanceData,
+    toBalanceData,
+    selectedFromToken,
+    selectedToToken})
   const formattedFromBalance = fromBalanceData
-    ? Number(formatUnits(fromBalanceData.value, selectedFromToken.decimals)).toFixed(2)
+    ? Number(
+        formatUnits(fromBalanceData.value, selectedFromToken.decimals)
+      ).toFixed(2)
     : "0";
 
   const formattedToBalance = toBalanceData
-    ? Number(formatUnits(toBalanceData.value, selectedToToken.decimals)).toFixed(2)
+    ? Number(
+        formatUnits(toBalanceData.value, selectedToToken.decimals)
+      ).toFixed(2)
     : "0";
 
   // Add handleAmountChange function
-  const handleAmountChange = useCallback((value) => {
-    if (!value || value === "") {
-      setAmount("");
-      return;
-    }
+  const handleAmountChange = useCallback(
+    (value) => {
+      if (!value || value === "") {
+        setAmount("");
+        return;
+      }
 
-    // Validate input is a valid number
-    const numValue = parseFloat(value);
-    if (isNaN(numValue)) return;
+      // Validate input is a valid number
+      const numValue = parseFloat(value);
+      if (isNaN(numValue)) return;
 
-    // Limit decimal places based on token decimals
-    const decimals = selectedFromToken?.decimals || 18;
-    const parts = value.split('.');
-    if (parts[1] && parts[1].length > decimals) {
-      value = `${parts[0]}.${parts[1].slice(0, decimals)}`;
-    }
+      // Limit decimal places based on token decimals
+      const decimals = selectedFromToken?.decimals || 18;
+      const parts = value.split(".");
+      if (parts[1] && parts[1].length > decimals) {
+        value = `${parts[0]}.${parts[1].slice(0, decimals)}`;
+      }
 
-    setAmount(value);
-  }, [selectedFromToken]);
+      setAmount(value);
+    },
+    [selectedFromToken]
+  );
 
   const handleSwap = useCallback(() => {
     // Store current amount
@@ -114,22 +124,22 @@ const TransactionLiquidity = () => {
 
   useEffect(() => {
     const depositReturnedLiquidity = () => {
-      setDepositLoading(false)
-      setTokenTwoAmount("")
+      setDepositLoading(false);
+      setTokenTwoAmount("");
       setTokenOneAmount("");
-      toast.success("Transaction completed")
+      toast.success("Transaction completed");
     };
 
     const depositReturnedPair = () => {
-      setDepositLoading(false)
-      setTokenTwoAmount("")
+      setDepositLoading(false);
+      setTokenTwoAmount("");
       setTokenOneAmount("");
-      toast.info("Pair Created")
+      toast.info("Pair Created");
     };
 
     const errorReturned = (e) => {
-      setDepositLoading(false)
-      console.log("Error", {e})
+      setDepositLoading(false);
+      console.log("Error", { e });
       // toast.error("Transaction failed")
     };
 
@@ -138,7 +148,7 @@ const TransactionLiquidity = () => {
     };
 
     const addLiquidityCallback = (params) => {
-      setDepositLoading(true)
+      setDepositLoading(true);
       stores.dispatcher.dispatch({
         type: ACTIONS.ADD_LIQUIDITY,
         content: {
@@ -146,17 +156,17 @@ const TransactionLiquidity = () => {
           pair: {
             token0: selectedFromToken,
             token1: selectedToToken,
-            isStable
+            isStable,
           },
-        }
+        },
       });
-    }
+    };
 
     const ssUpdated = async () => {
       try {
-        const token0IsETH =  selectedFromToken.address == "ETH";
-        const token1IsETH =  selectedToToken.address == "ETH";
-        
+        const token0IsETH = selectedFromToken.address == "ETH";
+        const token1IsETH = selectedToToken.address == "ETH";
+
         // Find pair for selected tokens
         const currentPair = await stores.stableSwapStore.getPair(
           token0IsETH ? CONTRACTS.WFTM_ADDRESS : selectedFromToken.address,
@@ -164,15 +174,17 @@ const TransactionLiquidity = () => {
           isStable
         );
 
-        console.log({currentPair})
-        
+        console.log({ currentPair });
+
         if (currentPair) {
           setPair(currentPair);
-          
+
           // Update balances
-          setPooledBalance(parseFloat(currentPair.balance).toFixed(2) || "0.00");
+          setPooledBalance(
+            parseFloat(currentPair.balance).toFixed(2) || "0.00"
+          );
           setStakedBalance(currentPair.gauge?.balance || "0.00");
-          
+
           // Update prices if available
           if (currentPair.reserve0 && currentPair.reserve1) {
             const price0 = BigNumber(currentPair.reserve0)
@@ -186,12 +198,12 @@ const TransactionLiquidity = () => {
           }
         }
       } catch (error) {
-        console.error('Error updating pair data:', error);
+        console.error("Error updating pair data:", error);
       }
     };
     // Initial update
     ssUpdated();
-    
+
     // Subscribe to events
     stores.emitter.on(ACTIONS.UPDATED, ssUpdated);
     stores.emitter.on(ACTIONS.ERROR, errorReturned);
@@ -203,15 +215,12 @@ const TransactionLiquidity = () => {
     return () => {
       // Cleanup listeners
       stores.emitter.removeListener(
-        ACTIONS.LIQUIDITY_ADDED, 
+        ACTIONS.LIQUIDITY_ADDED,
         depositReturnedLiquidity
       );
+      stores.emitter.removeListener(ACTIONS.PAIR_CREATED, depositReturnedPair);
       stores.emitter.removeListener(
-        ACTIONS.PAIR_CREATED, 
-        depositReturnedPair
-      );
-      stores.emitter.removeListener(
-        ACTIONS.ADD_LIQUIDITY_CALLBACK, 
+        ACTIONS.ADD_LIQUIDITY_CALLBACK,
         addLiquidityCallback
       );
       stores.emitter.removeListener(
@@ -220,8 +229,8 @@ const TransactionLiquidity = () => {
       );
       stores.emitter.removeListener(ACTIONS.UPDATED, ssUpdated);
       stores.emitter.removeListener(ACTIONS.ERROR, errorReturned);
-    }
-  }, [selectedFromToken, selectedToToken, isStable])
+    };
+  }, [selectedFromToken, selectedToToken, isStable]);
 
   const [isTransactionCompleted, setIsTransactionCompleted] = useState(false);
   const [approvalState, setApprovalState] = useState("idle");
@@ -340,7 +349,7 @@ const TransactionLiquidity = () => {
     if (!lastModified) return;
 
     // Set priority asset based on which field was last modified
-    const priorityAsset = lastModified === 'one' ? 0 : 1;
+    const priorityAsset = lastModified === "one" ? 0 : 1;
 
     // Call the function with the correct priority asset
     callQuoteAddLiquidity(
@@ -357,18 +366,20 @@ const TransactionLiquidity = () => {
   // handlers to set lastModified
   const handleTokenOneInput = (value) => {
     setTokenOneAmount(value);
-    setLastModified('one');
+    setLastModified("one");
   };
 
   const handleTokenTwoInput = (value) => {
     setTokenTwoAmount(value);
-    setLastModified('two');
+    setLastModified("two");
   };
 
   // Check if balance is sufficient
   const isInsufficientBalance = () => {
-    return parseFloat(tokenOneAmount) > parseFloat(formattedFromBalance) 
-    || parseFloat(tokenTwoAmount) > parseFloat(formattedToBalance);
+    return (
+      parseFloat(tokenOneAmount) > parseFloat(formattedFromBalance) ||
+      parseFloat(tokenTwoAmount) > parseFloat(formattedToBalance)
+    );
   };
 
   // Get button text based on current state
@@ -377,7 +388,8 @@ const TransactionLiquidity = () => {
       return "Insufficient Balance";
     }
 
-    if (selectedFromToken?.address == selectedToToken?.address) return "Same Token";
+    if (selectedFromToken?.address == selectedToToken?.address)
+      return "Same Token";
 
     if (isTransactionCompleted) {
       return "Start New Transaction";
@@ -388,21 +400,26 @@ const TransactionLiquidity = () => {
     }
 
     switch (transactionState) {
-      case "idle": return "Add Liquidity";
-      case "sending": return "Adding Liquidity...";
-      case "confirming": return "Confirming Transaction...";
-      case "confirmed": return "Transaction Complete";
-      case "error": return "Try Again";
-      default: return "Add Liquidity";
+      case "idle":
+        return "Add Liquidity";
+      case "sending":
+        return "Adding Liquidity...";
+      case "confirming":
+        return "Confirming Transaction...";
+      case "confirmed":
+        return "Transaction Complete";
+      case "error":
+        return "Try Again";
+      default:
+        return "Add Liquidity";
     }
   }, [
-      tokenOneAmount, 
-      tokenTwoAmount, 
-      isTransactionCompleted, 
-      transactionState, 
-      isInsufficientBalance
-    ]
-  );
+    tokenOneAmount,
+    tokenTwoAmount,
+    isTransactionCompleted,
+    transactionState,
+    isInsufficientBalance,
+  ]);
 
   // Check if button should be disabled
   const isButtonDisabled = useCallback(() => {
@@ -412,24 +429,32 @@ const TransactionLiquidity = () => {
     if (isInsufficientBalance()) return true;
     if (isTransactionCompleted) return false;
 
-    return ["sending", "confirming"].includes(transactionState) ||
-      ["approving", "confirming"].includes(approvalState);
+    return (
+      ["sending", "confirming"].includes(transactionState) ||
+      ["approving", "confirming"].includes(approvalState)
+    );
   }, [
-      depositLoading, 
-      tokenOneAmount, 
-      tokenTwoAmount, 
-      isTransactionCompleted, 
-      transactionState, 
-      approvalState, 
-      isInsufficientBalance
-    ]
-  );
+    depositLoading,
+    tokenOneAmount,
+    tokenTwoAmount,
+    isTransactionCompleted,
+    transactionState,
+    approvalState,
+    isInsufficientBalance,
+  ]);
 
   // Handle button click
   const handleButtonClick = useCallback(async () => {
-
     // if (isButtonDisabled()) return;
-    setDepositLoading(true)
+    setDepositLoading(true);
+    console.log({
+      token0: selectedFromToken,
+      token1: selectedToToken,
+      amount0: tokenOneAmount,
+      amount1: tokenTwoAmount,
+      isStable: isStable,
+      slippage: 10, // TODO: create a UI for setting slippage
+    });
 
     stores.dispatcher.dispatch({
       type: ACTIONS.CREATE_PAIR_AND_DEPOSIT,
@@ -439,14 +464,13 @@ const TransactionLiquidity = () => {
         amount0: tokenOneAmount,
         amount1: tokenTwoAmount,
         isStable: isStable,
-        slippage: 10 // TODO: create a UI for setting slippage
-      }
+        slippage: 10, // TODO: create a UI for setting slippage
+      },
     });
-    
   }, [isTransactionCompleted, isButtonDisabled]);
 
   const [analysisResults, setAnalysisResults] = useState(null);
-  const [lastSearchTerm, setLastSearchTerm] = useState('');
+  const [lastSearchTerm, setLastSearchTerm] = useState("");
 
   const parameterFormat = {
     fromAmountValue: 0,
@@ -455,33 +479,37 @@ const TransactionLiquidity = () => {
     toAmountValue: 0,
     selectedToToken: "",
     formattedToBalance: 0,
-    isStable: false
+    isStable: false,
   };
-  
+
   const handleAnalysisComplete = (result, searchTerm) => {
     setAnalysisResults(result);
     setLastSearchTerm(searchTerm);
-    
+
     if (!result) return;
-    
+
     if (result.fromAmountValue !== undefined) {
       handleTokenOneInput(result.fromAmountValue);
     }
-    
+
     if (result.selectedFromToken) {
-      const fromToken = tokenList.find(token => token.symbol === result.selectedFromToken);
+      const fromToken = tokenList.find(
+        (token) => token.symbol === result.selectedFromToken
+      );
       if (fromToken) setSelectedFromToken(fromToken);
     }
-    
+
     if (result.toAmountValue !== undefined) {
       handleTokenTwoInput(result.toAmountValue);
     }
-    
+
     if (result.selectedToToken) {
-      const toToken = tokenList.find(token => token.symbol === result.selectedToToken);
+      const toToken = tokenList.find(
+        (token) => token.symbol === result.selectedToToken
+      );
       if (toToken) setSelectedToToken(toToken);
     }
-    
+
     if (result.isStable !== undefined) {
       setIsStable(result.isStable);
     }
@@ -489,10 +517,13 @@ const TransactionLiquidity = () => {
 
   return (
     <>
-    {/* <div class="animated-border-box-glow"></div>animated-border-box */}
+      {/* <div class="animated-border-box-glow"></div>animated-border-box */}
       <div className="w-full flex justify-center items-center mt-4">
-        <SearchBar parameterFormat={parameterFormat}
-          onAnalysisComplete={handleAnalysisComplete} placeholder="Liquidity with AI analysis..."/>
+        <SearchBar
+          parameterFormat={parameterFormat}
+          onAnalysisComplete={handleAnalysisComplete}
+          placeholder="Liquidity with AI analysis..."
+        />
       </div>
       <div className="shadow-glow shadow-glow-hover ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-8 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
         <div className="p-2 ">
@@ -528,15 +559,21 @@ const TransactionLiquidity = () => {
           />
           <div className="flex justify-center items-center my-4 mt-6">
             <button
-              className={`px-4 py-2 border rounded-l ${!isStable ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
-                }`}
+              className={`px-4 py-2 border rounded-l ${
+                !isStable
+                  ? "bg-mainBg text-white"
+                  : "bg-gray-200 text-darkModeGray"
+              }`}
               onClick={() => setIsStable(false)}
             >
               Volatile
             </button>
             <button
-              className={`px-4 py-2 border rounded-r ${isStable ? "bg-mainBg text-white" : "bg-gray-200 text-darkModeGray"
-                }`}
+              className={`px-4 py-2 border rounded-r ${
+                isStable
+                  ? "bg-mainBg text-white"
+                  : "bg-gray-200 text-darkModeGray"
+              }`}
               onClick={() => setIsStable(true)}
             >
               Stable
@@ -544,14 +581,16 @@ const TransactionLiquidity = () => {
           </div>
 
           <div>
-            <p className="font-medium text-left mb-2 text-black dark:text-[hsl(220,8%,35%)]">Reserve Info</p>
-            <div className="grid md:grid-cols-2" >
-              <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2" >
+            <p className="font-medium text-left mb-2 text-black dark:text-[hsl(220,8%,35%)]">
+              Reserve Info
+            </p>
+            <div className="grid md:grid-cols-2">
+              <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2">
                 <p className="text-light">{selectedFromToken.symbol}</p>
                 <p className="text-lg font-bold">{token0Price}</p>
               </div>
 
-              <div className="border border-secondaryBg flex flex-col items-start px-3 py-2" >
+              <div className="border border-secondaryBg flex flex-col items-start px-3 py-2">
                 <p className="text-light">{selectedToToken.symbol}</p>
                 <p className="text-lg font-bold">{token1Price}</p>
               </div>
@@ -559,14 +598,16 @@ const TransactionLiquidity = () => {
           </div>
 
           <div className="my-4">
-            <p className="font-medium text-left mb-2 text-black dark:text-[hsl(220,8%,35%)]">Your Balances - WETH/DCC</p>
-            <div className="grid md:grid-cols-2" >
-              <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2" >
+            <p className="font-medium text-left mb-2 text-black dark:text-[hsl(220,8%,35%)]">
+              Your Balances - WETH/DCC
+            </p>
+            <div className="grid md:grid-cols-2">
+              <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2">
                 <p className="text-light">Pooled</p>
                 <p className="text-lg font-bold">{pooledBalance}</p>
               </div>
 
-              <div className="border border-secondaryBg flex flex-col items-start px-3 py-2" >
+              <div className="border border-secondaryBg flex flex-col items-start px-3 py-2">
                 <p className="text-light">Staked</p>
                 <p className="text-lg font-bold">{stakedBalance}</p>
               </div>
@@ -577,19 +618,24 @@ const TransactionLiquidity = () => {
             onClick={handleButtonClick}
             disabled={isButtonDisabled()}
             className={`py-2 rounded-full mt-4 w-full 
-          ${isInsufficientBalance()
-                ? "bg-red-500 hover:bg-red-600"
-                : isTransactionCompleted
-                  ? "bg-green-500 hover:bg-green-600"
-                  : transactionState === "error" || approvalState === "error"
-                    ? "bg-red-500 hover:bg-red-600"
-                    : "button_bg"
-              } 
+          ${
+            isInsufficientBalance()
+              ? "bg-red-500 hover:bg-red-600"
+              : isTransactionCompleted
+              ? "bg-green-500 hover:bg-green-600"
+              : transactionState === "error" || approvalState === "error"
+              ? "bg-red-500 hover:bg-red-600"
+              : "button_bg"
+          } 
           text-white 
           transition-all duration-200
           
           hover:shadow-lg
-          ${isButtonDisabled() ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"} 
+          ${
+            isButtonDisabled()
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:shadow-lg"
+          } 
         `}
           >
             {getButtonText()}
@@ -603,7 +649,5 @@ const TransactionLiquidity = () => {
     </>
   );
 };
-
-
 
 export default TransactionLiquidity;

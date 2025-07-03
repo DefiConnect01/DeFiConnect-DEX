@@ -1,4 +1,3 @@
-import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import App from './App';
 import TransactionHistory from './components/TransactionHistory';
@@ -12,7 +11,6 @@ import DomainTable from './components/domains/DomainTable';
 // import ZNSRegister from './components/ZNSRegister';
 
 function AppRouter() {
-    // console.log("Rendering AppRouter");
     return (
         <Router>
             <Routes>

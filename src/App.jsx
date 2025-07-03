@@ -3,7 +3,7 @@ import { Outlet ,useLocation, useNavigate} from 'react-router-dom';
 
 // React Icon imports
 import { IoIosArrowRoundForward } from "react-icons/io";
-import { FaTelegramPlane, FaGithub } from "react-icons/fa";
+import { FaTelegramPlane } from "react-icons/fa";
 import { FaXTwitter } from "react-icons/fa6";
 import { PiSunFill } from "react-icons/pi";
 
@@ -15,10 +15,10 @@ import PageBackground from "./assets/bridge-backg.png";
 import AddCustomToken from "./components/AddCustomToken";
 import SelectTokenModal from "./components/SelectTokenModal";
 import Header from "./components/Header";
-import BridgeInfo from "./components/BridgeInfo";
 
 // Hooks imports
 import { useAppKitAccount } from "@reown/appkit/react";
+import { useWalletStateSync } from "./hooks/useWalletAsync";
 
 
 
@@ -109,7 +109,12 @@ function App() {
   const [selectTokenModal, setSelectTokenModal] = useState(false);
   const [addCustomToken, setAddCustomToken] = useState(false);
   const { address, isConnected } = useAppKitAccount();
-  console.log("[METAMASK CONNECTION]",{address, isConnected})
+  const { isConnected: customIsConnected } = useWalletStateSync();
+  console.log("[METAMASK CONNECTION]", {
+    address,
+    isConnected,
+    customIsConnected,
+  });
 
   const location = useLocation()
   const isHomePage = location.pathname === '/';

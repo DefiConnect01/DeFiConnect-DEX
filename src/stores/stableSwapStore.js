@@ -561,6 +561,7 @@ class Store {
   ////////////////////////////////////////////////////////////////////////////////
 
   createPairDeposit = async (payload) => {
+    console.log("createPairDeposit payload", payload);
     const { token0, token1, amount0, amount1, isStable, slippage } = payload.content;
     await createPairDeposit(
       token0,

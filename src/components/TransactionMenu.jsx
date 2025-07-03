@@ -1,9 +1,7 @@
 import React from 'react'
 import TransactionInterface from './TransactionInterface';
 import PoolTable from './PoolTable';
-import ComingSoon from './ComingSoon';
 import VestTable from './lock/VestTable';
-import VoteTable from './vote/VoteTable';
 import LoanTable from './loan/LoanTable';
 import TransactionChain from './cross-chain/TransactionChain';
 import DomainTable from './domains/DomainTable';
@@ -93,19 +91,7 @@ function TransactionMenu() {
                     <>
                         <TransactionChain/>
                     </>
-                )}  
-
-                {/* {activeTab === "vote" && (
-                    <>
-                        <VoteTable/>
-                    </>
-                )} */}
-
-                {/* {activeTab === "reward" && (
-                    <>
-                        <ComingSoon/>
-                    </>
-                )} */}
+                )}
 
                 {activeTab === "domains" && (
                     <>

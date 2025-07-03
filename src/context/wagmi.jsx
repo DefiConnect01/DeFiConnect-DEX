@@ -1,54 +1,24 @@
 import React from "react";
-import { createAppKit, modal, useAppKitAccount } from "@reown/appkit/react";
-import { useAccount, WagmiProvider } from "wagmi";
-import { baseSepolia, base } from "@reown/appkit/networks";
+import { createAppKit } from "@reown/appkit/react";
+import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import cybaLogo from '../assets/creator.png';
-import u2uLogo from '../assets/logoU2u.jpg';
-import stores from "../stores";
-
-
-// Function to convert SVG to blob URL
-async function createBlobUrl(svgPath) {
-  try {
-    const response = await fetch(svgPath);
-    const blob = await response.blob();
-    return URL.createObjectURL(blob);
-  } catch (error) {
-    // console.error('Error creating blob URL:', error);
-    return null;
-  }
-}
+import PropTypes from "prop-types";
 
 // Create networks configuration
 const createNetworks = async () => {
-  const cybaLogoUrl = await createBlobUrl(cybaLogo);
-  // const u2ulogoUrl  = await ccreateBlobUrl(u2uLogo)
 
-  TODO: `Uncomment and update creator mainnet below`
-  // const creator = {
+  // const creatorTestnet = {
   //   id: "eip155:66665",
-  //   name: "Creator",
+  //   name: "Creator Testnet",
   //   chainId: 66665,
   //   chainNamespace: "eip155",
   //   currency: "ETH",
   //   explorerUrl: "https://explorer.creatorchain.io/stats",
   //   rpcUrl: "https://rpc.creatorchain.io",
-  //   imagesrc: cybaLogoUrl
+  //   // rpcUrl: `https://66665.rpc.thirdweb.com/${import.meta.env.VITE_THIRDWEB_SECRET_KEY}`,
+  //   imagesrc: "/creator.png",
   // };
-
-  const creatorTestnet = {
-    id: "eip155:66665",
-    name: "Creator Testnet",
-    chainId: 66665,
-    chainNamespace: "eip155",
-    currency: "ETH",
-    explorerUrl: "https://explorer.creatorchain.io/stats",
-    rpcUrl: "https://rpc.creatorchain.io",
-    // rpcUrl: `https://66665.rpc.thirdweb.com/${import.meta.env.VITE_THIRDWEB_SECRET_KEY}`,
-    imagesrc: "/creator.png"
-  };
 
   const u2uTestnet = {
     id: "eip155:2484",
@@ -56,16 +26,14 @@ const createNetworks = async () => {
     chainId: 2484,
     chainNamespace: "eip155",
     currency: "U2U",
-    explorerUrl: "https://explorer.creatorchain.io/stats",
-    rpcUrl: "https://rpc-nebulas-testnet.u2u.xyz",
-    // rpcUrl: https://66665.rpc.thirdweb.com/${import.meta.env.VITE_THIRDWEB_SECRET_KEY},
-    imagesrc: "/logoU2u.jpeg"
+    explorerUrl: "https://testnet.u2uscan.xyz",
+    rpcUrl: import.meta.env.VITE_RPC_URL,
+    imagesrc: "/logoU2u.jpeg",
   };
 
- 
-
-  return [u2uTestnet, creatorTestnet];
+  return [u2uTestnet];
 };
+
 const AppKitProvider = ({ children }) => {
   const [networks, setNetworks] = React.useState([]);
   const queryClient = new QueryClient();
@@ -107,7 +75,7 @@ const AppKitProvider = ({ children }) => {
         analytics: true,
       },
     });
-  }, [wagmiAdapter]);
+  }, [wagmiAdapter, networks, projectId]);
 
   if (!wagmiAdapter) return null;
 
@@ -116,6 +84,10 @@ const AppKitProvider = ({ children }) => {
       <QueryClientProvider client={queryClient}>{children}</QueryClientProvider>
     </WagmiProvider>
   );
+};
+
+AppKitProvider.propTypes = {
+  children: PropTypes.node,
 };
 
 export default AppKitProvider;

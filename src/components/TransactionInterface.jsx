@@ -1,81 +1,48 @@
-import React, { useContext, useState, useCallback, useEffect } from "react";
-import { useOutletContext } from 'react-router-dom';
+import React, { useContext, useState, useEffect } from "react";
 import { AppDataContext } from "../context/appContext";
-import { parseEther, formatUnits, parseUnits } from "viem";
-import {
-  useWriteContract,
-  useWaitForTransactionReceipt,
-  useReadContract,
-  useSwitchChain,
-  useBalance
-} from "wagmi";
-import { abi, ethereumAddress, cybriaAddress } from "../constants";
-import { toast } from 'react-toastify';
+import { formatUnits } from "viem";
+import { useWaitForTransactionReceipt, useBalance } from "wagmi";
+import { toast } from "react-toastify";
 import { useAppKitAccount } from "@reown/appkit/react";
 import stores from "../stores";
 import BigNumber from "bignumber.js";
-import { ACTIONS, DEFAULT_ASSET_FROM, DEFAULT_ASSET_TO, CONTRACTS } from "../stores/constants/constants";
+import {
+  ACTIONS,
+  DEFAULT_ASSET_FROM,
+  DEFAULT_ASSET_TO,
+  CONTRACTS,
+} from "../stores/constants/constants";
 import TokenInput from "./LiquidityTokenInput";
 import SwitchDirection from "./LiquiditySwitchDirection";
 import SearchBar from "./search/SearchBar";
 
-
-// const CHAIN_IDS = {
-//   CYBRIA: 6661,
-//   BASE_SEPOLIA: 84532,
-//   ETHEREUM: 1
-// };
-
-const CHAIN_IDS = {
-  CYBRIA: 6661,
-  BASE_SEPOLIA: 84532,
-  ETHEREUM: 1
-};
-
-
-const TOKENS = {
-  CYBRIA: {
-    CYBA: "0x95622Fce49d65D1101f6FDa8b6325459A6188E52",
-    // USDT: "0x102bd5D18b2f6800ef4dcaF5fCe131fbb52aeBA4",
-  },
-  BASE_SEPOLIA: {
-    CYBA: "0xE5a4574B92A3D9528CFE9FC1a02F4983dBFd8aa1",
-    // USDT: "0xd1e728572AD0F0Bd8AD9EEf614C353CdE527929B",
-  }, ETHEREUM:{
-    CYBA: "0x1063181dc986F76F7eA2Dd109e16fc596d0f522A"
-  }
-};
-
 const TransactionInterface = () => {
-  const { setSelectTokenModal, isDarkMode } = useOutletContext();
-  const { 
+  const {
     selectedFromToken,
     selectedToToken,
     setSelectedFromToken,
     setSelectedToToken,
     tokenList,
-    fromChain, 
-    selectedToken
   } = useContext(AppDataContext);
-  
+
   // ============================================
   const multiSwapStore = stores.multiSwapStore;
-  const [slippage, setSlippage] = useState(0.5);
+  const [slippage, setSlippage] = useState(5.5);
 
   const [quoteLoading, setQuoteLoading] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [swapList, setSwapList] = useState([selectedFromToken, selectedToToken]);
+  const [swapList, setSwapList] = useState([
+    selectedFromToken,
+    selectedToToken,
+  ]);
   const [, updateState] = React.useState();
   const forceUpdate = React.useCallback(() => updateState({}), []);
 
   const [fromAmountValue, setFromAmountValue] = useState("");
-  const [fromAmountError, setFromAmountError] = useState(false);
 
   const [toAmountValue, setToAmountValue] = useState("");
 
-  const [quoteError, setQuoteError] = useState(null);
   const [quote, setQuote] = useState(null);
-  const [hidequote, sethidequote] = useState(true);
   // ====================================
 
   const [txHash, setTxHash] = useState(null);
@@ -84,15 +51,10 @@ const TransactionInterface = () => {
   const [approvalState, setApprovalState] = useState("idle");
   const [isTransactionCompleted, setIsTransactionCompleted] = useState(false);
   const [needsApproval, setNeedsApproval] = useState(true);
-  const [errorMessage, setErrorMessage] = useState("Error - Try Again");
-  const [amount, setAmount] = useState("");
-  const [fee, setFee] = useState(null);
-  const [isFetchingFee, setIsFetchingFee] = useState(false);
-  const [formattedFromBalance, setFormattedFromBalance] = useState("0")
+  const fee = null;
+  const [formattedFromBalance, setFormattedFromBalance] = useState("0");
 
-  const { switchChain } = useSwitchChain();
-  const { address, isConnected } = useAppKitAccount()
-  const { writeContractAsync } = useWriteContract();
+  const { address } = useAppKitAccount();
 
   const isETH = swapList[0]?.symbol === "ETH";
 
@@ -120,38 +82,15 @@ const TransactionInterface = () => {
     hash: approvalTxHash,
   });
 
-  // Contract reads
-  const { data: allowance } = useReadContract({
-    address: TOKENS[fromChain][selectedToken],
-    abi: [
-      {
-        constant: true,
-        inputs: [
-          { name: "_owner", type: "address" },
-          { name: "_spender", type: "address" },
-        ],
-        name: "allowance",
-        outputs: [{ name: "", type: "uint256" }],
-        type: "function",
-      },
-    ],
-    functionName: "allowance",
-    args: [
-      address,
-      fromChain === "CYBRIA" ? cybriaAddress : ethereumAddress,
-    ],
-  });
-
   useEffect(() => {
-    setSwapList([selectedFromToken, selectedToToken])
-    console.log(swapList)
-  }, [selectedFromToken, selectedToToken])
+    setSwapList([selectedFromToken, selectedToToken]);
+  }, [selectedFromToken, selectedToToken]);
 
   useEffect(
     function () {
       const errorReturned = () => {
         if (quoteLoading) {
-          toast.error("Error swapping tokens")
+          toast.error("Error swapping tokens");
         }
         setQuoteLoading(false);
       };
@@ -162,31 +101,25 @@ const TransactionInterface = () => {
           setQuoteLoading(false);
           setQuote(null);
           setToAmountValue("");
-          setQuoteError(
+          toast.info(
             "Insufficient liquidity or no route available to complete swap"
           );
-          toast.info("Insufficient liquidity or no route available to complete swap")
         }
 
-        if (
-          val &&
-          val.inputs &&
-          val.inputs.fromAmount === fromAmountValue
-        ) {
+        if (val && val.inputs && val.inputs.fromAmount === fromAmountValue) {
           setQuoteLoading(false);
           if (BigNumber(val.output.finalValue).eq(0)) {
             setQuote(null);
             setToAmountValue("");
-            setQuoteError(
+            toast.info(
               "Insufficient liquidity or no route available to complete swap"
             );
-            toast.info("Insufficient liquidity or no route available to complete swap")
             return;
           }
 
-          toast.success("Quote fetched successfully")
+          toast.success("Quote fetched successfully");
           setToAmountValue(BigNumber(val.output.finalValue).toFixed(8));
-          // console.log('setquote')
+          console.log({ quote: val });
           setQuote(val);
         }
       };
@@ -196,47 +129,44 @@ const TransactionInterface = () => {
 
         // set tokens for multiswap store
         if (
-          baseAsset.length > 0
-          && multiSwapStore.tokenIn === null
-          && multiSwapStore.tokenOut === null
+          baseAsset.length > 0 &&
+          multiSwapStore.tokenIn === null &&
+          multiSwapStore.tokenOut === null
         ) {
-            multiSwapStore.setTokenOut(DEFAULT_ASSET_TO)
-            multiSwapStore.setTokenIn(DEFAULT_ASSET_FROM)
+          multiSwapStore.setTokenOut(DEFAULT_ASSET_TO);
+          multiSwapStore.setTokenIn(DEFAULT_ASSET_FROM);
         }
         forceUpdate();
       };
 
-      const swapReturned = (event) => {
-        toast.success('🎉 Swapped Successfully!');
+      const swapReturned = () => {
+        toast.success("🎉 Swapped Successfully!");
         setLoading(false);
         setFromAmountValue("");
         setToAmountValue("");
-        sethidequote(false);
         // basically calculates nothing (because when swap returns we want the from amount to be 0)
         calculateReceiveAmount(0, swapList[0], swapList[1]);
         setQuote(null);
         setQuoteLoading(false);
       };
-      
+
       const wrapReturned = () => {
-        toast.success("🎉 Wrapped Successfully!")
+        toast.success("🎉 Wrapped Successfully!");
         setLoading(false);
         setFromAmountValue("");
         setToAmountValue("");
-        sethidequote(false);
         // basically calculates nothing (because when swap returns we want the from amount to be 0)
         calculateReceiveAmount(0, swapList[0], swapList[1]);
         setQuote(null);
         setQuoteLoading(false);
       };
-      
+
       const unwrapReturned = () => {
-        console.log(111)
-        toast("🎉 Unwrapped Successfully!")
+        console.log(111);
+        toast("🎉 Unwrapped Successfully!");
         setLoading(false);
         setFromAmountValue("");
         setToAmountValue("");
-        sethidequote(false);
         // basically calculates nothing (because when swap returns we want the from amount to be 0)
         // calculateReceiveAmount(0, swapList[0], swapList[1]);
         setQuote(null);
@@ -268,33 +198,30 @@ const TransactionInterface = () => {
   );
 
   const fromAmountChanged = (value) => {
-    console.log(value)
-    setFromAmountError(false);
+    console.log(value);
     setFromAmountValue(value);
     setQuote(null);
     setToAmountValue("");
     if (value == "" || Number(value) === 0) {
-      setQuoteLoading(false)
+      setQuoteLoading(false);
       setToAmountValue("");
-      sethidequote(true);
     } else {
-      if (swapList[0]?.symbol === CONTRACTS.WFTM_SYMBOL || swapList[1]?.symbol === CONTRACTS.WFTM_SYMBOL) {
-        console.log("Wrap or unwrap")
-        calculateReceiveAmount(value, swapList[0], swapList[1])
+      if (
+        swapList[0]?.symbol === CONTRACTS.WFTM_SYMBOL ||
+        swapList[1]?.symbol === CONTRACTS.WFTM_SYMBOL
+      ) {
+        console.log("Wrap or unwrap");
+        calculateReceiveAmount(value, swapList[0], swapList[1]);
       } else {
-        sethidequote(false);
         setQuoteLoading(true);
-        setQuoteError(false);
         calculateReceiveAmount(value, swapList[0], swapList[1]);
       }
     }
   };
 
-
   const calculateReceiveAmount = (amount, from, to) => {
     if (multiSwapStore.isMultiswapInclude) {
       if (amount !== "" && !isNaN(amount) && to != null) {
-
         stores.dispatcher.dispatch({
           type: ACTIONS.QUOTE_SWAP,
           content: {
@@ -312,7 +239,9 @@ const TransactionInterface = () => {
       const fromTokenDecimals = fromBalanceData?.decimals || 18;
 
       const formattedBalance = fromBalanceData
-        ? Number(formatUnits(fromBalanceData.value, fromTokenDecimals)).toFixed(2)
+        ? Number(formatUnits(fromBalanceData.value, fromTokenDecimals)).toFixed(
+            2
+          )
         : "0";
 
       setFormattedFromBalance(formattedBalance);
@@ -324,30 +253,10 @@ const TransactionInterface = () => {
   }, [fromBalanceData]);
 
   useEffect(() => {
-    if (fromChain === "CYBRIA" && selectedToken === "CYBA") {
-      setNeedsApproval(false);
-      return;
-    }
-
-    if (!amount || !allowance) {
-      setNeedsApproval(true);
-      return;
-    }
-
-    try {
-      const parsedAmount = parseEther(amount.toString());
-      setNeedsApproval(allowance < parsedAmount);
-    } catch (err) {
-      // console.error("Error parsing amount:", err);
-      setNeedsApproval(true);
-    }
-  }, [allowance, amount, fromChain, selectedToken]);
-
-  useEffect(() => {
     if (isLoading) setTransactionState("confirming");
     else if (isConfirmed) {
       setTransactionState("confirmed");
-      toast.success('🎉 Transaction successfull!');
+      toast.success("🎉 Transaction successfull!");
       setIsTransactionCompleted(true);
     } else if (isError) {
       setTransactionState("error");
@@ -366,94 +275,22 @@ const TransactionInterface = () => {
 
   useEffect(() => {
     fromAmountChanged(fromAmountValue);
-  }, [swapList])
+  }, [swapList]);
 
-
-  // Helper function to parse amount based on token and chain
-  const parseAmount = (amount, chain, token) => {
-    if (chain === "ETHEREUM" && token === "CYBA") {
-      // Use 9 decimals for CYBA on Base Sepolia
-      return parseUnits(amount.toString(), 9);
-    }
-    // Use 18 decimals for all other cases
-    return parseEther(amount.toString());
-  };
-
-  // Add this to the handleSend function
-  const handleSend = useCallback(async () => {
-    if (!writeContractAsync || !amount) return;
-
-    try {
-      setTransactionState("sending");
-
-      const isCybria = fromChain === "CYBRIA";
-      const dstChainId = isCybria ? CHAIN_IDS.ETHEREUM : CHAIN_IDS.CYBRIA;
-
-      const srcToken = TOKENS[fromChain][selectedToken];
-      const dstToken = TOKENS[isCybria ? "ETHEREUM" : "CYBRIA"][selectedToken];
-      const contractAddress = isCybria ? cybriaAddress : ethereumAddress;
-      const functionName = isCybria && selectedToken === "CYBA" ? "sendNative" : "send";
-
-      const userInput = parseAmount(amount, fromChain, selectedToken);
-      let txConfig = {
-        address: contractAddress,
-        abi,
-        functionName,
-      };
-
-      if (isCybria && selectedToken === "CYBA") {
-        const nativeUserInput = parseEther(amount.toString()) + fee; // Keep 18 decimals for native ETH
-        txConfig.args = [address, dstToken, nativeUserInput, dstChainId, 0n, 5000];
-        txConfig.value = nativeUserInput;
-      } else {
-        txConfig.args = [address, srcToken, dstToken, userInput, dstChainId, 1n, 10];
-      }
-
-      // console.log("Transaction config:", txConfig);
-      const hash = await writeContractAsync(txConfig);
-      setTxHash(hash);
-      setTransactionState("confirming");
-    } catch (err) {
-      handleTransactionError(err);
-    }
-  }, [writeContractAsync, fromChain, selectedToken, amount, address, fee]);
-
-
-  const handleTransactionError = (err) => {
-    const message = err.message;
-    if (message.includes("transfer exist")) {
-      setErrorMessage("Transfer already exists. Change amount.");
-    } else if (message.includes("InsufficientFunds")) {
-      setErrorMessage("Insufficient Funds");
-    } else if (message.includes("Arithmetic operation resulted in underflow or overflow")) {
-      setErrorMessage("Amount is too small. Please increase the amount."); // New user-friendly message
-    } else {
-      setErrorMessage("Failed to send transaction");
-      // console.error("Failed to send transaction:", err.message);
-    }
-
-    // Show toast for better visibility
-    toast.error(
-      message.includes("Arithmetic operation resulted in underflow or overflow")
-        ? "Amount is too small. Please increase the amount."
-        : "Transaction failed. Please try again."
-    );
-
-    // console.error("Failed to send transaction:", err.message);
-    setTransactionState("error");
-  };
   const isInsufficientBalance = () => {
-    return quote && parseFloat(fromAmountValue) > parseFloat(formattedFromBalance)
+    return (
+      quote && parseFloat(fromAmountValue) > parseFloat(formattedFromBalance)
+    );
   };
 
   const getButtonText = () => {
     if (!address) {
-      return "Connect Wallet"
+      return "Connect Wallet";
     }
 
-    if (quoteLoading){
+    if (quoteLoading) {
       // toast.info('Quote loading...');
-      return "Quote loading..."
+      return "Quote loading...";
     }
 
     if (isInsufficientBalance()) {
@@ -466,45 +303,59 @@ const TransactionInterface = () => {
       return "Start New Transaction";
     }
 
-    if ((swapList[0]?.symbol === CONTRACTS.FTM_SYMBOL && swapList[1]?.symbol === CONTRACTS.WFTM_SYMBOL)) {
-      return 'Wrap'
+    if (
+      swapList[0]?.symbol === CONTRACTS.FTM_SYMBOL &&
+      swapList[1]?.symbol === CONTRACTS.WFTM_SYMBOL
+    ) {
+      return "Wrap";
     }
 
-    if (swapList[0]?.symbol === CONTRACTS.WFTM_SYMBOL && swapList[1]?.symbol === CONTRACTS.FTM_SYMBOL) {
-      return 'Unwrap'
+    if (
+      swapList[0]?.symbol === CONTRACTS.WFTM_SYMBOL &&
+      swapList[1]?.symbol === CONTRACTS.FTM_SYMBOL
+    ) {
+      return "Unwrap";
     }
 
-    if (quote && parseFloat(fromAmountValue) < parseFloat(formattedFromBalance)) {
-      return "Swap"
-    } 
-    
-    if (!quote && fromAmountValue) {
-      return "Route unavailable"
-    }
-
-    if (isFetchingFee) {
-      return "Calculating Fee...";
+    if (
+      quote &&
+      parseFloat(fromAmountValue) < parseFloat(formattedFromBalance)
+    ) {
+      return "Swap";
     }
 
     if (!fromAmountValue || fromAmountValue == 0) {
       return "Enter Amount";
     }
+    if (!quote && fromAmountValue) {
+      return "Route unavailable";
+    }
 
     if (!needsApproval) {
       switch (transactionState) {
-        case "idle": return "Transfer";
-        case "sending": return "Initiating Transfer...";
-        case "confirming": return "Confirming Transaction...";
-        case "confirmed": return "Transfer Complete";
-        case "error": return "Try Again";
-        default: return "Transfer";
+        case "idle":
+          return "Transfer";
+        case "sending":
+          return "Initiating Transfer...";
+        case "confirming":
+          return "Confirming Transaction...";
+        case "confirmed":
+          return "Transfer Complete";
+        case "error":
+          return "Try Again";
+        default:
+          return "Transfer";
       }
     } else {
       switch (approvalState) {
-        case "approving": return "Approving...";
-        case "confirming": return "Confirming Approval...";
-        case "approved": return "Proceed with Transfer";
-        case "error": return "Approval Failed - Try Again";
+        case "approving":
+          return "Approving...";
+        case "confirming":
+          return "Confirming Approval...";
+        case "approved":
+          return "Proceed with Transfer";
+        case "error":
+          return "Approval Failed - Try Again";
       }
     }
   };
@@ -525,11 +376,15 @@ const TransactionInterface = () => {
     return false;
   };
 
-  const makeSwap = async() => {
-    setLoading(true)
+  const makeSwap = async () => {
     try {
-      
-      if (swapList[0]?.symbol === CONTRACTS.WFTM_SYMBOL && swapList[1]?.symbol === CONTRACTS.FTM_SYMBOL) { //Unwrap
+      setLoading(true);
+
+      if (
+        swapList[0]?.symbol === CONTRACTS.WFTM_SYMBOL &&
+        swapList[1]?.symbol === CONTRACTS.FTM_SYMBOL
+      ) {
+        //Unwrap
         stores.dispatcher.dispatch({
           type: ACTIONS.UNWRAP,
           content: {
@@ -541,7 +396,11 @@ const TransactionInterface = () => {
             slippage: slippage,
           },
         });
-      } else if (swapList[0]?.symbol === CONTRACTS.FTM_SYMBOL && swapList[1]?.symbol === CONTRACTS.WFTM_SYMBOL) { //Wrap
+      } else if (
+        swapList[0]?.symbol === CONTRACTS.FTM_SYMBOL &&
+        swapList[1]?.symbol === CONTRACTS.WFTM_SYMBOL
+      ) {
+        //Wrap
         stores.dispatcher.dispatch({
           type: ACTIONS.WRAP,
           content: {
@@ -555,7 +414,6 @@ const TransactionInterface = () => {
           },
         });
       } else {
-
         await stores.stableSwapStore.swap({
           content: {
             fromAsset: swapList[0],
@@ -564,18 +422,19 @@ const TransactionInterface = () => {
             quote: quote,
             // TODO: make slippage value dynamic
             slippage: 50,
-          }
-        })
+          },
+        });
       }
-      await stores.stableSwapStore.loadBaseAssets()
+      await stores.stableSwapStore.loadBaseAssets();
     } catch (e) {
       // toast.error("Error occurred")
-      console.log('error swapping', e)
+      console.log("error swapping", e);
     } finally {
-      console.log("Done swapping")
+      setLoading(false);
+      console.log("Done swapping");
     }
-  }
-  
+  };
+
   // Modify handleButtonClick for better error handling
   const handleButtonClick = () => {
     try {
@@ -586,30 +445,17 @@ const TransactionInterface = () => {
 
       // Don't proceed if there's no amount
       if (!fromAmountValue) {
-        toast.error('Please enter an amount');
+        toast.error("Please enter an amount");
         return;
       }
 
       if (quote) {
         // do swap
-        makeSwap()
-      }
-
-      if (isFetchingFee) {
-        return;
-      }
-      if (!fee) {
-        return;
-      }
-
-      if (!needsApproval) {
-        handleSend();
-      } else {
-        handleApprove();
+        makeSwap();
       }
     } catch (error) {
-      // console.error('Button click error:', error);
-      toast.error('An error occurred. Please try again');
+      console.error("Button click error:", error);
+      toast.error("An error occurred. Please try again");
     }
   };
 
@@ -622,144 +468,124 @@ const TransactionInterface = () => {
     setApprovalTxHash(null);
   };
 
-  const handleAmountChange = useCallback((value) => {
-      if (!value || value === "") {
-        setAmount("");
-        return;
-      }
-  
-      // Validate input is a valid number
-      const numValue = parseFloat(value);
-      if (isNaN(numValue)) return;
-  
-      // Limit decimal places based on token decimals
-      const decimals = selectedFromToken?.decimals || 18;
-      const parts = value.split('.');
-      if (parts[1] && parts[1].length > decimals) {
-        value = `${parts[0]}.${parts[1].slice(0, decimals)}`;
-      }
-  
-      setAmount(value);
-    }, [selectedFromToken]);
+  const { data: toBalanceData } = useBalance({
+    address,
+    token: selectedToToken.address === "ETH" ? null : selectedToToken.address,
+  });
 
-    const { data: toBalanceData } = useBalance({
-        address,
-        token: selectedToToken.address === "ETH" ? null : selectedToToken.address
-      });
+  const formattedToBalance = toBalanceData
+    ? Number(
+        formatUnits(toBalanceData.value, selectedToToken.decimals)
+      ).toFixed(2)
+    : "0";
 
-    const formattedToBalance = toBalanceData
-      ? Number(formatUnits(toBalanceData.value, selectedToToken.decimals)).toFixed(2)
-      : "0";
-    
-    const [analysisResults, setAnalysisResults] = useState(null);
-    const [lastSearchTerm, setLastSearchTerm] = useState('');
+  const [analysisResults, setAnalysisResults] = useState(null);
+  const [lastSearchTerm, setLastSearchTerm] = useState("");
 
-    const parameterFormat = {
-      fromAmountValue: 0,
-      selectedFromToken: "",
-      formattedFromBalance: 0,
-      setSlippage: 0,
-      toAmountValue: 0,
-      selectedToToken: "",
-      formattedToBalance: 0,
-      isStable: false
-    };
-    
-    // Improved handler with error checking
-    const handleAnalysisComplete = (result, searchTerm) => {
-      
-      setAnalysisResults(result);
-      setLastSearchTerm(searchTerm);
-      
-      if (!result) return;
-      
-      if (result.fromAmountValue !== undefined) {
-        setFromAmountValue(result.fromAmountValue);
-      }
-      
-      if (result.selectedFromToken) {
-        const fromToken = tokenList.find(token => token.symbol === result.selectedFromToken);
-        if (fromToken) setSelectedFromToken(fromToken);
-      }
-      
-      if (result.toAmountValue !== undefined) {
-        setToAmountValue(result.toAmountValue);
-      }
-      
-      if (result.selectedToToken) {
-        const toToken = tokenList.find(token => token.symbol === result.selectedToToken);
-        if (toToken) setSelectedToToken(toToken);
-      }
-      
-      if (result.setSlippage !== undefined) {
-        setSlippage(result.setSlippage);
-      }
-    };
+  const parameterFormat = {
+    fromAmountValue: 0,
+    selectedFromToken: "",
+    formattedFromBalance: 0,
+    setSlippage: 0,
+    toAmountValue: 0,
+    selectedToToken: "",
+    formattedToBalance: 0,
+    isStable: false,
+  };
+
+  // Improved handler with error checking
+  const handleAnalysisComplete = (result, searchTerm) => {
+    setAnalysisResults(result);
+    setLastSearchTerm(searchTerm);
+
+    if (!result) return;
+
+    if (result.fromAmountValue !== undefined) {
+      setFromAmountValue(result.fromAmountValue);
+    }
+
+    if (result.selectedFromToken) {
+      const fromToken = tokenList.find(
+        (token) => token.symbol === result.selectedFromToken
+      );
+      if (fromToken) setSelectedFromToken(fromToken);
+    }
+
+    if (result.toAmountValue !== undefined) {
+      setToAmountValue(result.toAmountValue);
+    }
+
+    if (result.selectedToToken) {
+      const toToken = tokenList.find(
+        (token) => token.symbol === result.selectedToToken
+      );
+      if (toToken) setSelectedToToken(toToken);
+    }
+
+    if (result.setSlippage !== undefined) {
+      setSlippage(result.setSlippage);
+    }
+  };
   return (
     <>
-    <div className="w-full flex justify-center items-center">
-      <SearchBar parameterFormat={parameterFormat}
-          onAnalysisComplete={handleAnalysisComplete} placeholder="Swap with AI analysis..."/>
-    </div>
-    <div 
-    className="shadow-glow shadow-glow-hover ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-8 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
-      <div className="p-2">
-        <TokenInput
-          label="From"
-          amount={fromAmountValue}
-          setAmount={setFromAmountValue}
-          selectedToken={selectedFromToken}
-          onTokenSelect={setSelectedFromToken}
-          disabled={transactionState !== "idle"}
-          formattedBalance={formattedFromBalance}
-          fee={fee}
-          setSlippage={setSlippage}
-          slippage={slippage}
-          fromAmountChanged={fromAmountChanged}
+      <div className="w-full flex justify-center items-center">
+        <SearchBar
+          parameterFormat={parameterFormat}
+          onAnalysisComplete={handleAnalysisComplete}
+          placeholder="Swap with AI analysis..."
         />
-        <SwitchDirection
-          disabled={transactionState !== "idle"}
+      </div>
+      <div className="shadow-glow shadow-glow-hover ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-8 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
+        <div className="p-2">
+          <TokenInput
+            label="From"
+            amount={fromAmountValue}
+            selectedToken={selectedFromToken}
+            onTokenSelect={setSelectedFromToken}
+            disabled={transactionState !== "idle"}
+            formattedBalance={formattedFromBalance}
+            fee={fee}
+            slippage={slippage}
             fromAmountChanged={fromAmountChanged}
-          fromAmountValue={amount}
-        />
-        <TokenInput
-         label="To"
-         selectedToken={selectedToToken}
-         onTokenSelect={setSelectedToToken}
-         isReadOnly={true}
-         formattedBalance={formattedToBalance}
-         toAmountValue={toAmountValue}
-        />
+          />
+          <SwitchDirection disabled={transactionState !== "idle"} />
+          <TokenInput
+            label="To"
+            selectedToken={selectedToToken}
+            onTokenSelect={setSelectedToToken}
+            isReadOnly={true}
+            formattedBalance={formattedToBalance}
+            toAmountValue={toAmountValue}
+          />
 
-        <button
-          onClick={handleButtonClick}
-          disabled={isButtonDisabled()}
-          className={`py-2 rounded-full mt-4 w-full 
-          ${isInsufficientBalance()
+          <button
+            onClick={handleButtonClick}
+            disabled={isButtonDisabled()}
+            className={`py-2 rounded-full mt-4 w-full 
+          ${
+            isInsufficientBalance()
               ? "bg-red-500 hover:bg-red-600"
               : isTransactionCompleted
-                ? "bg-green-500 hover:bg-green-600"
-                : transactionState === "error" || approvalState === "error"
-                  ? "bg-red-500 hover:bg-red-600"
-                  : "button_bg"
-            }
+              ? "bg-green-500 hover:bg-green-600"
+              : transactionState === "error" || approvalState === "error"
+              ? "bg-red-500 hover:bg-red-600"
+              : "button_bg"
+          }
           text-white 
           transition-all duration-200
-          ${isButtonDisabled() ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"}
+          ${
+            isButtonDisabled()
+              ? "opacity-50 cursor-not-allowed"
+              : "hover:shadow-lg"
+          }
         `}
-        >
-          {getButtonText()}
-        </button>
-
-        {(transactionState === "error" || approvalState === "error") && (
-          <p className="text-red-500 mt-2">{errorMessage}</p>
-        )}
+          >
+            {getButtonText()}
+          </button>
+        </div>
       </div>
-    </div>
     </>
   );
 };
-
-
 
 export default TransactionInterface;

@@ -5,7 +5,7 @@ import { getTokenAllowance, getTokenContract } from "./token-helper";
 import { callContractWait } from "./web3-helper";
 import { v4 as uuidv4 } from "uuid";
 import { ACTIONS, CONTRACTS, MAX_UINT256, ZERO_ADDRESS } from "../constants";
-import { parseBN } from '../../lib/utils';
+import { parseBN } from "../../lib/utils";
 
 const getTXUUID = () => {
   return uuidv4();
@@ -26,27 +26,72 @@ export const createPairDeposit = async (
   isCreateGauge,
   callback
 ) => {
-  console.log({ token0, token1, amount0, amount1, isStable, slippage })
+  console.log({
+    token0,
+    token1,
+    amount0,
+    amount1,
+    isStable,
+    slippage,
+  });
+
   try {
     let toki0 = token0.address;
     let toki1 = token1.address;
-    if (token0.address === CONTRACTS.FTM_SYMBOL) {
-      toki0 = CONTRACTS.WFTM_ADDRESS;
-    }
-    if (token1.address === CONTRACTS.FTM_SYMBOL) {
-      toki1 = CONTRACTS.WFTM_ADDRESS;
-    }
+    const normalizeAddress = (address, wftmAddress, ftmSymbol) => {
+      // Create a set of common native token symbols to check against
+      const nativeSymbols = new Set(
+        [
+          ftmSymbol,
+          "ETH",
+          "eth", // Common Ethereum symbol
+          "FTM",
+          "ftm", // Common Fantom/U2U symbol
+        ]
+          .filter(Boolean)
+          .map((s) => s.toUpperCase())
+      ); // Filter out null/undefined and normalize to uppercase
 
-    console.log({ web3, toki0, toki1, isStable })
-    const pairFor = await getPairAddressByTokens(web3, toki0, toki1, isStable);
+      if (nativeSymbols.has(address.toUpperCase())) {
+        return wftmAddress;
+      }
+      return address;
+    };
 
-    console.log({pairFor})
+    // Apply normalization to both token addresses
+    toki0 = normalizeAddress(
+      toki0,
+      CONTRACTS.WFTM_ADDRESS,
+      CONTRACTS.FTM_SYMBOL
+    );
+    toki1 = normalizeAddress(
+      toki1,
+      CONTRACTS.WFTM_ADDRESS,
+      CONTRACTS.FTM_SYMBOL
+    );
+
+    console.log({ web3, toki0, toki1, isStable });
+    const pairFor = await getPairAddressByTokens(
+      web3,
+      toki0,
+      toki1,
+      isStable,
+    );
+
+    console.log({ pairFor });
 
     if (isCreateGauge) {
       if (pairFor && pairFor !== ZERO_ADDRESS) {
-        emitter.emit(ACTIONS.ERROR, "Pair already exists")
+        emitter.emit(ACTIONS.ERROR, "Pair already exists");
         await callback();
-        emitter.emit(ACTIONS.ADD_LIQUIDITY_CALLBACK, { token0, token1, amount0, amount1, isStable, slippage })
+        emitter.emit(ACTIONS.ADD_LIQUIDITY_CALLBACK, {
+          token0,
+          token1,
+          amount0,
+          amount1,
+          isStable,
+          slippage,
+        });
         return null;
       }
     }
@@ -59,7 +104,9 @@ export const createPairDeposit = async (
 
     if (isCreateGauge) {
       console.log({
-        title: `Create liquidity pool for ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,
+        title: `Create liquidity pool for ${isStable ? "s" : "v"}-${
+          token0.symbol
+        }/${token1.symbol}`,
         type: "Liquidity",
         verb: "Liquidity Pool Created",
         transactions: [
@@ -75,7 +122,9 @@ export const createPairDeposit = async (
           },
           {
             uuid: depositTXID,
-            description: `Create liquidity pool ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,
+            description: `Create liquidity pool ${isStable ? "s" : "v"}-${
+              token0.symbol
+            }/${token1.symbol}`,
             status: "WAITING",
           },
           {
@@ -84,9 +133,11 @@ export const createPairDeposit = async (
             status: "WAITING",
           },
         ],
-      })
+      });
       emitter.emit(ACTIONS.TX_ADDED, {
-        title: `Create liquidity pool for ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,
+        title: `Create liquidity pool for ${isStable ? "s" : "v"}-${
+          token0.symbol
+        }/${token1.symbol}`,
         type: "Liquidity",
         verb: "Liquidity Pool Created",
         transactions: [
@@ -102,7 +153,9 @@ export const createPairDeposit = async (
           },
           {
             uuid: depositTXID,
-            description: `Create liquidity pool ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,
+            description: `Create liquidity pool ${isStable ? "s" : "v"}-${
+              token0.symbol
+            }/${token1.symbol}`,
             status: "WAITING",
           },
           {
@@ -114,7 +167,9 @@ export const createPairDeposit = async (
       });
     } else {
       console.log({
-        title: `Add liquidity to ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,
+        title: `Add liquidity to ${isStable ? "s" : "v"}-${token0.symbol}/${
+          token1.symbol
+        }`,
         verb: "Liquidity Added",
         type: "Liquidity",
         transactions: [
@@ -130,13 +185,17 @@ export const createPairDeposit = async (
           },
           {
             uuid: depositTXID,
-            description: `Deposit tokens in the pool ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,
+            description: `Deposit tokens in the pool ${isStable ? "s" : "v"}-${
+              token0.symbol
+            }/${token1.symbol}`,
             status: "WAITING",
           },
         ],
-      })
+      });
       emitter.emit(ACTIONS.TX_ADDED, {
-        title: `Add liquidity to ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,
+        title: `Add liquidity to ${isStable ? "s" : "v"}-${token0.symbol}/${
+          token1.symbol
+        }`,
         verb: "Liquidity Added",
         type: "Liquidity",
         transactions: [
@@ -152,7 +211,9 @@ export const createPairDeposit = async (
           },
           {
             uuid: depositTXID,
-            description: `Deposit tokens in the pool ${isStable ? 's' : 'v'}-${token0.symbol}/${token1.symbol}`,
+            description: `Deposit tokens in the pool ${isStable ? "s" : "v"}-${
+              token0.symbol
+            }/${token1.symbol}`,
             status: "WAITING",
           },
         ],
@@ -164,7 +225,12 @@ export const createPairDeposit = async (
 
     // CHECK ALLOWANCES AND SET TX DISPLAY
     if (token0.address !== CONTRACTS.FTM_SYMBOL) {
-      allowance0 = await getTokenAllowance(web3, token0, account, CONTRACTS.ROUTER_ADDRESS);
+      allowance0 = await getTokenAllowance(
+        web3,
+        token0,
+        account,
+        CONTRACTS.ROUTER_ADDRESS
+      );
       if (BigNumber(allowance0).lt(amount0)) {
         emitter.emit(ACTIONS.TX_STATUS, {
           uuid: allowance0TXID,
@@ -187,7 +253,12 @@ export const createPairDeposit = async (
     }
 
     if (token1.address !== CONTRACTS.FTM_SYMBOL) {
-      allowance1 = await getTokenAllowance(web3, token1, account, CONTRACTS.ROUTER_ADDRESS);
+      allowance1 = await getTokenAllowance(
+        web3,
+        token1,
+        account,
+        CONTRACTS.ROUTER_ADDRESS
+      );
       if (BigNumber(allowance1).lt(amount1)) {
         emitter.emit(ACTIONS.TX_STATUS, {
           uuid: allowance1TXID,
@@ -274,8 +345,7 @@ export const createPairDeposit = async (
 
     await Promise.all(allowanceCallsPromises);
 
-
-    console.log("Done with approval")
+    console.log("Done with approval");
 
     // SUBMIT DEPOSIT TRANSACTION
     const sendSlippage = BigNumber(100).minus(slippage).div(100);
@@ -307,8 +377,8 @@ export const createPairDeposit = async (
       account,
       deadline,
     ];
-    console.log("hreeeeeeeeeeeeeeeeeeeee")
-    console.log(params)
+    console.log("hreeeeeeeeeeeeeeeeeeeee");
+    console.log(params);
     let sendValue = null;
 
     if (token0.address === CONTRACTS.FTM_SYMBOL) {
@@ -369,7 +439,12 @@ export const createPairDeposit = async (
             tok1 = CONTRACTS.WFTM_ADDRESS;
           }
 
-          const pairFor = await getPairAddressByTokens(web3, tok0, tok1, isStable);
+          const pairFor = await getPairAddressByTokens(
+            web3,
+            tok0,
+            tok1,
+            isStable
+          );
 
           // SUBMIT CREATE GAUGE TRANSACTION
           const gaugesContract = new web3.eth.Contract(
@@ -442,7 +517,12 @@ export const stakeLiquidity = async (
         },
       ],
     });
-    const stakeAllowance = await getTokenAllowance(web3, pair, account, pair.gauge.address);
+    const stakeAllowance = await getTokenAllowance(
+      web3,
+      pair,
+      account,
+      pair.gauge.address
+    );
 
     const pairContract = new web3.eth.Contract(
       CONTRACTS.PAIR_ABI,
@@ -584,7 +664,7 @@ export const removeLiquidity = async (
 ) => {
   try {
     const { token0, token1, pair, percent, slippage } = payload.content;
-    console.log({payload})
+    console.log({ payload });
 
     let tok0 = token0.address;
     let tok1 = token1.address;
@@ -618,7 +698,12 @@ export const removeLiquidity = async (
     });
 
     // CHECK ALLOWANCES AND SET TX DISPLAY
-    const allowance = await getTokenAllowance(web3, pair, account, CONTRACTS.ROUTER_ADDRESS);
+    const allowance = await getTokenAllowance(
+      web3,
+      pair,
+      account,
+      CONTRACTS.ROUTER_ADDRESS
+    );
 
     if (BigNumber(allowance).lt(pair.balance)) {
       emitter.emit(ACTIONS.TX_STATUS, {
@@ -682,12 +767,7 @@ export const removeLiquidity = async (
     );
 
     const quoteRemove = await routerContract.methods
-      .quoteRemoveLiquidity(
-        tok0,
-        tok1,
-        pair.isStable,
-        sendAmount
-      )
+      .quoteRemoveLiquidity(tok0, tok1, pair.isStable, sendAmount)
       .call();
 
     const sendSlippage = BigNumber(100).minus(slippage).div(100);
@@ -745,7 +825,6 @@ export const unstakeLiquidity = async (
   callback
 ) => {
   try {
-
     const { amount, percent, pair } = payload.content;
 
     // ADD TRNASCTIONS TO TRANSACTION QUEUE DISPLAY
@@ -767,7 +846,10 @@ export const unstakeLiquidity = async (
     // SUBMIT DEPOSIT TRANSACTION
     const sendAmount = parseBN(amount, pair.decimals);
 
-    const gaugeContract = new web3.eth.Contract(CONTRACTS.GAUGE_ABI, pair.gauge.address);
+    const gaugeContract = new web3.eth.Contract(
+      CONTRACTS.GAUGE_ABI,
+      pair.gauge.address
+    );
 
     if (parseFloat(percent) === 100) {
       callContractWait(
