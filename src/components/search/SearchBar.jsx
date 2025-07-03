@@ -75,11 +75,42 @@ const SearchBar = ({
         </div>
       )}
       
-      <div className={`flex items-center transition-all duration-300 glassmorphic rounded-full shadow-md overflow-hidden ${
+      {/* <div className={`flex items-center transition-all duration-300 glassmorphic rounded-full shadow-md overflow-hidden ${
         isExpanded ? 'w-64 pl-4 pr-2 py-2' : 'w-12 h-12 justify-center'
-      }`}>
+      }`}> */}
+
+      <div className={`flex items-center transition-all duration-300 glassmorphic rounded-full shadow-md overflow-hidden 
+        w-72 pl-4 pr-2 py-2`}>
+
+      <form onSubmit={handleSubmit} className="flex w-full items-center">
+          <FaSearch size={18} className="text-gray-500 dark:text-white mr-2" />
+          <input
+            ref={inputRef}
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder={placeholder}
+            className="flex-1 outline-none bg-transparent"
+            disabled={loading}
+          />
+          <button 
+            type="submit"
+            className={`ml-2 w-8 h-8 flex items-center justify-center rounded-full transition-colors ${
+              searchTerm.trim() && !loading
+                ? 'bg-primary/80 text-white hover:bg-primary' 
+                : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+            }`}
+            disabled={!searchTerm.trim() || loading}
+          >
+            {loading ? (
+              <FaSpinner size={16} className="animate-spin" />
+            ) : (
+              <FaArrowRight size={16} />
+            )}
+          </button>
+        </form>
         
-        {!isExpanded ? (
+        {/* {!isExpanded ? (
           <button 
             className="flex items-center justify-center w-full h-full text-gray-600 dark:text-white hover:text-gray-800"
             onClick={() => setIsExpanded(true)}
@@ -114,7 +145,7 @@ const SearchBar = ({
               )}
             </button>
           </form>
-        )}
+        )} */}
       </div>
     </div>
   );
