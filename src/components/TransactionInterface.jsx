@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { AppDataContext } from "../context/appContext";
 import { formatUnits } from "viem";
-import { useWaitForTransactionReceipt, useBalance } from "wagmi";
+import { useWaitForTransactionReceipt, useBalance, useAccount } from "wagmi";
 import { toast } from "react-toastify";
 import { useAppKitAccount } from "@reown/appkit/react";
 import stores from "../stores";
@@ -55,6 +55,7 @@ const TransactionInterface = () => {
   const [formattedFromBalance, setFormattedFromBalance] = useState("0");
 
   const { address } = useAppKitAccount();
+  const { isConnected } = useAccount();
 
   const isETH = swapList[0]?.symbol === "ETH";
 
@@ -542,7 +543,7 @@ const TransactionInterface = () => {
             amount={fromAmountValue}
             selectedToken={selectedFromToken}
             onTokenSelect={setSelectedFromToken}
-            disabled={transactionState !== "idle"}
+            disabled={transactionState !== "idle" || isConnected === false}
             formattedBalance={formattedFromBalance}
             fee={fee}
             slippage={slippage}
