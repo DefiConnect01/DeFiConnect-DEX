@@ -3,7 +3,8 @@ export const baseSepoliaAddress = "0x964Dee20b6dDaA984a8596521D738C0307321D6b";
 export const ethereumAddress = "0x1C93CF124a8E8c8DA3b650c398b63de80a781b08"
 
 
-export const cybriaAddress = "0x1C93CF124a8E8c8DA3b650c398b63de80a781b08";
+// export const cybriaAddress = "0x1C93CF124a8E8c8DA3b650c398b63de80a781b08";
+export const cybriaAddress = "0x114DcE206c2806c0A471E79fc6ca5f0F3B31A056";
 export const abi = "0x1C93CF124a8E8c8DA3b650c398b63de80a781b08";
 export const RouterAddress = ""
 

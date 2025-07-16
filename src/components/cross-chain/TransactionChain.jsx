@@ -9,7 +9,7 @@ import {
   useSwitchChain,
   useBalance
 } from "wagmi";
-import { abi, ethereumAddress, cybriaAddress } from "../../constants";
+import { abi, ethereumAddress, cybriaAddress, baseSepoliaAddress } from "../../constants";
 import { toast } from 'react-toastify';
 import { useAppKitAccount } from "@reown/appkit/react";
 import stores from "../../stores";
@@ -22,22 +22,22 @@ import ChainSelection from "./ChainSelection";
 
 
 const CHAIN_IDS = {
-  CYBRIA: 6661,
+  // CYBRIA: 6661,
   BASE_SEPOLIA: 84532,
-  ETHEREUM: 1
+  // ETHEREUM: 1,
+  U2UTestnet: 2484
+
 };
 
 
 const TOKENS = {
-  CYBRIA: {
-    CYBA: "0x95622Fce49d65D1101f6FDa8b6325459A6188E52",
+   U2UTestnet: {
+    DCC: "0x114DcE206c2806c0A471E79fc6ca5f0F3B31A056",
     // USDT: "0x102bd5D18b2f6800ef4dcaF5fCe131fbb52aeBA4",
   },
   BASE_SEPOLIA: {
-    CYBA: "0xE5a4574B92A3D9528CFE9FC1a02F4983dBFd8aa1",
+    DCC: "0x114DcE206c2806c0A471E79fc6ca5f0F3B31A056",
     // USDT: "0xd1e728572AD0F0Bd8AD9EEf614C353CdE527929B",
-  }, ETHEREUM:{
-    CYBA: "0x1063181dc986F76F7eA2Dd109e16fc596d0f522A"
   }
 };
 
@@ -117,7 +117,7 @@ const TransactionChain = () => {
 
   // Contract reads
   const { data: allowance } = useReadContract({
-    address: TOKENS[fromChain][selectedToken],
+    address: TOKENS[fromChain][DCC],
     abi: [
       {
         constant: true,
@@ -133,7 +133,7 @@ const TransactionChain = () => {
     functionName: "allowance",
     args: [
       address,
-      fromChain === "CYBRIA" ? cybriaAddress : ethereumAddress,
+      fromChain === "U2U" ? cybriaAddress : baseSepoliaAddress,
     ],
   });
 
@@ -319,7 +319,7 @@ const TransactionChain = () => {
   }, [fromBalanceData]);
 
   useEffect(() => {
-    if (fromChain === "CYBRIA" && selectedToken === "CYBA") {
+    if (fromChain === "U2U" && selectedToken === "DCC") {
       setNeedsApproval(false);
       return;
     }
@@ -366,12 +366,14 @@ const TransactionChain = () => {
 
   // Helper function to parse amount based on token and chain
   const parseAmount = (amount, chain, token) => {
-    if (chain === "ETHEREUM" && token === "CYBA") {
-      // Use 9 decimals for CYBA on Base Sepolia
-      return parseUnits(amount.toString(), 9);
-    }
-    // Use 18 decimals for all other cases
+    if (chain === "BASE_SEPOLIA" && token === "DCC") {
+      // Use 9 decimals for DCC on Base Sepolia
+      return parseUnits(amount.toString(), token.decimals);
+    } 
+      // Use 18 decimals for all other cases
     return parseEther(amount.toString());
+    
+    
   };
 
   // Add this to the handleSend function
@@ -381,13 +383,13 @@ const TransactionChain = () => {
     try {
       setTransactionState("sending");
 
-      const isCybria = fromChain === "CYBRIA";
-      const dstChainId = isCybria ? CHAIN_IDS.ETHEREUM : CHAIN_IDS.CYBRIA;
+      const isCybria = fromChain === "U2U";
+      const dstChainId = isCybria ? CHAIN_IDS.BASE_SEPOLIA : CHAIN_IDS.U2UTestnet;
 
       const srcToken = TOKENS[fromChain][selectedToken];
-      const dstToken = TOKENS[isCybria ? "ETHEREUM" : "CYBRIA"][selectedToken];
+      const dstToken = TOKENS[isCybria ? "BASE_SEPOLIA" : "U2U"][selectedToken];
       const contractAddress = isCybria ? cybriaAddress : ethereumAddress;
-      const functionName = isCybria && selectedToken === "CYBA" ? "sendNative" : "send";
+      const functionName = isCybria && selectedToken === "DCC" ? "sendNative" : "send";
 
       const userInput = parseAmount(amount, fromChain, selectedToken);
       let txConfig = {
@@ -396,7 +398,7 @@ const TransactionChain = () => {
         functionName,
       };
 
-      if (isCybria && selectedToken === "CYBA") {
+      if (isCybria && selectedToken === "DCC") {
         const nativeUserInput = parseEther(amount.toString()) + fee; // Keep 18 decimals for native ETH
         txConfig.args = [address, dstToken, nativeUserInput, dstChainId, 0n, 5000];
         txConfig.value = nativeUserInput;
