@@ -46,14 +46,15 @@ const TokenInput = ({
               className="w-[30px] mr-1 rounded-full"
             />
             <p className="sm:text-xl font-bold bg-transparent">
-              {selectedToken.symbol}
+              {selectedToken.symbol == "ETH" ? "U2U" : selectedToken.symbol}
             </p>
           </div>
           {formattedBalance && (
             <em className="flex text-[#58585e] dark:text-[hsl(0,0%,65%)] text-sm">
               Balance:{" "}
               <span className="ml-1">
-                {formattedBalance} {selectedToken.symbol}
+                {formattedBalance}{" "}
+                {selectedToken.symbol == "ETH" ? "U2U" : selectedToken.symbol}
               </span>
             </em>
           )}
