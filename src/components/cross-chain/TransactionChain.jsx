@@ -117,7 +117,9 @@ const TransactionChain = () => {
 
   // Contract reads
   const { data: allowance } = useReadContract({
-    address: TOKENS[fromChain][selectedToken],
+    address: TOKENS[fromChain]?.[selectedToken] ??
+  TOKENS[fromChain]?.['CYBA'] ??
+  '0x95622Fce49d65D1101f6FDa8b6325459A6188E52',
     abi: [
       {
         constant: true,
