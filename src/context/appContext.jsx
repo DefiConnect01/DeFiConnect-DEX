@@ -1,6 +1,5 @@
 import { useState, createContext } from "react";
 import tokenList from "../constants/tokenList.json";
-import { SiBitcoin } from 'react-icons/si';
 
 // Context should start with an uppercase letter
 export const AppDataContext = createContext();
