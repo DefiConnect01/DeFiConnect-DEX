@@ -1,8 +1,8 @@
 [
   {
     "name": "Ether",
-    "symbol": "ETH",
-    "address": "ETH",
+    "symbol": "U2U",
+    "address": "U2U",
     "decimals": 18,
     "chainId": 2484,
     "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
