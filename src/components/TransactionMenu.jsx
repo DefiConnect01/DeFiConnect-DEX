@@ -9,7 +9,7 @@ import TransactionStake from './stake/TransactionStake';
 
 function TransactionMenu() {
 
-    const [activeTab, setActiveTab] = React.useState("swap");
+    const [activeTab, setActiveTab] = React.useState("stake");
 
     const handleActive = (tab) => {
         setActiveTab(tab);
