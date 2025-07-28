@@ -8,6 +8,8 @@ import TransactionLock from './components/lock/TransactionLock';
 import TransactionLoan from './components/loan/TransactionLoan';
 import TransactionChain from './components/cross-chain/TransactionChain';
 import DomainTable from './components/domains/DomainTable';
+import AnalyticsDashboard from './components/AnalyticsDashboard';
+
 // import ZNSRegister from './components/ZNSRegister';
 
 function AppRouter() {
@@ -16,8 +18,10 @@ function AppRouter() {
             <Routes>
             
                 <Route path="/" element={<App />}>
-               
-                    <Route index element={<>
+
+                    <Route path='/' element={<> <AnalyticsDashboard/> </>} />
+
+                    <Route path="/trade" element= {<>
                         <TransactionMenu/>
                     </>} />
                   

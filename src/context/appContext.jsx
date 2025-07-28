@@ -8,12 +8,10 @@ export default function AppContext({ children }) {
   const [selectedFromToken, setSelectedFromToken] = useState(tokenList[0]);
   const [selectedToToken, setSelectedToToken] = useState(tokenList[1]);
 
-  console.log({ tokenList });
-
   // const [fromChain, setFromChain] = useState("CYBRIA");
   // const [selectedToken, setSelectedToken] = useState("ETH");
-  const [fromChain, setFromChain] = useState("U2UTestnet");
-  const [selectedToken, setSelectedToken] = useState("DCC");
+  const [fromChain, setFromChain] = useState("baseSepolia");
+  const [toChain, setToChain] = useState("u2uTestnet");
 
   return (
     <AppDataContext.Provider
@@ -24,10 +22,9 @@ export default function AppContext({ children }) {
         setSelectedFromToken,
         setSelectedToToken,
         fromChain,
-        selectedToken,
         setFromChain,
-        setSelectedToken
-
+        toChain,
+        setToChain
       }}
     >
       {children}

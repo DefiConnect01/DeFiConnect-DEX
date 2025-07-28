@@ -154,11 +154,11 @@ function App() {
   return (
     <>
 
-      <div class="fixed left-0 top-0 h-full w-12 z-30">
-        <div class="glow"></div>
+      <div className="fixed left-0 top-0 h-full w-12 z-30">
+        <div className="glow"></div>
       </div>
-      <div class="fixed -right-12 top-0 h-full w-12 z-30">
-        <div class="glow_red"></div>
+      <div className="fixed -right-12 top-0 h-full w-12 z-30">
+        <div className="glow_red"></div>
       </div>
       <div
         className="absolute flex justify-center text-center dark:bg-darkBackground bg-lightBackground t-0 l-0 w-full h-auto min-h-full dark:text-darkText text-lightText py-8"

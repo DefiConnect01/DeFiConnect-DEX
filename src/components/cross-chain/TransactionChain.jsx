@@ -16,9 +16,11 @@ import stores from "../../stores";
 import BigNumber from "bignumber.js";
 import { ACTIONS, DEFAULT_ASSET_FROM, DEFAULT_ASSET_TO, CONTRACTS } from "../../stores/constants/constants";
 import TokenInput from "../LiquidityTokenInput";
-import SwitchDirection from "../LiquiditySwitchDirection";
+// import SwitchDirection from "../LiquiditySwitchDirection";
 import SearchBar from "../search/SearchBar";
 import ChainSelection from "./ChainSelection";
+import { MdOutlineSwitchLeft } from "react-icons/md";
+
 
 
 const CHAIN_IDS = {
@@ -42,7 +44,7 @@ const TOKENS = {
 };
 
 const TransactionChain = () => {
-  const { setSelectTokenModal, isDarkMode } = useOutletContext();
+  // const { setSelectTokenModal, isDarkMode } = useOutletContext();
   const { 
     selectedFromToken,
     selectedToToken,
@@ -117,7 +119,9 @@ const TransactionChain = () => {
 
   // Contract reads
   const { data: allowance } = useReadContract({
-    address: TOKENS[fromChain][DCC],
+    address: TOKENS[fromChain]?.[selectedToken] ??
+  TOKENS[fromChain]?.['CYBA'] ??
+  '0x95622Fce49d65D1101f6FDa8b6325459A6188E52',
     abi: [
       {
         constant: true,
@@ -648,7 +652,6 @@ const TransactionChain = () => {
       ? Number(formatUnits(toBalanceData.value, selectedToToken.decimals)).toFixed(2)
       : "0";
     
-    const [analysisResults, setAnalysisResults] = useState(null);
     const [lastSearchTerm, setLastSearchTerm] = useState('');
 
     const parameterFormat = {
@@ -665,10 +668,12 @@ const TransactionChain = () => {
     // Improved handler with error checking
     const handleAnalysisComplete = (result, searchTerm) => {
       
-      setAnalysisResults(result);
-      setLastSearchTerm(searchTerm);
-      
+
       if (!result) return;
+      if (searchTerm !== lastSearchTerm) {
+        setLastSearchTerm(searchTerm);
+        return;
+      }
       
       if (result.fromAmountValue !== undefined) {
         setFromAmountValue(result.fromAmountValue);
@@ -700,15 +705,27 @@ const TransactionChain = () => {
                 onAnalysisComplete={handleAnalysisComplete} placeholder="Swap with AI analysis..."/>
     </div>
 
-    <div className="w-full flex justify-center items-center">
-      <ChainSelection chain={""}/>
+    <div className="flex flex-col sm:flex-row justify-center items-center gap-4 mt-4">
+      <div className="w-full flex flex-col justify-center items-center">
+        <ChainSelection chain={""} type={"source"}/>
+      </div>
+
+      <div>
+        <MdOutlineSwitchLeft
+          className="bg-white/80 text-primary hover:bg-primary/50 hover:text-white rounded-md sm:w-[40px] sm:h-[40px] w-[30px] h-[30px] cursor-pointer sm:p-2 p-1 "
+        />
+      </div>
+
+      <div className="w-full flex flex-col justify-center items-center">
+        <ChainSelection chain={""}/>
+      </div>
     </div>
 
     <div 
     className="shadow-glow shadow-glow-hover ml-[50%] bg-[hsla(0,1%,75%,.4)] border-2 dark:border-[#0A0D26] dark:bg-[#060A1A] text-lightText rounded-2xl dark:text-darkText transform translate-x-[-50%] mt-8 px-2 py-1 w-[95vw] max-w-[450px] flex flex-col sm:gap-4 gap-2">
       <div className="p-2">
         <TokenInput
-          label="From"
+          label=""
           amount={fromAmountValue}
           setAmount={setFromAmountValue}
           selectedToken={selectedFromToken}
@@ -719,7 +736,7 @@ const TransactionChain = () => {
           setSlippage={setSlippage}
           fromAmountChanged={fromAmountChanged}
         />
-        <SwitchDirection
+        {/* <SwitchDirection
           disabled={transactionState !== "idle"}
             fromAmountChanged={fromAmountChanged}
           fromAmountValue={amount}
@@ -731,7 +748,7 @@ const TransactionChain = () => {
          isReadOnly={true}
          formattedBalance={formattedToBalance}
          toAmountValue={toAmountValue}
-        />
+        /> */}
 
         <button
           onClick={handleButtonClick}

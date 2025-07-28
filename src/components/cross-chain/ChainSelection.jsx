@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { FaEthereum, FaCaretDown, FaCheck } from 'react-icons/fa';
-import { SiBitcoin, SiLitecoin, SiDogecoin, SiPolkadot } from 'react-icons/si';
+import { SiBitcoin } from 'react-icons/si';
 
-const ChainSelection = ({ onSelect, chain }) => {
+const ChainSelection = ({ onSelect, chain, type }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedChain, setSelectedChain] = useState(null);
   const dropdownRef = useRef(null);
@@ -42,6 +42,12 @@ const ChainSelection = ({ onSelect, chain }) => {
   };
 
   return (
+
+    <>
+    <div>
+      <h3>{type === "source" ? "Source Chain" : "Destination Chain"}</h3>
+    </div>
+    
     <div className="relative w-64 my-4" ref={dropdownRef}>
       {/* Selected Chain Button */}
       <button
@@ -91,6 +97,8 @@ const ChainSelection = ({ onSelect, chain }) => {
         </div>
       )}
     </div>
+
+    </>
   );
 };
 

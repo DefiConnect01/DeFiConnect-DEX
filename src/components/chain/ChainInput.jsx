@@ -1,9 +1,9 @@
 import { useContext, useState } from "react";
-import { AppDataContext } from "../context/appContext";
+import { AppDataContext } from "../../context/appContext";
 import SelectTokenModal from "./TokenModal";
 import PercentageButton from "./PercentageButton";
 
-const TokenInput = ({
+const ChainInput = ({
   label,
   amount,
   selectedToken,
@@ -136,4 +136,4 @@ const TokenInput = ({
   );
 };
 
-export default TokenInput;
+export default ChainInput;
