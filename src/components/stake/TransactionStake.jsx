@@ -219,9 +219,9 @@ const TransactionStake = () => {
               </div>
 
               <div className="border border-secondaryBg flex flex-col items-end px-3 py-2 text-sm" >
-                <p className="text-light">0 TACC</p>
+                <p className="text-light">0 DCC</p>
                 <p className="text-light">0</p>
-                <p className="text-light">0 TACC</p>
+                <p className="text-light">0 DCC</p>
               </div>
             </div>
           </div>
@@ -250,8 +250,8 @@ const TransactionStake = () => {
               <div className="border border-secondaryBg flex flex-col items-end px-3 py-2 text-sm" >
                 <p className="text-light">0%</p>
                 <p className="text-light">0</p>
-                <p className="text-light">0 TACC</p>
-                <p className="text-light">0 TACC</p>
+                <p className="text-light">0 DCC</p>
+                <p className="text-light">0 DCC</p>
               </div>
             </div>
            
