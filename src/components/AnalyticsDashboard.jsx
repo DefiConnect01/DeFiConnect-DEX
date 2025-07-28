@@ -36,7 +36,7 @@ const AnalyticsDashboard = () => {
   const maxVolume = Math.max(...volumeData);
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800 text-gray-900 dark:text-gray-100">
+    <div className="min-h-screen text-gray-900 dark:text-gray-100 pb-12">
       {/* Hero Section */}
       <div className="py-16 px-4 md:px-8 text-center">
         <motion.div
@@ -45,6 +45,9 @@ const AnalyticsDashboard = () => {
           transition={{ duration: 0.5 }}
           className="max-w-4xl mx-auto"
         >
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">
+            Welcome to DeFiConnect DEX
+          </h1>
          
           <p className="mt-4 text-xl text-gray-600 dark:text-gray-300">
             Where DeFi meets innovation
@@ -53,7 +56,7 @@ const AnalyticsDashboard = () => {
           <div className="mt-12">
             <button 
               onClick={() => navigate('/trade')}
-              className="bg-gradient-to-r from-purple-600 to-blue-500 text-black px-8 py-3 rounded-full font-medium hover:opacity-90 transition-opacity text-lg shadow-lg"
+              className="bg-white dark:glassmorphic text-black dark:text-white px-8 py-3 rounded-full font-medium hover:opacity-90 transition hover:scale-105 text-lg shadow-lg"
             >
               Start Trading
             </button>
@@ -66,7 +69,7 @@ const AnalyticsDashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {/* TVL Card */}
           <motion.div 
-            className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl"
+            className="bg-white dark:glassmorphic rounded-2xl p-6 shadow-xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -86,7 +89,7 @@ const AnalyticsDashboard = () => {
           
           {/* Volume Card */}
           <motion.div 
-            className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl"
+            className="bg-white dark:glassmorphic rounded-2xl p-6 shadow-xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.3 }}
@@ -99,7 +102,7 @@ const AnalyticsDashboard = () => {
           
           {/* Fees Card */}
           <motion.div 
-            className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl"
+            className="bg-white dark:glassmorphic rounded-2xl p-6 shadow-xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.4 }}
@@ -113,7 +116,7 @@ const AnalyticsDashboard = () => {
         
         {/* Chart Section */}
         <motion.div 
-          className="mt-12 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl"
+          className="mt-12 bg-white dark:glassmorphic rounded-2xl p-6 shadow-xl"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 0.5 }}
@@ -148,7 +151,7 @@ const AnalyticsDashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-12">
           {/* Top Tokens */}
           <motion.div 
-            className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl"
+            className="bg-white dark:glassmorphic rounded-2xl p-6 shadow-xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.6 }}
@@ -194,7 +197,7 @@ const AnalyticsDashboard = () => {
           
           {/* Top Pairs */}
           <motion.div 
-            className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl"
+            className="bg-white dark:glassmorphic rounded-2xl p-6 shadow-xl"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.7 }}
@@ -249,7 +252,7 @@ const AnalyticsDashboard = () => {
         
         {/* Platform Stats */}
         <motion.div 
-          className="mt-12 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl"
+          className="mt-12 bg-white dark:glassmorphic rounded-2xl p-6 shadow-xl"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.8 }}
@@ -282,7 +285,7 @@ const AnalyticsDashboard = () => {
         
         {/* Latest Updates */}
         <motion.div 
-          className="mt-12 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl"
+          className="mt-12 bg-white dark:glassmorphic rounded-2xl p-6 shadow-xl"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.9 }}
@@ -292,26 +295,26 @@ const AnalyticsDashboard = () => {
           <div className="flex flex-col md:flex-row gap-6">
             <div className="flex-1 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-gray-900 dark:to-gray-900 p-6 rounded-xl border border-purple-100 dark:border-gray-700">
               <div className="flex items-start">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center text-white font-bold text-xl mr-4">
+                <div className="w-8 h-8 p-4 rounded-full bg-gradient-to-r from-green-500 to-blue-500 flex items-center justify-center text-white font-bold text-xl mr-4">
                   S
                 </div>
                 <div>
                   <h3 className="font-bold text-lg">Stake Pool launch</h3>
                   <p className="text-gray-600 dark:text-gray-400 mt-2">August 5, 2025</p>
-                  <p className="mt-3">We're excited to announce the  launch of Stake Pool on Base Chain, putting your $DCC token into working for you.</p>
+                  <p className="mt-3">We&apos;re excited to announce the  launch of Stake Pool on Base Chain, putting your $DCC token into working for you.</p>
                 </div>
               </div>
             </div>
             
             <div className="flex-1 bg-gradient-to-r from-green-50 to-teal-50 dark:from-gray-900 dark:to-gray-900 p-6 rounded-xl border border-green-100 dark:border-gray-700">
               <div className="flex items-start">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center text-white font-bold text-xl mr-4">
+                <div className="w-8 h-8 p-4 rounded-full bg-gradient-to-r from-green-500 to-teal-500 flex items-center justify-center text-white font-bold text-xl mr-4">
                   U
                 </div>
                 <div>
                   <h3 className="font-bold text-lg">Testnet Campaign on U2U Network</h3>
                   <p className="text-gray-600 dark:text-gray-400 mt-2">August  10, 2025</p>
-                  <p className="mt-3">We're excited to announce The Upcoming Testnet Campaign on U2U Network .</p>
+                  <p className="mt-3">We&apos;re excited to announce The Upcoming Testnet Campaign on U2U Network .</p>
                 </div>
               </div>
             </div>
