@@ -129,7 +129,7 @@ import PoolTable from './PoolTable';
 import TransactionStake from './stake/TransactionStake';
 
 function TransactionMenu() {
-  const [activeTab, setActiveTab] = React.useState("swap");
+  const [activeTab, setActiveTab] = React.useState("stake");
   const navigate = useNavigate();
 
   const handleActive = (tab) => {
