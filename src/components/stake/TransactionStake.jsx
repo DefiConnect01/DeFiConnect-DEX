@@ -33,22 +33,10 @@ const TransactionStake = () => {
   const [stakeTime, setStakeTime] = useState(7)
 
   const { address } = useAppKitAccount()
+  const [isTransactionCompleted, setIsTransactionCompleted] = useState(false);
+  const [approvalState, setApprovalState] = useState("idle");
 
-  // const { data: fromBalanceData } = useBalance({
-  //   address,
-  //   chainId: selectedFromToken?.chainId,
-  //   token: selectedFromToken.address === "ETH" ? undefined : selectedFromToken?.address, // Token is undefined for ETH
-  // });
-
-  // const formattedFromBalance = fromBalanceData
-  //   ? Number(formatUnits(fromBalanceData.value, selectedFromToken.decimals)).toFixed(2)
-  //   : "0";
-
-
-  // const [isTransactionCompleted, setIsTransactionCompleted] = useState(false);
-  // const [approvalState, setApprovalState] = useState("idle");
-
-  // // Check if balance is sufficient
+  // Check if balance is sufficient
   // const isInsufficientBalance = useCallback(() => {
   //   if (!amount || !formattedFromBalance) return false;
 
@@ -63,7 +51,7 @@ const TransactionStake = () => {
   //   return currentAmount > balance;
   // }, [amount, formattedFromBalance, fee, selectedFromToken]);
 
-  // // Get button text based on current state
+  // Get button text based on current state
   // const getButtonText = useCallback(() => {
   //   if (isInsufficientBalance()) {
   //     return "Insufficient Balance";
@@ -98,7 +86,7 @@ const TransactionStake = () => {
   //     ["approving", "confirming"].includes(approvalState);
   // }, [depositLoading, tokenOneAmount, tokenTwoAmount, isTransactionCompleted, transactionState, approvalState, isInsufficientBalance]);
 
-  // // Handle button click
+  // Handle button click
   // const handleButtonClick = useCallback(async () => {
 
   //   setDepositLoading(true);
@@ -107,13 +95,13 @@ const TransactionStake = () => {
 
   // }, [isTransactionCompleted, isButtonDisabled]);
 
-  // // const [analysisResults, setAnalysisResults] = useState(null);
-  // const [lastSearchTerm, setLastSearchTerm] = useState('');
+  const [analysisResults, setAnalysisResults] = useState(null);
+  const [lastSearchTerm, setLastSearchTerm] = useState('');
 
-  // const parameterFormat = {
-  //   stakeValue: 0,
-  //   stakeTime: "30 days"
-  // };
+  const parameterFormat = {
+    stakeValue: 0,
+    stakeTime: "30 days"
+  };
 
   const handleAnalysisComplete = (result, searchTerm) => {
     // setAnalysisResults(result);
@@ -259,30 +247,31 @@ const TransactionStake = () => {
           </div>
 
           <button
-            onClick={handleButtonClick}
-            disabled={isButtonDisabled()}
-            className={`py-2 rounded-full mt-4 w-full 
-          ${isInsufficientBalance()
-                ? "bg-red-500 hover:bg-red-600"
-                : isTransactionCompleted
-                  ? "bg-green-500 hover:bg-green-600"
-                  : transactionState === "error" || approvalState === "error"
-                    ? "bg-red-500 hover:bg-red-600"
-                    : "button_bg"
-              } 
-              text-white 
-              transition-all duration-200
+            // onClick={handleButtonClick}
+            // disabled={isButtonDisabled()}
+            // className={`py-2 rounded-full mt-4 w-full 
+          // ${isInsufficientBalance()
+          //       ? "bg-red-500 hover:bg-red-600"
+          //       : isTransactionCompleted
+          //         ? "bg-green-500 hover:bg-green-600"
+          //         : transactionState === "error" || approvalState === "error"
+          //           ? "bg-red-500 hover:bg-red-600"
+          //           : "button_bg"
+          //     } 
+          //     text-white 
+          //     transition-all duration-200
               
-              hover:shadow-lg
-              ${isButtonDisabled() ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"} 
-            `}
+          //     hover:shadow-lg
+          //     ${isButtonDisabled() ? "opacity-50 cursor-not-allowed" : "hover:shadow-lg"} 
+          //   `}
           >
-            {getButtonText()}
+             {/* {getButtonText()} */}
+             {}
           </button>
 
-          {(transactionState === "error" || approvalState === "error") && (
+          {/* {(transactionState === "error" || approvalState === "error") && (
             <p className="text-red-500 mt-2">{errorMessage}</p>
-          )}
+          )} */}
         </div>
       </div>
     </>
