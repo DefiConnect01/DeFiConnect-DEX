@@ -2,7 +2,8 @@ import { PiCoinsBold } from "react-icons/pi";
 
 const StakeInput = ({
   setStakeValue,
-  stakeValue
+  stakeValue,
+
 }) => {
   return (
     <div>
