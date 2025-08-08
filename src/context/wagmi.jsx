@@ -32,7 +32,7 @@ const createNetworks = async () => {
     imagesrc: "/logoU2u.jpeg",
   };
 
-  return [u2uTestnet, base];
+  return [u2uTestnet];
 };
 
 const AppKitProvider = ({ children }) => {
