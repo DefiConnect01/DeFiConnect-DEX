@@ -3,7 +3,8 @@ import { createAppKit } from "@reown/appkit/react";
 import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
-import PropTypes from "prop-types";
+import PropTypes from "prop-types"
+import { base } from 'wagmi/chains'
 
 // Create networks configuration
 const createNetworks = async () => {
@@ -31,7 +32,7 @@ const createNetworks = async () => {
     imagesrc: "/logoU2u.jpeg",
   };
 
-  return [u2uTestnet];
+  return [u2uTestnet, base];
 };
 
 const AppKitProvider = ({ children }) => {
