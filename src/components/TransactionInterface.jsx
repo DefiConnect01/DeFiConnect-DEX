@@ -471,7 +471,7 @@ const TransactionInterface = () => {
 
   const { data: toBalanceData } = useBalance({
     address,
-    token: selectedToToken.address === "ETH" ? null : selectedToToken.address,
+    token: selectedToToken.address === "U2U" ? null : selectedToToken.address,
   });
 
   const formattedToBalance = toBalanceData
