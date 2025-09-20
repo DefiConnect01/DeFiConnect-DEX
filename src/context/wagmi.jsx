@@ -4,6 +4,7 @@ import { WagmiProvider } from "wagmi";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiAdapter } from "@reown/appkit-adapter-wagmi";
 import PropTypes from "prop-types";
+import {base} from "wagmi/chains"
 
 // Create networks configuration
 const createNetworks = async () => {

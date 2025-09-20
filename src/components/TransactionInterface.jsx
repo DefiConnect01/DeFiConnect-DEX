@@ -57,7 +57,7 @@ const TransactionInterface = () => {
   const { address } = useAppKitAccount();
   const { isConnected } = useAccount();
 
-  const isETH = swapList[0]?.symbol === "ETH";
+  const isETH = swapList[0]?.symbol === "U2U";
 
   // use useEeffect to update token balance on switch
   const { data: fromBalanceData } = useBalance({
@@ -471,7 +471,7 @@ const TransactionInterface = () => {
 
   const { data: toBalanceData } = useBalance({
     address,
-    token: selectedToToken.address === "ETH" ? null : selectedToToken.address,
+    token: selectedToToken.address === "U2U" ? null : selectedToToken.address,
   });
 
   const formattedToBalance = toBalanceData
