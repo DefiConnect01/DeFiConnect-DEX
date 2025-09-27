@@ -47,6 +47,8 @@ export const createPairDeposit = async (
           "eth", // Common Ethereum symbol
           "FTM",
           "ftm", // Common Fantom/U2U symbol
+           "U2U",  // Add U2U to the list
+            "u2u", 
         ]
           .filter(Boolean)
           .map((s) => s.toUpperCase())
