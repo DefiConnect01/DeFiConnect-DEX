@@ -20,16 +20,16 @@ export const VE_TOKEN_LOGO = 'https=//dystopia-swap-seven.vercel.app/logo.svg'
 export const VE_TOKEN_ABI = abis.veTokenABI
 
 export const WFTM_ADDRESS = "0xF8A37509C8a1ee397e8585A4C84B02358a2240A8";
-export const WFTM_NAME = 'ETH'
-export const WFTM_SYMBOL = 'WETH'
+export const WFTM_NAME = "U2U";
+export const WFTM_SYMBOL = "WU2U";
 export const WFTM_DECIMALS = 18
 export const WFTM_LOGO = 'https=//raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0/logo.png'
 export const WFTM_ABI = abis.wftmABI
 
 // changed
-export const FTM_ADDRESS = 'ETH'
-export const FTM_NAME = 'ETH'
-export const FTM_SYMBOL = 'ETH'
+export const FTM_ADDRESS = "U2U";
+export const FTM_NAME = "U2U";
+export const FTM_SYMBOL = "U2U";
 export const FTM_DECIMALS = 18
 export const FTM_LOGO = 'https=//i.ibb.co/rGJ8WyX/eth-logo.png'
 

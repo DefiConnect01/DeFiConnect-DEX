@@ -49,7 +49,7 @@ const TransactionLiquidity = () => {
     address,
     chainId: selectedFromToken?.chainId,
     token:
-      selectedFromToken.address === "ETH"
+      selectedFromToken.address === "U2U"
         ? undefined
         : selectedFromToken?.address, // Token is undefined for ETH
   });
@@ -58,7 +58,7 @@ const TransactionLiquidity = () => {
     address,
     chainId: selectedToToken?.chainId,
     token:
-      selectedToToken.address === "ETH" ? undefined : selectedToToken?.address, // Token is undefined for ETH
+      selectedToToken.address === "U2U" ? undefined : selectedToToken?.address, // Token is undefined for ETH
   });
 
 
@@ -164,8 +164,8 @@ const TransactionLiquidity = () => {
 
     const ssUpdated = async () => {
       try {
-        const token0IsETH = selectedFromToken.address == "ETH";
-        const token1IsETH = selectedToToken.address == "ETH";
+        const token0IsETH = selectedFromToken.address == "U2U";
+        const token1IsETH = selectedToToken.address == "U2U";
 
         // Find pair for selected tokens
         const currentPair = await stores.stableSwapStore.getPair(
@@ -254,10 +254,10 @@ const TransactionLiquidity = () => {
       let addy0 = assetA.address;
       let addy1 = assetB.address;
 
-      if (assetA.address === "ETH") {
+      if (assetA.address === "U2U") {
         addy0 = CONTRACTS.WFTM_ADDRESS;
       }
-      if (assetB.address === "ETH") {
+      if (assetB.address === "U2U") {
         addy1 = CONTRACTS.WFTM_ADDRESS;
       }
 
@@ -599,7 +599,7 @@ const TransactionLiquidity = () => {
 
           <div className="my-4">
             <p className="font-medium text-left mb-2 text-black dark:text-[hsl(220,8%,35%)]">
-              Your Balances - WETH/DCC
+              Your Balances - WU2U/DCC
             </p>
             <div className="grid md:grid-cols-2">
               <div className="border border-secondaryBg border-b-transparent md:border-b-secondaryBg md:border-r-transparent flex flex-col items-start px-3 py-2">
