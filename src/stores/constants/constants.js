@@ -7,7 +7,7 @@ import * as actions from './actions'
 import * as queries from './graph-queries'
 
 
-let isTestnet = import.meta.env.VITE_PUBLIC_CHAINID == 66665
+let isTestnet = true
 console.log({
   isTestnet
 })
@@ -15,10 +15,10 @@ console.log({
 // URLS
 let scan, cont;
 if (isTestnet) {
-  scan = 'https://explorer.creatorchain.io/'
+  scan = "https://testnet.u2uscan.xyz";
   cont = contractsTestnet
 } else {
-  scan = 'https://polygonscan.com/'
+  scan = "https://u2uscan.xyz";
   cont = contracts
 }
 
