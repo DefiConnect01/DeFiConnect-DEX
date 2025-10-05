@@ -129,7 +129,7 @@ import PoolTable from './PoolTable';
 import TransactionStake from './stake/TransactionStake';
 
 function TransactionMenu() {
-  const [activeTab, setActiveTab] = React.useState("stake");
+  const [activeTab, setActiveTab] = React.useState("swap");
   const navigate = useNavigate();
 
   const handleActive = (tab) => {
@@ -167,22 +167,22 @@ function TransactionMenu() {
         </div>
         <div className="me-2">
           <button 
-            onClick={() => handleActive("stake")} 
-            className={`w-full inline-block p-4 rounded-t-lg ${activeTab === "stake" ?
-              "dark:text-white bg-gray-200 dark:bg-gray-700 font-bold" : 
-              "hover:text-gray-600 dark:hover:text-gray-300 dark:hover:bg-gray-800"} transition-colors`}
-          >
-            Stake
-          </button>
-        </div>
-        <div className="me-2">
-          <button 
             onClick={() => handleActive("liquidity")} 
             className={`w-full inline-block p-4 rounded-t-lg ${activeTab === "liquidity" ?
               "dark:text-white bg-gray-200 dark:bg-gray-700 font-bold" : 
               "hover:text-gray-600 dark:hover:text-gray-300 dark:hover:bg-gray-800"} transition-colors`}
           >
-            Liquidity
+               Liquidity
+          </button>
+        </div>
+        <div className="me-2">
+          <button 
+            onClick={() => handleActive("stake")} 
+            className={`w-full inline-block p-4 rounded-t-lg ${activeTab === "stake" ?
+              "dark:text-white bg-gray-200 dark:bg-gray-700 font-bold" : 
+              "hover:text-gray-600 dark:hover:text-gray-300 dark:hover:bg-gray-800"} transition-colors`}
+          >
+          Stake
           </button>
         </div>
       </div>

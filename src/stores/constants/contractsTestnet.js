@@ -53,7 +53,7 @@ export const VOTER_ABI = abis.voterABI
 export const LIBRARY_ADDRESS = '0x6845cf30A9211050a0C706D85C09FcAe38734DDf'
 export const LIBRARY_ABI = abis.dystopiaLibraryABI
 
-export const REWARD_ADDRESS = "0x114DcE206c2806c0A471E79fc6ca5f0F3B31A056"; //DCC
+export const REWARD_ADDRESS = "0x0Bf87E52eFFf9045D632f2413EEd38BA14C0769c"; //DCC
 export const ERC20_ABI = abis.erc20ABI
 export const PAIR_ABI = abis.pairABI
 export const GAUGE_ABI = abis.gaugeABI
