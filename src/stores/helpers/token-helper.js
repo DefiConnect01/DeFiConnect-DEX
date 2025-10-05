@@ -79,7 +79,7 @@ export const createBaseAsset = async (address, web3, account, getBalance) => {
 };
 
 async function getTokenList() {
-  if (parseInt(import.meta.env.VITE_PUBLIC_CHAINID) === 2484) {
+  if (parseInt(import.meta.env.VITE_PUBLIC_CHAINID) === 39) {
     // some test token list
   } else {
     return { data: { tokens: DEFAULT_TOKEN_LIST, }, }

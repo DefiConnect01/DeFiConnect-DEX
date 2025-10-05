@@ -21,19 +21,33 @@ const createNetworks = async () => {
   //   imagesrc: "/creator.png",
   // };
 
-  const u2uTestnet = {
-    id: "eip155:2484",
-    name: "U2U Network Nebulas",
-    chainId: 2484,
+   const u2u= {
+    id: "eip155:39",
+    name: "U2U Solaris",
+    chainId: 39,
     chainNamespace: "eip155",
     currency: "U2U",
-    explorerUrl: "https://testnet.u2uscan.xyz",
+    explorerUrl: "https://u2uscan.xyz",
     rpcUrl: import.meta.env.VITE_RPC_URL,
     imagesrc: "/logoU2u.jpeg",
   };
 
-  return [u2uTestnet];
+  return [u2u];
 };
+
+//   const u2uTestnet = {
+//     id: "eip155:2484",
+//     name: "U2U Network Nebulas",
+//     chainId: 2484,
+//     chainNamespace: "eip155",
+//     currency: "U2U",
+//     explorerUrl: "https://testnet.u2uscan.xyz",
+//     rpcUrl: import.meta.env.VITE_RPC_URL,
+//     imagesrc: "/logoU2u.jpeg",
+//   };
+
+//   return [u2uTestnet];
+// };
 
 const AppKitProvider = ({ children }) => {
   const [networks, setNetworks] = React.useState([]);
@@ -67,7 +81,7 @@ const AppKitProvider = ({ children }) => {
       networks,
       metadata: {
         name: "DefiConnect Dex",
-        description: "ve-(3,3) dex on Creator",
+        description: "ve-(3,3) dex on U2u Network",
         url: import.meta.env.VITE_WEBSITE_URL,
         icons: ["https://avatars.githubusercontent.com/u/179229932"],
       },

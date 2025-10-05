@@ -10,7 +10,7 @@ const TokenWithBalance = ({ token, address, onSelect, onClose }) => {
   const { data } = useBalance({
     address,
     chainId: token?.chainId,
-    token: token?.symbol === "ETH" ? undefined : token?.address, // Token is undefined for ETH
+    token: token?.symbol === "U2U" ? undefined : token?.address, // Token is undefined for ETH
   });
 
   // Combine token with its balance data

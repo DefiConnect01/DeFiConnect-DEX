@@ -4,31 +4,32 @@
     "symbol": "U2U",
     "address": "U2U",
     "decimals": 18,
-    "chainId": 2484,
+    "chainId": 39,
     "logoURI": "https://assets.coingecko.com/coins/images/32963/small/Logo_U2U.jpeg?1734261244"
+  },
+   {
+    "name": "pUSDT",
+    "symbol": "pUSDT",
+    "address": "0x0820957B320E901622385Cc6C4fca196b20b939F",
+    "decimals": 6,
+    "chainId": 39,
+    "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
   },
   {
     "name": "Defi Connect Token",
     "symbol": "DCC",
-    "address": "0x0Bf87E52eFFf9045D632f2413EEd38BA14C0769c",
+    "address": "0x94DBc7D227bC6d9b3Ee9243922679126515afa98",
     "decimals": 18,
-    "chainId": 2484,
+    "chainId": 39,
     "logoURI": "https://i.ibb.co/Z6hz0Dq/deficonnectcredit1.png"
   },
   {
-    "name": "WrappedEther",
-    "symbol": "WETH",
-    "address": "0xC5f15624b4256C1206e4BB93f2CCc9163A75b703",
+    "name": "Wrapped U2U",
+    "symbol": "WU2U",
+    "address": "0xA99cf32e9aAa700f9E881BA9BF2C57A211ae94df",
     "decimals": 18,
-    "chainId": 2484,
-    "logoURI": "https://i.ibb.co/rGJ8WyX/eth-logo.png"
-  },
-  {
-    "name": "USDT",
-    "symbol": "USDT",
-    "address": "0xdFAe88F8610a038AFcDF47A5BC77C0963C65087c",
-    "decimals": 6,
-    "chainId": 2484,
-    "logoURI": "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png"
+    "chainId": 39,
+    "logoURI": "https://assets.coingecko.com/coins/images/32963/small/Logo_U2U.jpeg?1734261244"
   }
+ 
 ]
